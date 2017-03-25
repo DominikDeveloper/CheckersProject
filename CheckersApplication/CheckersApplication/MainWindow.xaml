@@ -5,5 +5,5 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CheckersApplication"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525" ShowsNavigationUI="False" Source="CameraCapture.xaml">
+        Title="CheckersApplication" Height="350" Width="525" ShowsNavigationUI="False" Source="CameraCapture.xaml">
 </NavigationWindow>

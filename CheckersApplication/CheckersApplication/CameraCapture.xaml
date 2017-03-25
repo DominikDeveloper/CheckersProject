@@ -8,7 +8,9 @@
       d:DesignHeight="300" d:DesignWidth="300"
       Title="CameraCapture">
 
-    <Grid Background="#2D2D2F">
-        
+    <Grid Background="Bisque">
+        <!-- #2d2d2f -->
+        <Image x:Name="IMG_Camera" Margin="174,181,10,10"/>
+        <Label x:Name="LB_Capture" Content="Przechwytywanie:" HorizontalAlignment="Center" Height="33" Margin="179,143,5,0" VerticalAlignment="Top" Width="116" RenderTransformOrigin="0.487,-0.321"/>
     </Grid>
 </Page>

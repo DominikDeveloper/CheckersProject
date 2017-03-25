@@ -17,9 +17,10 @@ using Emgu.CV;
 using Emgu.CV.UI;
 using Emgu.CV.Structure;
 using System.Drawing;
-using System.Windows.Forms;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Windows.Threading;
+using System.Windows.Interop;
 
 namespace CheckersApplication
 {
@@ -43,13 +44,55 @@ namespace CheckersApplication
 
         public void updateFrames(object sender, EventArgs e)
         {
-            cameraWindow.Image = capture.QueryFrame();
+            try
+            {
+                cameraWindow.Image = capture.QueryFrame(); //.QuerySmallFrame(); --> what better?
+                IMG_Camera.Source = ToBitmapSource(cameraWindow.Image);
+            }
+            catch (Exception ex) { System.Windows.MessageBox.Show(ex.Message); }
         }
 
         public void CameraShow()
         {
-            System.Windows.Forms.Application.Idle += new EventHandler(updateFrames);
-            cameraWindow.ShowDialog();         
+            ComponentDispatcher.ThreadIdle += new System.EventHandler(updateFrames);
+        }   
+        
+
+        /// <summary>
+        /// Convert an IImage to a WPF BitmapSource. The result can be used in the Set Property of Image.Source
+        /// </summary>
+        /// <param name="image">The Emgu CV Image</param>
+        /// <returns>The equivalent BitmapSource</returns>
+        public static BitmapSource ToBitmapSource(IImage image)
+        {
+            try
+            {
+                using (Bitmap source = image.Bitmap)
+                {
+                    IntPtr ptr = source.GetHbitmap(); //obtain the Hbitmap
+
+                    BitmapSource bs = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+                        ptr,
+                        IntPtr.Zero,
+                        Int32Rect.Empty,
+                        System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
+
+                    DeleteObject(ptr); //release the HBitmap
+                    return bs;
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
+
+        /// <summary>
+        /// Delete a GDI object
+        /// </summary>
+        /// <param name="o">The poniter to the GDI object to be deleted</param>
+        /// <returns></returns>
+        [DllImport("gdi32")]
+        private static extern int DeleteObject(IntPtr o);
     }
 }
