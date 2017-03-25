@@ -37,9 +37,7 @@ namespace CheckersApplication
             InitializeComponent();
 
             cameraWindow = new ImageViewer(); //create an image viewer
-            capture = new Capture(); //create a camera capture
-            //0 parameters --> default camera; for DroidCam (Android phone)? --> capture = new Capture("http://IP:PORT/mjpegfeed");
-            CameraShow();
+            
         }
 
         public void updateFrames(object sender, EventArgs e)
@@ -55,8 +53,43 @@ namespace CheckersApplication
         public void CameraShow()
         {
             ComponentDispatcher.ThreadIdle += new System.EventHandler(updateFrames);
-        }   
-        
+        }
+
+        private void BT_Start_Click(object sender, RoutedEventArgs e)
+        {
+            BT_Start.IsEnabled = false;
+            BT_Stop.IsEnabled = true;
+
+
+            //capture:
+            //0 parameters --> default camera; for DroidCam (Android phone)? --> capture = new Capture("http://IP:PORT/mjpegfeed");
+            if (TB_CameraSource.Text != String.Empty)
+            {
+                Int32 idCamera;
+                bool textParamIsNumber = Int32.TryParse(TB_CameraSource.Text, out idCamera);
+
+                if (textParamIsNumber == true)
+                    capture = new Capture(idCamera); //number in textbox = idCamera as parameter
+                else
+                    capture = new Capture(TB_CameraSource.Text); //string in textbox = url
+            }
+            else
+            {
+                capture = new Capture(); //blank textbox = default camera
+            }
+            
+            CameraShow();
+        }
+
+        private void BT_Stop_Click(object sender, RoutedEventArgs e)
+        {
+            BT_Stop.IsEnabled = false;
+            BT_Start.IsEnabled = true;
+
+            ComponentDispatcher.ThreadIdle -= new EventHandler(updateFrames);
+            capture.Stop();
+            capture.Dispose();
+        }
 
         /// <summary>
         /// Convert an IImage to a WPF BitmapSource. The result can be used in the Set Property of Image.Source

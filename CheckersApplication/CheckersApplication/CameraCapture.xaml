@@ -12,5 +12,8 @@
         <!-- #2d2d2f -->
         <Image x:Name="IMG_Camera" Margin="174,181,10,10"/>
         <Label x:Name="LB_Capture" Content="Przechwytywanie:" HorizontalAlignment="Center" Height="33" Margin="179,143,5,0" VerticalAlignment="Top" Width="116" RenderTransformOrigin="0.487,-0.321"/>
+        <Button x:Name="BT_Start" Content="Rozpocznij" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="BT_Start_Click" Margin="36,181,0,0"/>
+        <Button x:Name="BT_Stop" Content="Zatrzymaj" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="BT_Stop_Click" IsEnabled="False" Margin="36,237,0,0"/>
+        <TextBox x:Name="TB_CameraSource" HorizontalAlignment="Left" Height="41" Margin="36,118,0,0" TextWrapping="Wrap" Text="Wpisz tu URL kamery (http://IP:PORT/mjpegfeed)" VerticalAlignment="Top" Width="95"/>
     </Grid>
 </Page>
