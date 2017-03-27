@@ -41,7 +41,7 @@ namespace CheckersApplication
         private void ChangeBtnStartStop()
         {
             BT_Start.IsEnabled = !BT_Start.IsEnabled;
-            BT_Stop.IsEnabled = !BT_Start.IsEnabled;
+            BT_Stop.IsEnabled = !BT_Stop.IsEnabled;
         }
 
         public void CameraShow()
