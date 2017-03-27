@@ -52,7 +52,14 @@ namespace CheckersApplication
         private void BT_Start_Click(object sender, RoutedEventArgs e)
         {
             ChangeBtnStartStop();
-                        camera = new Camera(TB_CameraSource.Text);
+            if (CB_CameraSource.IsChecked.HasValue && CB_CameraSource.IsChecked.Value)
+            {
+                camera = new Camera(TB_CameraSource2.Text);
+            }
+            else
+            {
+                camera = new Camera(TB_CameraSource.Text);
+            }
             CameraShow();           
         }
 
