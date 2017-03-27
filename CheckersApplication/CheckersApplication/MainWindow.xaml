@@ -5,15 +5,15 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:CheckersApplication"
       mc:Ignorable="d" 
-      d:DesignHeight="300" d:DesignWidth="300"
+      Height="720" Width="1280"
       Title="CameraCapture">
 
-    <Grid Background="Bisque">
+    <Grid Background="#FFFFFEFE">
         <!-- #2d2d2f -->
-        <Image x:Name="IMG_Camera" Margin="174,181,10,10"/>
-        <Label x:Name="LB_Capture" Content="Przechwytywanie:" HorizontalAlignment="Center" Height="33" Margin="179,143,5,0" VerticalAlignment="Top" Width="116" RenderTransformOrigin="0.487,-0.321"/>
+        <Image x:Name="IMG_Camera" Margin="962,10,10,379" Width="300" Height="300"/>
         <Button x:Name="BT_Start" Content="Rozpocznij" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="BT_Start_Click" Margin="36,181,0,0"/>
         <Button x:Name="BT_Stop" Content="Zatrzymaj" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="BT_Stop_Click" IsEnabled="False" Margin="36,237,0,0"/>
-        <TextBox x:Name="TB_CameraSource" HorizontalAlignment="Left" Height="41" Margin="36,118,0,0" TextWrapping="Wrap" Text="Wpisz tu URL kamery (http://IP:PORT/mjpegfeed)" VerticalAlignment="Top" Width="95"/>
+        <TextBox x:Name="TB_CameraSource" HorizontalAlignment="Left" Height="41" Margin="36,118,0,0" TextWrapping="Wrap" Text="Wpisz tu URL kamery (http://IP:PORT/mjpegfeed)" VerticalAlignment="Top" Width="289"/>
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="300" Margin="962,10,0,0" VerticalAlignment="Top" Width="300"/>
     </Grid>
 </Window>
