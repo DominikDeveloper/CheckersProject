@@ -15,25 +15,21 @@ namespace CheckersApplication
     /// <summary>
     /// Interaction logic for CameraCapture.xaml
     /// </summary>
-    public partial class CameraCapture : Window
+    public partial class MainWindow : Window
     {
-        ImageViewer cameraWindow;
-        Capture capture;
+        Camera camera;
 
-        public CameraCapture()
+        public MainWindow()
         {
-            InitializeComponent();
-
-            cameraWindow = new ImageViewer(); //create an image viewer
-            
+            InitializeComponent(); 
         }
 
         public void updateFrames(object sender, EventArgs e)
         {
             try
             {
-                cameraWindow.Image = capture.QueryFrame(); //.QuerySmallFrame(); --> what better?
-                IMG_Camera.Source = ToBitmapSource(cameraWindow.Image);
+                camera.imageViewer.Image = camera.capture.QueryFrame(); //.QuerySmallFrame(); --> what better?
+                IMG_Camera.Source = ToBitmapConverter.Convert(camera.imageViewer.Image);
             }
             catch (Exception ex) { System.Windows.MessageBox.Show(ex.Message); }
         }
@@ -46,74 +42,23 @@ namespace CheckersApplication
         private void BT_Start_Click(object sender, RoutedEventArgs e)
         {
             BT_Start.IsEnabled = false;
-            BT_Stop.IsEnabled = true;
-
-
-            //capture:
-            //0 parameters --> default camera; for DroidCam (Android phone)? --> capture = new Capture("http://IP:PORT/mjpegfeed");
-            if (TB_CameraSource.Text != String.Empty)
-            {
-                Int32 idCamera;
-                bool textParamIsNumber = Int32.TryParse(TB_CameraSource.Text, out idCamera);
-
-                if (textParamIsNumber == true)
-                    capture = new Capture(idCamera); //number in textbox = idCamera as parameter
-                else
-                    capture = new Capture(TB_CameraSource.Text); //string in textbox = url
-            }
-            else
-            {
-                capture = new Capture(); //blank textbox = default camera
-            }
-            
-            CameraShow();
+            BT_Stop.IsEnabled = true;          
+            camera = new Camera(TB_CameraSource.Text);
+            CameraShow();           
         }
 
         private void BT_Stop_Click(object sender, RoutedEventArgs e)
         {
             BT_Stop.IsEnabled = false;
             BT_Start.IsEnabled = true;
-
             ComponentDispatcher.ThreadIdle -= new EventHandler(updateFrames);
-            capture.Stop();
-            capture.Dispose();
+            camera.capture.Stop();
+            camera.capture.Dispose();
+            IMG_Camera.Source = null;
         }
 
-        /// <summary>
-        /// Convert an IImage to a WPF BitmapSource. The result can be used in the Set Property of Image.Source
-        /// </summary>
-        /// <param name="image">The Emgu CV Image</param>
-        /// <returns>The equivalent BitmapSource</returns>
-        public static BitmapSource ToBitmapSource(IImage image)
-        {
-            try
-            {
-                using (Bitmap source = image.Bitmap)
-                {
-                    IntPtr ptr = source.GetHbitmap(); //obtain the Hbitmap
 
-                    BitmapSource bs = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-                        ptr,
-                        IntPtr.Zero,
-                        Int32Rect.Empty,
-                        System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
 
-                    DeleteObject(ptr); //release the HBitmap
-                    return bs;
-                }
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
-        }
 
-        /// <summary>
-        /// Delete a GDI object
-        /// </summary>
-        /// <param name="o">The poniter to the GDI object to be deleted</param>
-        /// <returns></returns>
-        [DllImport("gdi32")]
-        private static extern int DeleteObject(IntPtr o);
     }
 }
