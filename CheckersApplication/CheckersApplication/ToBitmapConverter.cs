@@ -15,8 +15,6 @@ namespace CheckersApplication
     {
         public static BitmapSource Convert(IImage image)
         {
-            try
-            {
                 using (Bitmap source = image.Bitmap)
                 {
                     IntPtr ptr = source.GetHbitmap();
@@ -28,12 +26,7 @@ namespace CheckersApplication
                     DeleteObject(ptr);
                     return bs;
                 }
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show(ex.Message);
-                return null;
-            }
+
         }
         [DllImport("gdi32")]
         private static extern int DeleteObject(IntPtr o);

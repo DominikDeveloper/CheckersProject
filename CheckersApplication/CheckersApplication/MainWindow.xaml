@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:CheckersApplication"
       mc:Ignorable="d" 
       Height="720" Width="1280"
-      Title="CameraCapture">
+      Title="Checkers Project">
 
     <Grid Background="#FFFFFEFE">
         <!-- #2d2d2f -->

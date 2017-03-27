@@ -31,7 +31,31 @@ namespace CheckersApplication
                 camera.imageViewer.Image = camera.capture.QueryFrame(); //.QuerySmallFrame(); --> what better?
                 IMG_Camera.Source = ToBitmapConverter.Convert(camera.imageViewer.Image);
             }
-            catch (Exception ex) { System.Windows.MessageBox.Show(ex.Message); }
+            catch (Exception ex) {
+                ComponentDispatcher.ThreadIdle -= new EventHandler(updateFrames);
+                System.Windows.MessageBox.Show(ex.Message);
+                ChangeBtnStartStop();
+            }
+        }
+
+        private void ChangeBtnStartStop()
+        {
+            if (BT_Start.IsEnabled)
+            {
+                BT_Start.IsEnabled = false;
+            }
+            else
+            {
+                BT_Start.IsEnabled = true;
+            }
+            if (!BT_Stop.IsEnabled)
+            {
+                BT_Stop.IsEnabled = true;
+            }
+            else
+            {
+                BT_Stop.IsEnabled = false;
+            }
         }
 
         public void CameraShow()
@@ -41,24 +65,19 @@ namespace CheckersApplication
 
         private void BT_Start_Click(object sender, RoutedEventArgs e)
         {
-            BT_Start.IsEnabled = false;
-            BT_Stop.IsEnabled = true;          
-            camera = new Camera(TB_CameraSource.Text);
+            ChangeBtnStartStop();
+                        camera = new Camera(TB_CameraSource.Text);
             CameraShow();           
         }
 
         private void BT_Stop_Click(object sender, RoutedEventArgs e)
         {
-            BT_Stop.IsEnabled = false;
-            BT_Start.IsEnabled = true;
+            ChangeBtnStartStop();
             ComponentDispatcher.ThreadIdle -= new EventHandler(updateFrames);
             camera.capture.Stop();
             camera.capture.Dispose();
             IMG_Camera.Source = null;
         }
-
-
-
 
     }
 }
