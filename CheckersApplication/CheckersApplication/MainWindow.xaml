@@ -13,9 +13,8 @@
         <Image x:Name="IMG_Camera" Margin="962,10,10,379" Width="300" Height="300"/>
         <Button x:Name="BT_Start" Content="Rozpocznij" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="BT_Start_Click" Margin="36,181,0,0"/>
         <Button x:Name="BT_Stop" Content="Zatrzymaj" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="BT_Stop_Click" IsEnabled="False" Margin="36,237,0,0"/>
-        <TextBox x:Name="TB_CameraSource" HorizontalAlignment="Left" Height="41" Margin="36,84,0,0" TextWrapping="Wrap" Text="Wpisz tu URL kamery (http://IP:PORT/mjpegfeed)" VerticalAlignment="Top" Width="289"/>
+        <TextBox x:Name="TB_CameraSource" HorizontalAlignment="Left" Height="41" Margin="36,84,0,0" TextWrapping="Wrap" Text="URL streamu, ID kamery, lub plik wideo,&#xD;&#xA;np. (http://IP:PORT/mjpegfeed)" VerticalAlignment="Top" Width="253" IsEnabled="False" GotFocus="TB_CameraSource_GotFocus" Foreground="Gray"/>
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="300" Margin="962,10,0,0" VerticalAlignment="Top" Width="300"/>
-        <CheckBox x:Name="CB_CameraSource" Content="Lub podaj jej ID:" HorizontalAlignment="Left" Margin="36,136,0,0" VerticalAlignment="Top" Width="111" Height="17"/>
-        <TextBox x:Name="TB_CameraSource2" HorizontalAlignment="Left" Height="28" Margin="164,130,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="26" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+        <CheckBox x:Name="CB_DefaultCamera" Content="Kamera domyślna" HorizontalAlignment="Left" Margin="36,62,0,0" VerticalAlignment="Top" Width="120" Height="17" IsChecked="True" Click="CB_DefaultCamera_Click" />
     </Grid>
 </Window>

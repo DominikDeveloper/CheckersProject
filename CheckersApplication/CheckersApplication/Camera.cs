@@ -19,9 +19,9 @@ namespace CheckersApplication
             imageViewer = new ImageViewer();
             //0 parameters --> default camera; for DroidCam (Android phone)? --> capture = new Capture("http://IP:PORT/mjpegfeed"); 
             //"http://192.168.1.13:4747/mjpegfeed"
-            if (path.Equals("0"))
+            if (path.Equals(""))
             {
-                capture = new Capture(0);
+                capture = new Capture();
             }
             else
             {

@@ -52,9 +52,9 @@ namespace CheckersApplication
         private void BT_Start_Click(object sender, RoutedEventArgs e)
         {
             ChangeBtnStartStop();
-            if (CB_CameraSource.IsChecked.HasValue && CB_CameraSource.IsChecked.Value)
+            if (CB_DefaultCamera.IsChecked==true)
             {
-                camera = new Camera(TB_CameraSource2.Text);
+                camera = new Camera("");
             }
             else
             {
@@ -72,5 +72,21 @@ namespace CheckersApplication
             IMG_Camera.Source = null;
         }
 
+        private void CB_DefaultCamera_Click(object sender, RoutedEventArgs e)
+        {
+            TB_CameraSource.IsEnabled = !(bool)CB_DefaultCamera.IsChecked;
+            if (!TB_CameraSource.IsEnabled)
+            {
+                TB_CameraSource.Text = "URL streamu, ID kamery, lub plik wideo,\nnp. (http://IP:PORT/mjpegfeed)";
+                TB_CameraSource.Foreground = System.Windows.Media.Brushes.Gray;
+            }
+            
+        }
+
+        private void TB_CameraSource_GotFocus(object sender, RoutedEventArgs e)
+        {
+            TB_CameraSource.Text = "";
+            TB_CameraSource.Foreground = System.Windows.Media.Brushes.Black;
+        }
     }
 }
