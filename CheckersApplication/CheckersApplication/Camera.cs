@@ -25,7 +25,15 @@ namespace CheckersApplication
             }
             else
             {
-                capture = new Capture(path);
+                try
+                {
+                    int i = Convert.ToInt16(path);
+                    capture = new Capture(i);
+                }
+                catch
+                {
+                    capture = new Capture(path);
+                }
             }
         }
     }
