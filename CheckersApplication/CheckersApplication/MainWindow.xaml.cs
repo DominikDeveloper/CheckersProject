@@ -1,14 +1,21 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using Emgu.CV;
-using Emgu.CV.UI;
-using Emgu.CV.Structure;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Threading;
 using System.Windows.Interop;
+using System.Collections.Generic;
+
+using Emgu.CV;
+using Emgu.CV.UI;
+using Emgu.CV.Structure;
+using Emgu.CV.Util;
+using Emgu.CV.Features2D;
+using System.Text;
+using Emgu.CV.CvEnum;
+using System.Diagnostics;
 
 namespace CheckersApplication
 {
@@ -18,10 +25,14 @@ namespace CheckersApplication
     public partial class MainWindow : Window
     {
         Camera camera;
+        Detection detection;
 
         public MainWindow()
         {
-            InitializeComponent(); 
+            InitializeComponent();
+            detection = new Detection();
+
+            Test1OnPicture("Chessboard8x8.png"); //after testing, delete it
         }
 
         public void updateFrames(object sender, EventArgs e)
@@ -29,7 +40,8 @@ namespace CheckersApplication
             try
             {
                 camera.imageViewer.Image = camera.capture.QueryFrame(); //.QuerySmallFrame(); --> what better?
-                IMG_Camera.Source = ToBitmapConverter.Convert(camera.imageViewer.Image);
+                //IMG_Camera.Source = ToBitmapConverter.Convert(camera.imageViewer.Image);
+                Test2OnCamera(camera.imageViewer.Image, 8, 8); //after testing, delete it and uncomment @up
             }
             catch (Exception ex) {
                 ComponentDispatcher.ThreadIdle -= new EventHandler(updateFrames);
@@ -87,6 +99,22 @@ namespace CheckersApplication
         {
             TB_CameraSource.Text = "";
             TB_CameraSource.Foreground = System.Windows.Media.Brushes.Black;
+        }
+
+        /// <summary>
+        /// Tests
+        /// </summary>
+        private void Test1OnPicture(string filePath)
+        {
+            UInt16 width = 8;
+            UInt16 height = 8;
+            Image<Gray, Byte> image = new Image<Gray, Byte>(filePath);
+            detection.ShowCorners(image, width, height);
+        }
+
+        public void Test2OnCamera(IImage img, UInt16 width, UInt16 height)
+        {
+            detection.ShowCorners(img, 8, 8);
         }
     }
 }
