@@ -36,5 +36,47 @@ namespace CheckersApplication
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
+
+        public void ShowCircles()
+        {
+            StringBuilder msgBuilder = new StringBuilder("Performance: ");
+
+            //Load the image from file and resize it for display
+            Image<Bgr, Byte> img =
+               new Image<Bgr, byte>("Chessboard.png")
+               .Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
+            //Convert the image to grayscale and filter out the noise
+            UMat uimage = new UMat();
+            CvInvoke.CvtColor(img, uimage, ColorConversion.Bgr2Gray);
+
+            //use image pyr to remove noise
+            UMat pyrDown = new UMat();
+            CvInvoke.PyrDown(uimage, pyrDown);
+            CvInvoke.PyrUp(pyrDown, uimage);
+
+            //Image<Gray, Byte> gray = img.Convert<Gray, Byte>().PyrDown().PyrUp();
+
+            #region circle detection
+            Stopwatch watch = Stopwatch.StartNew();
+            double cannyThreshold = 140.0;
+            double circleAccumulatorThreshold = 40.0;
+            double dp = 2.0;
+            double minDist = 30.0;
+            int minRadius = 5;
+            int maxRadius = 30;
+            CircleF[] circles = CvInvoke.HoughCircles(uimage, HoughType.Gradient, dp, minDist, cannyThreshold, circleAccumulatorThreshold, minRadius, maxRadius);
+
+            watch.Stop();
+            msgBuilder.Append(String.Format("Hough circles - {0} ms; Number of circles: {1}", watch.ElapsedMilliseconds,circles.Length));
+            Console.WriteLine(msgBuilder);
+
+            #endregion
+            #region draw circles
+            foreach (CircleF circle in circles)
+                img.Draw(circle, new Bgr(Color.Blue), 3);
+
+            CvInvoke.Imshow("Result of circles browsing", img);
+            #endregion
+        }
     }
 }

@@ -32,7 +32,7 @@ namespace CheckersApplication
             InitializeComponent();
             detection = new Detection();
 
-            Test1OnPicture("Chessboard8x8.png"); //after testing, delete it
+            Test1OnPicture("Chessboard.png"); //after testing, delete it
         }
 
         public void updateFrames(object sender, EventArgs e)
@@ -110,6 +110,7 @@ namespace CheckersApplication
             UInt16 height = 8;
             Image<Gray, Byte> image = new Image<Gray, Byte>(filePath);
             detection.ShowCorners(image, width, height);
+            detection.ShowCircles();
         }
 
         public void Test2OnCamera(IImage img, UInt16 width, UInt16 height)
