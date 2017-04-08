@@ -67,7 +67,7 @@ namespace CheckersApplication
             CircleF[] circles = CvInvoke.HoughCircles(uimage, HoughType.Gradient, dp, minDist, cannyThreshold, circleAccumulatorThreshold, minRadius, maxRadius);
 
             watch.Stop();
-            msgBuilder.Append(String.Format("Hough circles - {0} ms; Number of circles: {1}", watch.ElapsedMilliseconds,circles.Length));
+            msgBuilder.Append(String.Format("Hough circles - {0} ms; Number of circles: {1}", watch.ElapsedMilliseconds, circles.Length));
             Console.WriteLine(msgBuilder);
 
             #endregion
@@ -77,6 +77,86 @@ namespace CheckersApplication
 
             CvInvoke.Imshow("Result of circles browsing", img);
             #endregion
+
+            double cannyThresholdLinking = 120.0;
+
+            UMat cannyEdges = new UMat();
+            CvInvoke.Canny(img, cannyEdges, cannyThreshold, cannyThresholdLinking);
+
+            LineSegment2D[] lines = CvInvoke.HoughLinesP(
+               cannyEdges,
+               1, //Distance resolution in pixel-related units
+               Math.PI / 45.0, //Angle resolution measured in radians.
+               20, //threshold
+               30, //min Line width
+               10); //gap between lines
+
+
+
+            watch.Restart();
+            List<Triangle2DF> triangleList = new List<Triangle2DF>();
+            List<RotatedRect> boxList = new List<RotatedRect>(); //a box is a rotated rectangle
+
+            using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
+            {
+                CvInvoke.FindContours(cannyEdges, contours, null, RetrType.List, ChainApproxMethod.ChainApproxSimple);
+                int count = contours.Size;
+                for (int i = 0; i < count; i++)
+                {
+                    using (VectorOfPoint contour = contours[i])
+                    using (VectorOfPoint approxContour = new VectorOfPoint())
+                    {
+                        CvInvoke.ApproxPolyDP(contour, approxContour, CvInvoke.ArcLength(contour, true) * 0.05, true);
+                        if (CvInvoke.ContourArea(approxContour, false) > 250) //only consider contours with area greater than 250
+                        {
+                            if (approxContour.Size == 3) //The contour has 3 vertices, it is a triangle
+                            {
+                                System.Drawing.Point[] pts = approxContour.ToArray();
+                                triangleList.Add(new Triangle2DF(
+                                   pts[0],
+                                   pts[1],
+                                   pts[2]
+                                   ));
+                            }
+                            else if (approxContour.Size == 4) //The contour has 4 vertices.
+                            {
+                                #region determine if all the angles in the contour are within [80, 100] degree
+                                bool isRectangle = true;
+                                System.Drawing.Point[] pts = approxContour.ToArray();
+                                LineSegment2D[] edges = PointCollection.PolyLine(pts, true);
+
+                                for (int j = 0; j < edges.Length; j++)
+                                {
+                                    double angle = Math.Abs(
+                                       edges[(j + 1) % edges.Length].GetExteriorAngleDegree(edges[j]));
+                                    if (angle < 80 || angle > 100)
+                                    {
+                                        isRectangle = false;
+                                        break;
+                                    }
+                                }
+                                #endregion
+
+                                if (isRectangle) boxList.Add(CvInvoke.MinAreaRect(approxContour));
+                            }
+                        }
+                    }
+                }
+            }
+
+            watch.Stop();
+            msgBuilder.Append(String.Format("Triangles & Rectangles - {0} ms; triangles: {1}, rectangles: {2}", watch.ElapsedMilliseconds,triangleList.Count, boxList.Count));
+            Console.WriteLine(msgBuilder);
+
+
+            foreach (Triangle2DF triangle in triangleList)
+                img.Draw(triangle, new Bgr(Color.DarkBlue), 2);
+            foreach (RotatedRect box in boxList)
+                img.Draw(box, new Bgr(Color.DarkOrange), 2);
+            CvInvoke.Imshow("Result of triangles and rectangles browsing", img);
+
+
+
         }
     }
 }
