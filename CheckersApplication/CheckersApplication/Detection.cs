@@ -45,6 +45,11 @@ namespace CheckersApplication
             Image<Bgr, Byte> img =
                new Image<Bgr, byte>("Chessboard.png")
                .Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
+
+            Image<Bgr, Byte> img2 =
+   new Image<Bgr, byte>("Chessboard.png")
+   .Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
+            Image<Bgr, Byte> img3 = img2.CopyBlank();
             //Convert the image to grayscale and filter out the noise
             UMat uimage = new UMat();
             CvInvoke.CvtColor(img, uimage, ColorConversion.Bgr2Gray);
@@ -81,7 +86,7 @@ namespace CheckersApplication
             double cannyThresholdLinking = 120.0;
 
             UMat cannyEdges = new UMat();
-            CvInvoke.Canny(img, cannyEdges, cannyThreshold, cannyThresholdLinking);
+            CvInvoke.Canny(img2, cannyEdges, cannyThreshold, cannyThresholdLinking);
 
             LineSegment2D[] lines = CvInvoke.HoughLinesP(
                cannyEdges,
@@ -107,7 +112,7 @@ namespace CheckersApplication
                     using (VectorOfPoint approxContour = new VectorOfPoint())
                     {
                         CvInvoke.ApproxPolyDP(contour, approxContour, CvInvoke.ArcLength(contour, true) * 0.05, true);
-                        if (CvInvoke.ContourArea(approxContour, false) > 250) //only consider contours with area greater than 250
+                        if (CvInvoke.ContourArea(approxContour, false) > 500 && CvInvoke.ContourArea(approxContour, false) < 1200) //only consider contours with area greater than 250
                         {
                             if (approxContour.Size == 3) //The contour has 3 vertices, it is a triangle
                             {
@@ -150,10 +155,14 @@ namespace CheckersApplication
 
 
             foreach (Triangle2DF triangle in triangleList)
-                img.Draw(triangle, new Bgr(Color.DarkBlue), 2);
+                img3.Draw(triangle, new Bgr(Color.DarkBlue), 2);
             foreach (RotatedRect box in boxList)
-                img.Draw(box, new Bgr(Color.DarkOrange), 2);
-            CvInvoke.Imshow("Result of triangles and rectangles browsing", img);
+            {
+                img3.Draw(box, new Bgr(Color.DarkOrange), 1);
+            }
+
+            CvInvoke.Imshow("Result of triangles and rectangles browsing", img3);
+       
 
 
 
