@@ -150,43 +150,18 @@ namespace CheckersApplication
                                     x1 = ((approxContour[0].X + approxContour[1].X + approxContour[2].X + approxContour[3].X) / 4);
                                     //r.Center.X
                                     y1 = ((approxContour[0].Y + approxContour[1].Y + approxContour[2].Y + approxContour[3].Y) / 4);
-                                    if (x1==Convert.ToInt32(r.Center.X) && y1==Convert.ToInt32(r.Center.Y))
+
+                                    for(int x=-5;x<=5;x++)
                                     {
-                                        g = 1;
+                                        for(int y=-5;y<=5;y++)
+                                        {
+                                            if (x1 == Convert.ToInt32(r.Center.X) + x && y1 == Convert.ToInt32(r.Center.Y) + y)
+                                            {
+                                                g = 1;
+                                            }
+                                        }
                                     }
-                                    if (x1 == Convert.ToInt32(r.Center.X)-1 && y1 == Convert.ToInt32(r.Center.Y)-1)
-                                    {
-                                        g = 1;
-                                    }
-                                    if (x1 == Convert.ToInt32(r.Center.X) - 1 && y1 == Convert.ToInt32(r.Center.Y))
-                                    {
-                                        g = 1;
-                                    }
-                                    if (x1 == Convert.ToInt32(r.Center.X) && y1 == Convert.ToInt32(r.Center.Y) - 1)
-                                    {
-                                        g = 1;
-                                    }
-                                    if (x1 == Convert.ToInt32(r.Center.X) + 1 && y1 == Convert.ToInt32(r.Center.Y) + 1)
-                                    {
-                                        g = 1;
-                                    }
-                                    if (x1 == Convert.ToInt32(r.Center.X) + 1 && y1 == Convert.ToInt32(r.Center.Y))
-                                    {
-                                        g = 1;
-                                    }
-                                    if (x1 == Convert.ToInt32(r.Center.X) && y1 == Convert.ToInt32(r.Center.Y) + 1)
-                                    {
-                                        g = 1;
-                                    }
-                                    if (x1 == Convert.ToInt32(r.Center.X) - 1 && y1 == Convert.ToInt32(r.Center.Y) + 1)
-                                    {
-                                        g = 1;
-                                    }
-                                    if (x1 == Convert.ToInt32(r.Center.X) + 1 && y1 == Convert.ToInt32(r.Center.Y) - 1)
-                                    {
-                                        g = 1;
-                                    }
-                                }
+                                  }
                                 if (isRectangle && g==0) boxList.Add(CvInvoke.MinAreaRect(approxContour));
                                 g = 0;
                                 }
