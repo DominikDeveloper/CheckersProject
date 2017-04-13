@@ -24,6 +24,9 @@ namespace CheckersApplication
 {
     class Detection
     {
+        int g = 0;
+        int x1;
+        int y1;
         public void ShowCorners(IInputOutputArray imageObj, UInt16 width, UInt16 height) //terrible delay
         {
             System.Drawing.Size patternSize = new System.Drawing.Size(width - 1, height - 1);
@@ -102,52 +105,95 @@ namespace CheckersApplication
             List<Triangle2DF> triangleList = new List<Triangle2DF>();
             List<RotatedRect> boxList = new List<RotatedRect>(); //a box is a rotated rectangle
 
-            using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
-            {
-                CvInvoke.FindContours(cannyEdges, contours, null, RetrType.List, ChainApproxMethod.ChainApproxSimple);
-                int count = contours.Size;
-                for (int i = 0; i < count; i++)
+                using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
                 {
-                    using (VectorOfPoint contour = contours[i])
-                    using (VectorOfPoint approxContour = new VectorOfPoint())
+                    CvInvoke.FindContours(cannyEdges, contours, null, RetrType.List, ChainApproxMethod.ChainApproxSimple);
+                    int count = contours.Size;
+                    for (int i = 0; i < count; i++)
                     {
-                        CvInvoke.ApproxPolyDP(contour, approxContour, CvInvoke.ArcLength(contour, true) * 0.05, true);
-                        if (CvInvoke.ContourArea(approxContour, false) > 500 && CvInvoke.ContourArea(approxContour, false) < 1200) //only consider contours with area greater than 250
+                       // if (i % 8 == 0) i += 8;
+                        using (VectorOfPoint contour = contours[i])
+                        using (VectorOfPoint approxContour = new VectorOfPoint())
                         {
-                            if (approxContour.Size == 3) //The contour has 3 vertices, it is a triangle
+                            CvInvoke.ApproxPolyDP(contour, approxContour, CvInvoke.ArcLength(contour, true) * 0.05, true);
+                            if (CvInvoke.ContourArea(approxContour, false) > 100 && CvInvoke.ContourArea(approxContour, false) < 4000) //only consider contours with area greater than 250
                             {
-                                System.Drawing.Point[] pts = approxContour.ToArray();
-                                triangleList.Add(new Triangle2DF(
-                                   pts[0],
-                                   pts[1],
-                                   pts[2]
-                                   ));
-                            }
-                            else if (approxContour.Size == 4) //The contour has 4 vertices.
-                            {
-                                #region determine if all the angles in the contour are within [80, 100] degree
-                                bool isRectangle = true;
-                                System.Drawing.Point[] pts = approxContour.ToArray();
-                                LineSegment2D[] edges = PointCollection.PolyLine(pts, true);
-
-                                for (int j = 0; j < edges.Length; j++)
+                                if (approxContour.Size == 3) //The contour has 3 vertices, it is a triangle
                                 {
-                                    double angle = Math.Abs(
-                                       edges[(j + 1) % edges.Length].GetExteriorAngleDegree(edges[j]));
-                                    if (angle < 80 || angle > 100)
+                                    System.Drawing.Point[] pts = approxContour.ToArray();
+                                    triangleList.Add(new Triangle2DF(
+                                       pts[0],
+                                       pts[1],
+                                       pts[2]
+                                       ));
+                                }
+                                else if (approxContour.Size == 4) //The contour has 4 vertices.
+                                {
+                                    #region determine if all the angles in the contour are within [80, 100] degree
+                                    bool isRectangle = true;
+                                    System.Drawing.Point[] pts = approxContour.ToArray();
+                                    LineSegment2D[] edges = PointCollection.PolyLine(pts, true);
+
+                                    for (int j = 0; j < edges.Length; j++)
                                     {
-                                        isRectangle = false;
-                                        break;
+                                        double angle = Math.Abs(
+                                           edges[(j + 1) % edges.Length].GetExteriorAngleDegree(edges[j]));
+                                        if (angle < 85 || angle > 95)
+                                        {
+                                            isRectangle = false;
+                                            break;
+                                        }
+                                    }
+                                #endregion
+                                foreach (RotatedRect r in boxList)
+                                {
+                                    x1 = ((approxContour[0].X + approxContour[1].X + approxContour[2].X + approxContour[3].X) / 4);
+                                    //r.Center.X
+                                    y1 = ((approxContour[0].Y + approxContour[1].Y + approxContour[2].Y + approxContour[3].Y) / 4);
+                                    if (x1==Convert.ToInt32(r.Center.X) && y1==Convert.ToInt32(r.Center.Y))
+                                    {
+                                        g = 1;
+                                    }
+                                    if (x1 == Convert.ToInt32(r.Center.X)-1 && y1 == Convert.ToInt32(r.Center.Y)-1)
+                                    {
+                                        g = 1;
+                                    }
+                                    if (x1 == Convert.ToInt32(r.Center.X) - 1 && y1 == Convert.ToInt32(r.Center.Y))
+                                    {
+                                        g = 1;
+                                    }
+                                    if (x1 == Convert.ToInt32(r.Center.X) && y1 == Convert.ToInt32(r.Center.Y) - 1)
+                                    {
+                                        g = 1;
+                                    }
+                                    if (x1 == Convert.ToInt32(r.Center.X) + 1 && y1 == Convert.ToInt32(r.Center.Y) + 1)
+                                    {
+                                        g = 1;
+                                    }
+                                    if (x1 == Convert.ToInt32(r.Center.X) + 1 && y1 == Convert.ToInt32(r.Center.Y))
+                                    {
+                                        g = 1;
+                                    }
+                                    if (x1 == Convert.ToInt32(r.Center.X) && y1 == Convert.ToInt32(r.Center.Y) + 1)
+                                    {
+                                        g = 1;
+                                    }
+                                    if (x1 == Convert.ToInt32(r.Center.X) - 1 && y1 == Convert.ToInt32(r.Center.Y) + 1)
+                                    {
+                                        g = 1;
+                                    }
+                                    if (x1 == Convert.ToInt32(r.Center.X) + 1 && y1 == Convert.ToInt32(r.Center.Y) - 1)
+                                    {
+                                        g = 1;
                                     }
                                 }
-                                #endregion
-
-                                if (isRectangle) boxList.Add(CvInvoke.MinAreaRect(approxContour));
+                                if (isRectangle && g==0) boxList.Add(CvInvoke.MinAreaRect(approxContour));
+                                g = 0;
+                                }
                             }
                         }
                     }
                 }
-            }
 
             watch.Stop();
             msgBuilder.Append(String.Format("Triangles & Rectangles - {0} ms; triangles: {1}, rectangles: {2}", watch.ElapsedMilliseconds,triangleList.Count, boxList.Count));
@@ -158,11 +204,11 @@ namespace CheckersApplication
                 img3.Draw(triangle, new Bgr(Color.DarkBlue), 2);
             foreach (RotatedRect box in boxList)
             {
-                img3.Draw(box, new Bgr(Color.DarkOrange), 1);
+                img3.Draw(box, new Bgr(Color.DarkOrange), 1);     
             }
 
             CvInvoke.Imshow("Result of triangles and rectangles browsing", img3);
-       
+
 
 
 
