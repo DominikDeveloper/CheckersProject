@@ -27,32 +27,28 @@ namespace CheckersApplication
         int g = 0;
         int x1;
         int y1;
-        public void ShowCorners(IInputOutputArray imageObj, UInt16 width, UInt16 height) //terrible delay
+
+        public IInputOutputArray GetInternalCorners(IImage inputImage, UInt16 width, UInt16 height)
         {
+            IInputOutputArray editableImage = inputImage;
             System.Drawing.Size patternSize = new System.Drawing.Size(width - 1, height - 1);
             var cornerPoints = new VectorOfPointF();
-            bool result = CvInvoke.FindChessboardCorners(imageObj, patternSize, cornerPoints, Emgu.CV.CvEnum.CalibCbType.AdaptiveThresh | Emgu.CV.CvEnum.CalibCbType.FilterQuads);
+            bool result = CvInvoke.FindChessboardCorners(
+                editableImage, patternSize, cornerPoints, Emgu.CV.CvEnum.CalibCbType.AdaptiveThresh | Emgu.CV.CvEnum.CalibCbType.FilterQuads);
             try
             {
-                CvInvoke.DrawChessboardCorners(imageObj, patternSize, cornerPoints, result);
-                CvInvoke.Imshow("Result of corners browsing", imageObj);
+                CvInvoke.DrawChessboardCorners(editableImage, patternSize, cornerPoints, result);
+                return editableImage;
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
+
+            return null;
         }
 
-        public void ShowCircles()
+        public IImage GetCircles(Image<Bgr, Byte> img, int thickness = 3)
         {
             StringBuilder msgBuilder = new StringBuilder("Performance: ");
 
-            //Load the image from file and resize it for display
-            Image<Bgr, Byte> img =
-               new Image<Bgr, byte>("Chessboard.png")
-               .Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
-
-            Image<Bgr, Byte> img2 =
-   new Image<Bgr, byte>("Chessboard.png")
-   .Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
-            Image<Bgr, Byte> img3 = img2.CopyBlank();
             //Convert the image to grayscale and filter out the noise
             UMat uimage = new UMat();
             CvInvoke.CvtColor(img, uimage, ColorConversion.Bgr2Gray);
@@ -72,21 +68,31 @@ namespace CheckersApplication
             double minDist = 30.0;
             int minRadius = 5;
             int maxRadius = 30;
-            CircleF[] circles = CvInvoke.HoughCircles(uimage, HoughType.Gradient, dp, minDist, cannyThreshold, circleAccumulatorThreshold, minRadius, maxRadius);
+            CircleF[] circles = CvInvoke.HoughCircles(
+                uimage, HoughType.Gradient, dp, minDist, cannyThreshold, circleAccumulatorThreshold, minRadius, maxRadius);
 
             watch.Stop();
             msgBuilder.Append(String.Format("Hough circles - {0} ms; Number of circles: {1}", watch.ElapsedMilliseconds, circles.Length));
             Console.WriteLine(msgBuilder);
-
             #endregion
+
             #region draw circles
             foreach (CircleF circle in circles)
-                img.Draw(circle, new Bgr(Color.Blue), 3);
+                img.Draw(circle, new Bgr(Color.Blue), thickness);
 
-            CvInvoke.Imshow("Result of circles browsing", img);
+            return img;
             #endregion
+        }
+
+        public IImage GetTrianglesRectangles(Image<Bgr, Byte> img2, bool BlackBox = true)
+        {
+            StringBuilder msgBuilder = new StringBuilder("Performance: ");
 
             double cannyThresholdLinking = 120.0;
+            Stopwatch watch = Stopwatch.StartNew();
+            double cannyThreshold = 140.0;
+
+            Image<Bgr, Byte> img3 = img2.CopyBlank();
 
             UMat cannyEdges = new UMat();
             CvInvoke.Canny(img2, cannyEdges, cannyThreshold, cannyThresholdLinking);
@@ -105,45 +111,45 @@ namespace CheckersApplication
             List<Triangle2DF> triangleList = new List<Triangle2DF>();
             List<RotatedRect> boxList = new List<RotatedRect>(); //a box is a rotated rectangle
 
-                using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
+            using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
+            {
+                CvInvoke.FindContours(cannyEdges, contours, null, RetrType.List, ChainApproxMethod.ChainApproxSimple);
+                int count = contours.Size;
+                for (int i = 0; i < count; i++)
                 {
-                    CvInvoke.FindContours(cannyEdges, contours, null, RetrType.List, ChainApproxMethod.ChainApproxSimple);
-                    int count = contours.Size;
-                    for (int i = 0; i < count; i++)
+                    // if (i % 8 == 0) i += 8;
+                    using (VectorOfPoint contour = contours[i])
+                    using (VectorOfPoint approxContour = new VectorOfPoint())
                     {
-                       // if (i % 8 == 0) i += 8;
-                        using (VectorOfPoint contour = contours[i])
-                        using (VectorOfPoint approxContour = new VectorOfPoint())
+                        CvInvoke.ApproxPolyDP(contour, approxContour, CvInvoke.ArcLength(contour, true) * 0.05, true);
+                        if (CvInvoke.ContourArea(approxContour, false) > 1000 && CvInvoke.ContourArea(approxContour, false) < 4000) //only consider contours with area greater than 250
                         {
-                            CvInvoke.ApproxPolyDP(contour, approxContour, CvInvoke.ArcLength(contour, true) * 0.05, true);
-                            if (CvInvoke.ContourArea(approxContour, false) > 100 && CvInvoke.ContourArea(approxContour, false) < 4000) //only consider contours with area greater than 250
+                            if (approxContour.Size == 3) //The contour has 3 vertices, it is a triangle
                             {
-                                if (approxContour.Size == 3) //The contour has 3 vertices, it is a triangle
-                                {
-                                    System.Drawing.Point[] pts = approxContour.ToArray();
-                                    triangleList.Add(new Triangle2DF(
-                                       pts[0],
-                                       pts[1],
-                                       pts[2]
-                                       ));
-                                }
-                                else if (approxContour.Size == 4) //The contour has 4 vertices.
-                                {
-                                    #region determine if all the angles in the contour are within [80, 100] degree
-                                    bool isRectangle = true;
-                                    System.Drawing.Point[] pts = approxContour.ToArray();
-                                    LineSegment2D[] edges = PointCollection.PolyLine(pts, true);
+                                System.Drawing.Point[] pts = approxContour.ToArray();
+                                triangleList.Add(new Triangle2DF(
+                                   pts[0],
+                                   pts[1],
+                                   pts[2]
+                                   ));
+                            }
+                            else if (approxContour.Size == 4) //The contour has 4 vertices.
+                            {
+                                #region determine if all the angles in the contour are within [80, 100] degree
+                                bool isRectangle = true;
+                                System.Drawing.Point[] pts = approxContour.ToArray();
+                                LineSegment2D[] edges = PointCollection.PolyLine(pts, true);
 
-                                    for (int j = 0; j < edges.Length; j++)
+                                for (int j = 0; j < edges.Length; j++)
+                                {
+                                    double angle = Math.Abs(
+                                       edges[(j + 1) % edges.Length].GetExteriorAngleDegree(edges[j]));
+                                    if (angle < 85 || angle > 95)
                                     {
-                                        double angle = Math.Abs(
-                                           edges[(j + 1) % edges.Length].GetExteriorAngleDegree(edges[j]));
-                                        if (angle < 85 || angle > 95)
-                                        {
-                                            isRectangle = false;
-                                            break;
-                                        }
+                                        isRectangle = false;
+                                        break;
                                     }
+                                }
                                 #endregion
                                 foreach (RotatedRect r in boxList)
                                 {
@@ -151,9 +157,9 @@ namespace CheckersApplication
                                     //r.Center.X
                                     y1 = ((approxContour[0].Y + approxContour[1].Y + approxContour[2].Y + approxContour[3].Y) / 4);
 
-                                    for(int x=-5;x<=5;x++)
+                                    for (int x = -5; x <= 5; x++)
                                     {
-                                        for(int y=-5;y<=5;y++)
+                                        for (int y = -5; y <= 5; y++)
                                         {
                                             if (x1 == Convert.ToInt32(r.Center.X) + x && y1 == Convert.ToInt32(r.Center.Y) + y)
                                             {
@@ -161,32 +167,34 @@ namespace CheckersApplication
                                             }
                                         }
                                     }
-                                  }
-                                if (isRectangle && g==0) boxList.Add(CvInvoke.MinAreaRect(approxContour));
-                                g = 0;
                                 }
+                                if (isRectangle && g == 0) boxList.Add(CvInvoke.MinAreaRect(approxContour));
+                                g = 0;
                             }
                         }
                     }
                 }
-
-            watch.Stop();
-            msgBuilder.Append(String.Format("Triangles & Rectangles - {0} ms; triangles: {1}, rectangles: {2}", watch.ElapsedMilliseconds,triangleList.Count, boxList.Count));
-            Console.WriteLine(msgBuilder);
-
-
-            foreach (Triangle2DF triangle in triangleList)
-                img3.Draw(triangle, new Bgr(Color.DarkBlue), 2);
-            foreach (RotatedRect box in boxList)
-            {
-                img3.Draw(box, new Bgr(Color.DarkOrange), 1);     
             }
 
-            CvInvoke.Imshow("Result of triangles and rectangles browsing", img3);
+            watch.Stop();
+            msgBuilder.Append(String.Format("Triangles & Rectangles - {0} ms; triangles: {1}, rectangles: {2}", watch.ElapsedMilliseconds, triangleList.Count, boxList.Count));
+            Console.WriteLine(msgBuilder);
 
+            Image<Bgr, byte> resultImg;
+            if (BlackBox) {
+                resultImg = img3;
+            }
+            else
+                resultImg = img2;
 
+            //foreach (Triangle2DF triangle in triangleList) { resultImg.Draw(triangle, new Bgr(Color.DarkBlue), 2); }
 
-
+            foreach (RotatedRect box in boxList)
+            {
+                resultImg.Draw(box, new Bgr(Color.DarkOrange), 1);
+            }
+            
+            return resultImg;
         }
     }
 }

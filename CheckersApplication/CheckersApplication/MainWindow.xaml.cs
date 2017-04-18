@@ -7,15 +7,18 @@ using System.Runtime.InteropServices;
 using System.Windows.Threading;
 using System.Windows.Interop;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Windows.Forms;
+using System.Text;
 
 using Emgu.CV;
 using Emgu.CV.UI;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
 using Emgu.CV.Features2D;
-using System.Text;
 using Emgu.CV.CvEnum;
-using System.Diagnostics;
+
+using DirectShowLib;
 
 namespace CheckersApplication
 {
@@ -32,7 +35,27 @@ namespace CheckersApplication
             InitializeComponent();
             detection = new Detection();
 
-            Test1OnPicture("Chessboard.png"); //after testing, delete it
+            discoverUsbCameras();
+
+            CvInvoke.UseOpenCL = (bool)CB_OpenCL.IsChecked;
+        }
+
+        public void discoverUsbCameras()
+        {
+            List<KeyValuePair<int, string>> ListCamerasData = new List<KeyValuePair<int, string>>();
+
+            //-> Find systems cameras with DirectShow.Net dll
+            DsDevice[] _SystemCamereas = DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice);
+
+            int _DeviceIndex = 0;
+            foreach (DirectShowLib.DsDevice _Camera in _SystemCamereas)
+            {
+                CO_Cameras.Items.Add(new KeyValuePair<int, string>(_DeviceIndex, _Camera.Name));
+                _DeviceIndex++;
+            }
+
+            if (CO_Cameras.Items.Count > 0)
+                CO_Cameras.SelectedIndex = 0;
         }
 
         public void updateFrames(object sender, EventArgs e)
@@ -40,8 +63,8 @@ namespace CheckersApplication
             try
             {
                 camera.imageViewer.Image = camera.capture.QueryFrame(); //.QuerySmallFrame(); --> what better?
-                //IMG_Camera.Source = ToBitmapConverter.Convert(camera.imageViewer.Image);
-                Test2OnCamera(camera.imageViewer.Image, 8, 8); //after testing, delete it and uncomment @up
+                camera.imageViewer.Image = Test2OnCamera(camera.imageViewer.Image, 8, 8); //after testing, delete it
+                IMG_Camera.Source = ToBitmapConverter.Convert(camera.imageViewer.Image);              
             }
             catch (Exception ex) {
                 ComponentDispatcher.ThreadIdle -= new EventHandler(updateFrames);
@@ -66,13 +89,15 @@ namespace CheckersApplication
             ChangeBtnStartStop();
             if (CB_DefaultCamera.IsChecked==true)
             {
-                camera = new Camera("");
+                if (CO_Cameras.Items.Count > 0)
+                    camera = new Camera(Convert.ToString(CO_Cameras.SelectedIndex));
             }
             else
             {
                 camera = new Camera(TB_CameraSource.Text);
             }
-            CameraShow();           
+            CameraShow();
+            CO_Cameras.IsEnabled = false;
         }
 
         private void BT_Stop_Click(object sender, RoutedEventArgs e)
@@ -82,10 +107,14 @@ namespace CheckersApplication
             camera.capture.Stop();
             camera.capture.Dispose();
             IMG_Camera.Source = null;
+
+            CO_Cameras.IsEnabled = true;
         }
 
         private void CB_DefaultCamera_Click(object sender, RoutedEventArgs e)
         {
+            CO_Cameras.IsEnabled = !CO_Cameras.IsEnabled;
+
             TB_CameraSource.IsEnabled = !(bool)CB_DefaultCamera.IsChecked;
             if (!TB_CameraSource.IsEnabled)
             {
@@ -93,6 +122,38 @@ namespace CheckersApplication
                 TB_CameraSource.Foreground = System.Windows.Media.Brushes.Gray;
             }
             
+        }
+
+        private void CB_OpenCL_Click(object sender, RoutedEventArgs e)
+        {
+            CvInvoke.UseOpenCL = !CvInvoke.UseOpenCL;
+        }
+
+        private void BT_ImageTest_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+
+            openFileDialog1.Filter = "All files (*.*)|*.*";
+            openFileDialog1.RestoreDirectory = true;
+
+
+            DialogResult result = openFileDialog1.ShowDialog();
+
+            string path = String.Empty;
+
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                try
+                {
+                    path = System.IO.Path.GetFileName(openFileDialog1.FileName);
+                    if (path != String.Empty)
+                        Test1OnPicture(path);
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show("Niepoprawny plik. Komunikat błędu: " + ex.Message);
+                }
+            }
         }
 
         private void TB_CameraSource_GotFocus(object sender, RoutedEventArgs e)
@@ -108,14 +169,44 @@ namespace CheckersApplication
         {
             UInt16 width = 8;
             UInt16 height = 8;
-            Image<Gray, Byte> image = new Image<Gray, Byte>(filePath);
-            detection.ShowCorners(image, width, height);
-            detection.ShowCircles();
+
+            var imgToCorners = new Image<Bgr, Byte>(filePath);
+            CvInvoke.Imshow("Result of corners browsing", detection.GetInternalCorners(imgToCorners, width, height));
+
+            var imgToCircles =
+                new Image<Bgr, byte>(filePath).Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
+            CvInvoke.Imshow("Result of circles browsing", detection.GetCircles(imgToCircles));
+
+            var imgToRectangles = new Image<Bgr, byte>(filePath).Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
+            CvInvoke.Imshow("Result of triangles and rectangles browsing", detection.GetTrianglesRectangles(imgToRectangles));
         }
 
-        public void Test2OnCamera(IImage img, UInt16 width, UInt16 height)
+
+        public IImage Test2OnCamera(IImage img, UInt16 width, UInt16 height)
         {
-            detection.ShowCorners(img, 8, 8);
+            #region corners
+            var detCorners = detection.GetInternalCorners(img, width, height);
+            //CvInvoke.Imshow("Corners-Circles-Rects", detCorners);
+            #endregion
+
+            #region 3/4 -angles
+            Bitmap bmp = new Bitmap(img.Bitmap);
+            var convertedImg = new Image<Bgr, Byte>(bmp);
+
+            var detRects = detection.GetTrianglesRectangles(convertedImg, false);
+            //CvInvoke.Imshow("Corners-Circles-Rects", detRects);
+            #endregion
+
+            #region circles
+            bmp = new Bitmap(detRects.Bitmap);
+            convertedImg = new Image<Bgr, Byte>(bmp);
+
+            var detCircles = detection.GetCircles(convertedImg);
+            //CvInvoke.Imshow("Corners-Circles-Rects", detCircles);
+            #endregion
+
+            return detCircles; //last modified picture
         }
+
     }
 }
