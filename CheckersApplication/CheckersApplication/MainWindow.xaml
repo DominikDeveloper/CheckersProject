@@ -8,6 +8,51 @@
       Height="720" Width="1280"
       Title="Checkers Project">
 
+    <Window.Resources>
+        <DrawingBrush x:Key="CheckerBoard" Stretch="None" TileMode="Tile" Viewport="0,0,2,2" ViewportUnits="Absolute">
+            <DrawingBrush.Drawing>
+                <DrawingGroup>
+                    <GeometryDrawing Brush="Tan">
+                        <GeometryDrawing.Geometry>
+                            <RectangleGeometry Rect="0,0,2,2" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="Brown">
+                        <GeometryDrawing.Geometry>
+                            <GeometryGroup>
+                                <RectangleGeometry Rect="0,0,1,1" />
+                                <RectangleGeometry Rect="1,1,1,1" />
+                            </GeometryGroup>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+
+        <Style x:Key="CheckersPieceStyle" TargetType="{x:Type Image}">
+            <Style.Triggers>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Player}" Value="{x:Static local:Player.White}"/>
+                    </MultiDataTrigger.Conditions>
+                    <MultiDataTrigger.Setters>
+                        <Setter Property="Image.Source" Value="http://www.wpclipart.com/recreation/games/chess/chess_set_1/chess_piece_white_pawn_T.png" />
+                    </MultiDataTrigger.Setters>
+                </MultiDataTrigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Player}" Value="{x:Static local:Player.Black}"/>
+                    </MultiDataTrigger.Conditions>
+                    <MultiDataTrigger.Setters>
+                        <Setter Property="Image.Source" Value="http://www.wpclipart.com/recreation/games/chess/chess_set_1/chess_piece_black_pawn_T.png" />
+                    </MultiDataTrigger.Setters>
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+
+    </Window.Resources>
+
+
     <Grid Background="#FFFFFEFE">
         <!-- #2d2d2f -->
         <Image x:Name="IMG_Camera" Margin="962,10,10,379" Width="300" Height="300"/>
@@ -16,5 +61,26 @@
         <TextBox x:Name="TB_CameraSource" HorizontalAlignment="Left" Height="41" Margin="36,84,0,0" TextWrapping="Wrap" Text="URL streamu, ID kamery, lub plik wideo,&#xD;&#xA;np. (http://IP:PORT/mjpegfeed)" VerticalAlignment="Top" Width="253" IsEnabled="False" GotFocus="TB_CameraSource_GotFocus" Foreground="Gray"/>
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="300" Margin="962,10,0,0" VerticalAlignment="Top" Width="300"/>
         <CheckBox x:Name="CB_DefaultCamera" Content="Kamera domyślna" HorizontalAlignment="Left" Margin="36,62,0,0" VerticalAlignment="Top" Width="120" Height="17" IsChecked="True" Click="CB_DefaultCamera_Click" />
+
+        <ItemsControl Name="ChessBoard" Margin="376,138,452,247" Height="304" Width="444">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas Width="8" Height="8" Background="{StaticResource CheckerBoard}"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid Width="1" Height="1">
+                        <Image Width="0.8" Height="0.8" Style="{StaticResource CheckersPieceStyle}" />
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemContainerStyle>
+                <Style>
+                    <Setter Property="Canvas.Left" Value="{Binding Pos.X}" />
+                    <Setter Property="Canvas.Top" Value="{Binding Pos.Y}" />
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+        </ItemsControl>
     </Grid>
 </Window>

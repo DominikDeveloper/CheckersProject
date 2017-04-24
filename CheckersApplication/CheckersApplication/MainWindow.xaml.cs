@@ -9,6 +9,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Threading;
 using System.Windows.Interop;
+using System.Collections.ObjectModel;
 
 namespace CheckersApplication
 {
@@ -21,7 +22,16 @@ namespace CheckersApplication
 
         public MainWindow()
         {
-            InitializeComponent(); 
+            InitializeComponent();
+            this.ChessBoard.ItemsSource = new ObservableCollection<CheckersPiece>
+        {
+            new CheckersPiece{Pos=new System.Drawing.Point(0, 6), Player=Player.White},
+            new CheckersPiece{Pos=new System.Drawing.Point(1, 6), Player=Player.White},
+            new CheckersPiece{Pos=new System.Drawing.Point(2, 6), Player=Player.White},
+            new CheckersPiece{Pos=new System.Drawing.Point(3, 6), Player=Player.Black},
+            new CheckersPiece{Pos=new System.Drawing.Point(7, 0), Player=Player.Black}
+        };
+
         }
 
         public void updateFrames(object sender, EventArgs e)
@@ -88,5 +98,6 @@ namespace CheckersApplication
             TB_CameraSource.Text = "";
             TB_CameraSource.Foreground = System.Windows.Media.Brushes.Black;
         }
+
     }
 }
