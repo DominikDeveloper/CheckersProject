@@ -23,20 +23,16 @@ namespace CheckersApplication
         public MainWindow()
         {
             InitializeComponent();
-
-
-            
-            this.ChessBoard.ItemsSource = new ObservableCollection<CheckersPiece>
-        {
-            new CheckersPiece{Pos=new System.Drawing.Point(0, 6), Player=Player.White},
-            new CheckersPiece{Pos=new System.Drawing.Point(1, 6), Player=Player.White},
-            new CheckersPiece{Pos=new System.Drawing.Point(2, 6), Player=Player.White},
-            new CheckersPiece{Pos=new System.Drawing.Point(3, 6), Player=Player.Black},
-            new CheckersPiece{Pos=new System.Drawing.Point(7, 0), Player=Player.Black}
-        };
-        
+            FillChessboard();
         }
 
+        private void FillChessboard()
+        {
+            ChessBoardState chessBoardState = new ChessBoardState();
+            chessBoardState.TestData();
+            this.ChessBoard.ItemsSource = chessBoardState.pieces;
+        }
+            
         public void updateFrames(object sender, EventArgs e)
         {
             try

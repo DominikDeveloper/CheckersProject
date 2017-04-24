@@ -100,7 +100,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CheckersPiece.cs" />
-    <Compile Include="Chessboard.cs" />
+    <Compile Include="ChessBoardState.cs" />
     <Compile Include="ToBitmapConverter.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
