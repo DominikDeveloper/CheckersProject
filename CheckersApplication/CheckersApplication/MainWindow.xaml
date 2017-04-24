@@ -9,7 +9,7 @@
       Title="Checkers Project">
 
     <Window.Resources>
-        <DrawingBrush x:Key="CheckerBoard" Stretch="None" TileMode="Tile" Viewport="0,0,2,2" ViewportUnits="Absolute">
+        <DrawingBrush x:Key="CheckerBoard" Stretch="Fill" TileMode="Tile" Viewport="0,0,120,120" ViewportUnits="Absolute">
             <DrawingBrush.Drawing>
                 <DrawingGroup>
                     <GeometryDrawing Brush="Tan">
@@ -62,16 +62,16 @@
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="300" Margin="962,10,0,0" VerticalAlignment="Top" Width="300"/>
         <CheckBox x:Name="CB_DefaultCamera" Content="Kamera domyślna" HorizontalAlignment="Left" Margin="36,62,0,0" VerticalAlignment="Top" Width="120" Height="17" IsChecked="True" Click="CB_DefaultCamera_Click" />
 
-        <ItemsControl Name="ChessBoard" Margin="376,138,452,247" Height="304" Width="444">
+        <ItemsControl Name="ChessBoard" Margin="380,84,448,301">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <Canvas Width="8" Height="8" Background="{StaticResource CheckerBoard}"/>
+                    <Canvas Width="480" Height="480" Background="{StaticResource CheckerBoard}"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Grid Width="1" Height="1">
-                        <Image Width="0.8" Height="0.8" Style="{StaticResource CheckersPieceStyle}" />
+                    <Grid Width="60" Height="60">
+                        <Image Width="48" Height="48" Style="{StaticResource CheckersPieceStyle}" />
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

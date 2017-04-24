@@ -23,6 +23,9 @@ namespace CheckersApplication
         public MainWindow()
         {
             InitializeComponent();
+
+
+            
             this.ChessBoard.ItemsSource = new ObservableCollection<CheckersPiece>
         {
             new CheckersPiece{Pos=new System.Drawing.Point(0, 6), Player=Player.White},
@@ -31,7 +34,7 @@ namespace CheckersApplication
             new CheckersPiece{Pos=new System.Drawing.Point(3, 6), Player=Player.Black},
             new CheckersPiece{Pos=new System.Drawing.Point(7, 0), Player=Player.Black}
         };
-
+        
         }
 
         public void updateFrames(object sender, EventArgs e)
