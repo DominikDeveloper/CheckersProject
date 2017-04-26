@@ -124,6 +124,8 @@ namespace CheckersApplication
 
         public IImage GetTrianglesRectangles(Image<Bgr, Byte> img2, bool BlackBox = true)
         {
+            ChessboardIndex1 = 7;
+            ChessboardIndex2 = 7;
             StringBuilder msgBuilder = new StringBuilder("Performance: ");
 
             double cannyThresholdLinking = 120.0;
