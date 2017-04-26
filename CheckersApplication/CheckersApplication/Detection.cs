@@ -100,9 +100,9 @@ namespace CheckersApplication
                         //r.Center.X
                         y1 = Convert.ToInt32(circle.Center.Y);
 
-                        for (int x = -5; x <= 5; x++)
+                        for (int x = -7; x <= 7; x++)
                         {
-                            for (int y = -5; y <= 5; y++)
+                            for (int y = -7; y <= 7; y++)
                             {
                                 if (x1 == ChessboardArray[i, j].x + x && y1 == ChessboardArray[i, j].y + y)
                                 {
@@ -237,8 +237,8 @@ namespace CheckersApplication
                                     {
                                         boxList.Add(CvInvoke.MinAreaRect(approxContour));
                                         ChessboardArray[ChessboardIndex1, ChessboardIndex2].Value = 1;
-                                        ChessboardArray[ChessboardIndex1, ChessboardIndex2].x = x1;
-                                        ChessboardArray[ChessboardIndex1, ChessboardIndex2].y = y1;
+                                        ChessboardArray[ChessboardIndex1, ChessboardIndex2].x = ((approxContour[0].X + approxContour[1].X + approxContour[2].X + approxContour[3].X) / 4);
+                                        ChessboardArray[ChessboardIndex1, ChessboardIndex2].y = ((approxContour[0].Y + approxContour[1].Y + approxContour[2].Y + approxContour[3].Y) / 4);
                                         ChessboardIndex2--;
                                         if(ChessboardIndex2==-1)
                                         {
