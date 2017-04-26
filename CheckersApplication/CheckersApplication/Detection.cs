@@ -38,7 +38,6 @@ namespace CheckersApplication
         int ChessboardIndex1 = 7;
         int ChessboardIndex2 = 7;
         ChessField[,] ChessboardArray = new ChessField[8, 8];
-        ChessField ChessField = new ChessField();
 
 
 
@@ -114,13 +113,6 @@ namespace CheckersApplication
                     }
                 }
             }
-            for (int i = 0; i < 8; i++)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-                    Console.WriteLine(ChessboardArray[i, j].Value.ToString());
-                }
-            }
 
             #region draw circles
             foreach (CircleF circle in circles)
@@ -161,7 +153,7 @@ namespace CheckersApplication
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    ChessboardArray[i, j] = ChessField;
+                    ChessboardArray[i, j] = new ChessField();
                 }
             }
 
