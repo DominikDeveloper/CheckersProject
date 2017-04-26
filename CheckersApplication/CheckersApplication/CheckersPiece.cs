@@ -21,7 +21,12 @@ namespace CheckersApplication
         public Point Pos
         {
             get { return pos; }
-            set { pos.X= value.X*60;pos.Y = value.Y * 60; RaisePropertyChanged(() => pos); }
+            set
+            {
+                pos.X= value.X*60;
+                pos.Y = value.Y * 60;
+                RaisePropertyChanged(() => pos);
+            }
         }
 
         private Player player;
