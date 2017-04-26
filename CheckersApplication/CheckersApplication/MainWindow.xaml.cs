@@ -29,7 +29,7 @@ namespace CheckersApplication
         private void FillChessboard()
         {
             ChessBoardState chessBoardState = new ChessBoardState();
-            chessBoardState.TestData();
+            //chessBoardState.TestData();
             this.ChessBoard.ItemsSource = chessBoardState.pieces;
         }
             

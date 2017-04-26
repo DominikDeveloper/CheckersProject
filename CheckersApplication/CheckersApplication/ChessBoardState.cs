@@ -10,6 +10,7 @@ namespace CheckersApplication
 
     class ChessBoardState
     {
+        public const int empty = 0;
         private int[,] matrix = new int[8, 8];
         public ObservableCollection<CheckersPiece> pieces = new ObservableCollection<CheckersPiece>();
 
@@ -20,11 +21,11 @@ namespace CheckersApplication
             {
                 for(int j = 0; j < 8; j++)
                 {
-                    int state = rnd.Next(0, 3);
-                    if (state == 1)
-                        matrix[i, j] = 1;
-                    else if (state == 2)
-                        matrix[i, j] = 2;
+                    int state = rnd.Next(1, 6);
+                    if (state == (int)Player.White)
+                        matrix[i, j] = (int)Player.White;
+                    else if (state == (int)Player.Black)
+                        matrix[i, j] = (int)Player.Black;
                 }
             }
             matrixToPieces();
