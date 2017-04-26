@@ -33,7 +33,8 @@ namespace CheckersApplication
         int ContourAreaAddtoMin;
         int AngleMin;
         int AngleMax;
-
+        int MaxRectangles = 0;
+        int calibrationRounds = 0;
 
         public IInputOutputArray GetInternalCorners(IImage inputImage, UInt16 width, UInt16 height)
         {
@@ -119,13 +120,23 @@ namespace CheckersApplication
             List<Triangle2DF> triangleList = new List<Triangle2DF>();
             List<RotatedRect> boxList = new List<RotatedRect>(); //a box is a rotated rectangle
 
-            /*while (boxList.Count() != 64)
-            {*/
+            while (boxList.Count() != 64 && calibrationRounds < 3000)
+            {
+                //for(int i1=0;i1<1000 && boxList.Count() != 64; i1++)
+                //{
+                //    for (int i2 = 0; i2 < 3000 && boxList.Count() != 64; i2++)
+                //    {
+                //        for (int i3 = 70; i3 < 90 && boxList.Count() != 64; i3++)
+                //        {
+                //            for (int i4 = 90; i4 < 110 && boxList.Count()!=64; i4++)
+                //            {
+
+                calibrationRounds++;
                 //rnd1 = rnd.Next(1, 101); //?
-                ContourAreaMin = 500;//rnd.Next(1, 1000);
-                ContourAreaAddtoMin = 3500; //rnd.Next(1, 3000);
-                AngleMin = 85; //rnd.Next(70, 90);
-                AngleMax = 95; //rnd.Next(90, 110);
+                ContourAreaMin = rnd.Next(1, 1000);
+                ContourAreaAddtoMin = rnd.Next(1, 3000);
+                AngleMin = rnd.Next(70, 90);
+                AngleMax = rnd.Next(90, 110);
                 
                 using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
                 {
@@ -140,16 +151,16 @@ namespace CheckersApplication
                             CvInvoke.ApproxPolyDP(contour, approxContour, CvInvoke.ArcLength(contour, true) * 0.05, true);
                             if (CvInvoke.ContourArea(approxContour, false) > ContourAreaMin && CvInvoke.ContourArea(approxContour, false) < ContourAreaMin + ContourAreaAddtoMin) //only consider contours with area greater than 250
                             {
-                                if (approxContour.Size == 3) //The contour has 3 vertices, it is a triangle
-                                {
-                                    System.Drawing.Point[] pts = approxContour.ToArray();
-                                    triangleList.Add(new Triangle2DF(
-                                       pts[0],
-                                       pts[1],
-                                       pts[2]
-                                       ));
-                                }
-                                else if (approxContour.Size == 4) //The contour has 4 vertices.
+                                //if (approxContour.Size == 3) //The contour has 3 vertices, it is a triangle
+                                //{
+                                //    System.Drawing.Point[] pts = approxContour.ToArray();
+                                //    triangleList.Add(new Triangle2DF(
+                                //       pts[0],
+                                //       pts[1],
+                                //       pts[2]
+                                //       ));
+                                //}
+                                if (approxContour.Size == 4) //The contour has 4 vertices.
                                 {
                                     #region determine if all the angles in the contour are within [80, 100] degree
                                     bool isRectangle = true;
@@ -190,8 +201,12 @@ namespace CheckersApplication
                             }
                         }
                     }
+                }
+                //            }
+                //        }
+                //    }
                 //}
-                
+
             }
 
             watch.Stop();
