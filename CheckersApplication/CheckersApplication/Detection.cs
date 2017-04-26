@@ -24,15 +24,15 @@ namespace CheckersApplication
 {
     class Detection
     {
-        int g = 0;
+        int RectangleExists = 0;
         int x1;
         int y1;
         Random rnd = new Random();
-        int rnd1;
-        int rnd2;
-        int rnd3;
-        int rnd4;
-        int rnd5;
+        //int rnd1;
+        int ContourAreaMin;
+        int ContourAreaAddtoMin;
+        int AngleMin;
+        int AngleMax;
 
 
         public IInputOutputArray GetInternalCorners(IImage inputImage, UInt16 width, UInt16 height)
@@ -121,11 +121,11 @@ namespace CheckersApplication
 
             /*while (boxList.Count() != 64)
             {*/
-                rnd1 = rnd.Next(1, 101); //?
-                rnd2 = 500;//rnd.Next(1, 1000);
-                rnd3 = 3500; //rnd.Next(1, 3000);
-                rnd4 = 85; //rnd.Next(70, 90);
-                rnd5 = 95; //rnd.Next(90, 110);
+                //rnd1 = rnd.Next(1, 101); //?
+                ContourAreaMin = 500;//rnd.Next(1, 1000);
+                ContourAreaAddtoMin = 3500; //rnd.Next(1, 3000);
+                AngleMin = 85; //rnd.Next(70, 90);
+                AngleMax = 95; //rnd.Next(90, 110);
                 
                 using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
                 {
@@ -138,7 +138,7 @@ namespace CheckersApplication
                         using (VectorOfPoint approxContour = new VectorOfPoint())
                         {
                             CvInvoke.ApproxPolyDP(contour, approxContour, CvInvoke.ArcLength(contour, true) * 0.05, true);
-                            if (CvInvoke.ContourArea(approxContour, false) > rnd2 && CvInvoke.ContourArea(approxContour, false) < rnd2 + rnd3) //only consider contours with area greater than 250
+                            if (CvInvoke.ContourArea(approxContour, false) > ContourAreaMin && CvInvoke.ContourArea(approxContour, false) < ContourAreaMin + ContourAreaAddtoMin) //only consider contours with area greater than 250
                             {
                                 if (approxContour.Size == 3) //The contour has 3 vertices, it is a triangle
                                 {
@@ -160,7 +160,7 @@ namespace CheckersApplication
                                     {
                                         double angle = Math.Abs(
                                            edges[(j + 1) % edges.Length].GetExteriorAngleDegree(edges[j]));
-                                        if (angle < rnd4 || angle > rnd5)
+                                        if (angle < AngleMin || angle > AngleMax)
                                         {
                                             isRectangle = false;
                                             break;
@@ -179,13 +179,13 @@ namespace CheckersApplication
                                             {
                                                 if (x1 == Convert.ToInt32(r.Center.X) + x && y1 == Convert.ToInt32(r.Center.Y) + y)
                                                 {
-                                                    g = 1;
+                                                    RectangleExists = 1;
                                                 }
                                             }
                                         }
                                     }
-                                    if (isRectangle && g == 0) boxList.Add(CvInvoke.MinAreaRect(approxContour));
-                                    g = 0;
+                                    if (isRectangle && RectangleExists == 0) boxList.Add(CvInvoke.MinAreaRect(approxContour));
+                                    RectangleExists = 0;
                                 }
                             }
                         }
