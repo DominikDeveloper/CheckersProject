@@ -34,7 +34,6 @@ namespace CheckersApplication
         int rnd4;
         int rnd5;
 
-        public void ShowCorners(IInputOutputArray imageObj, UInt16 width, UInt16 height) //terrible delay
 
         public IInputOutputArray GetInternalCorners(IImage inputImage, UInt16 width, UInt16 height)
         {
@@ -92,6 +91,7 @@ namespace CheckersApplication
             #endregion
         }
 
+
         public IImage GetTrianglesRectangles(Image<Bgr, Byte> img2, bool BlackBox = true)
         {
             StringBuilder msgBuilder = new StringBuilder("Performance: ");
@@ -118,13 +118,15 @@ namespace CheckersApplication
             watch.Restart();
             List<Triangle2DF> triangleList = new List<Triangle2DF>();
             List<RotatedRect> boxList = new List<RotatedRect>(); //a box is a rotated rectangle
-            while(boxList.Count()!=64)
-            {
-                rnd1 = rnd.Next(1, 101);
-                rnd2 = rnd.Next(1, 1000);
-                rnd3 = rnd.Next(1, 3000);
-                rnd4 = rnd.Next(70, 90);
-                rnd5 = rnd.Next(90, 110);
+
+            /*while (boxList.Count() != 64)
+            {*/
+                rnd1 = rnd.Next(1, 101); //?
+                rnd2 = 500;//rnd.Next(1, 1000);
+                rnd3 = 3500; //rnd.Next(1, 3000);
+                rnd4 = 85; //rnd.Next(70, 90);
+                rnd5 = 95; //rnd.Next(90, 110);
+                
                 using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
                 {
                     CvInvoke.FindContours(cannyEdges, contours, null, RetrType.List, ChainApproxMethod.ChainApproxSimple);
@@ -136,7 +138,7 @@ namespace CheckersApplication
                         using (VectorOfPoint approxContour = new VectorOfPoint())
                         {
                             CvInvoke.ApproxPolyDP(contour, approxContour, CvInvoke.ArcLength(contour, true) * 0.05, true);
-                            if (CvInvoke.ContourArea(approxContour, false) > rnd2 && CvInvoke.ContourArea(approxContour, false) < rnd2+rnd3) //only consider contours with area greater than 250
+                            if (CvInvoke.ContourArea(approxContour, false) > rnd2 && CvInvoke.ContourArea(approxContour, false) < rnd2 + rnd3) //only consider contours with area greater than 250
                             {
                                 if (approxContour.Size == 3) //The contour has 3 vertices, it is a triangle
                                 {
@@ -171,23 +173,25 @@ namespace CheckersApplication
                                         //r.Center.X
                                         y1 = ((approxContour[0].Y + approxContour[1].Y + approxContour[2].Y + approxContour[3].Y) / 4);
 
-                                    for (int x = -5; x <= 5; x++)
-                                    {
-                                        for (int y = -5; y <= 5; y++)
+                                        for (int x = -5; x <= 5; x++)
                                         {
-                                            if (x1 == Convert.ToInt32(r.Center.X) + x && y1 == Convert.ToInt32(r.Center.Y) + y)
+                                            for (int y = -5; y <= 5; y++)
                                             {
-                                                g = 1;
+                                                if (x1 == Convert.ToInt32(r.Center.X) + x && y1 == Convert.ToInt32(r.Center.Y) + y)
+                                                {
+                                                    g = 1;
+                                                }
                                             }
                                         }
                                     }
+                                    if (isRectangle && g == 0) boxList.Add(CvInvoke.MinAreaRect(approxContour));
+                                    g = 0;
                                 }
-                                if (isRectangle && g == 0) boxList.Add(CvInvoke.MinAreaRect(approxContour));
-                                g = 0;
                             }
                         }
                     }
-                }
+                //}
+                
             }
 
             watch.Stop();
@@ -195,7 +199,8 @@ namespace CheckersApplication
             Console.WriteLine(msgBuilder);
 
             Image<Bgr, byte> resultImg;
-            if (BlackBox) {
+            if (BlackBox)
+            {
                 resultImg = img3;
             }
             else
@@ -207,7 +212,7 @@ namespace CheckersApplication
             {
                 resultImg.Draw(box, new Bgr(Color.DarkOrange), 1);
             }
-            
+
             return resultImg;
         }
     }
