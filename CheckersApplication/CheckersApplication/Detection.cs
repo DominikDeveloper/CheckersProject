@@ -33,8 +33,14 @@ namespace CheckersApplication
         int ContourAreaAddtoMin;
         int AngleMin;
         int AngleMax;
-        int MaxRectangles = 0;
+        //int MaxRectangles = 0;
         int calibrationRounds = 0;
+        int ChessboardIndex1 = 7;
+        int ChessboardIndex2 = 7;
+        ChessField[,] ChessboardArray = new ChessField[8, 8];
+        ChessField ChessField = new ChessField();
+
+
 
         public IInputOutputArray GetInternalCorners(IImage inputImage, UInt16 width, UInt16 height)
         {
@@ -79,10 +85,42 @@ namespace CheckersApplication
             CircleF[] circles = CvInvoke.HoughCircles(
                 uimage, HoughType.Gradient, dp, minDist, cannyThreshold, circleAccumulatorThreshold, minRadius, maxRadius);
 
+
             watch.Stop();
             msgBuilder.Append(String.Format("Hough circles - {0} ms; Number of circles: {1}", watch.ElapsedMilliseconds, circles.Length));
             Console.WriteLine(msgBuilder);
             #endregion
+
+            foreach (CircleF circle in circles)
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    for (int j = 0; j < 8; j++)
+                    {
+                        x1 = Convert.ToInt32(circle.Center.X);
+                        //r.Center.X
+                        y1 = Convert.ToInt32(circle.Center.Y);
+
+                        for (int x = -5; x <= 5; x++)
+                        {
+                            for (int y = -5; y <= 5; y++)
+                            {
+                                if (x1 == ChessboardArray[i, j].x + x && y1 == ChessboardArray[i, j].y + y)
+                                {
+                                    ChessboardArray[i, j].Value = 2;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    Console.WriteLine(ChessboardArray[i, j].Value.ToString());
+                }
+            }
 
             #region draw circles
             foreach (CircleF circle in circles)
@@ -91,7 +129,6 @@ namespace CheckersApplication
             return img;
             #endregion
         }
-
 
         public IImage GetTrianglesRectangles(Image<Bgr, Byte> img2, bool BlackBox = true)
         {
@@ -120,8 +157,17 @@ namespace CheckersApplication
             List<Triangle2DF> triangleList = new List<Triangle2DF>();
             List<RotatedRect> boxList = new List<RotatedRect>(); //a box is a rotated rectangle
 
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    ChessboardArray[i, j] = ChessField;
+                }
+            }
+
             while (boxList.Count() != 64 && calibrationRounds < 3000)
             {
+                //boxList.Clear();
                 //for(int i1=0;i1<1000 && boxList.Count() != 64; i1++)
                 //{
                 //    for (int i2 = 0; i2 < 3000 && boxList.Count() != 64; i2++)
@@ -195,7 +241,19 @@ namespace CheckersApplication
                                             }
                                         }
                                     }
-                                    if (isRectangle && RectangleExists == 0) boxList.Add(CvInvoke.MinAreaRect(approxContour));
+                                    if (isRectangle && RectangleExists == 0)
+                                    {
+                                        boxList.Add(CvInvoke.MinAreaRect(approxContour));
+                                        ChessboardArray[ChessboardIndex1, ChessboardIndex2].Value = 1;
+                                        ChessboardArray[ChessboardIndex1, ChessboardIndex2].x = x1;
+                                        ChessboardArray[ChessboardIndex1, ChessboardIndex2].y = y1;
+                                        ChessboardIndex2--;
+                                        if(ChessboardIndex2==-1)
+                                        {
+                                            ChessboardIndex1--;
+                                            ChessboardIndex2 = 7;
+                                        }
+                                    }
                                     RectangleExists = 0;
                                 }
                             }

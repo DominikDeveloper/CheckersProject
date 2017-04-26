@@ -87,6 +87,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ChessField.cs" />
     <Compile Include="Detection.cs" />
     <Compile Include="ToBitmapConverter.cs" />
     <Page Include="MainWindow.xaml">

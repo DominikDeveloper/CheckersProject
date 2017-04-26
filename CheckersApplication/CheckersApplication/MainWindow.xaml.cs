@@ -173,12 +173,12 @@ namespace CheckersApplication
             var imgToCorners = new Image<Bgr, Byte>(filePath);
             CvInvoke.Imshow("Result of corners browsing", detection.GetInternalCorners(imgToCorners, width, height));
 
+            var imgToRectangles = new Image<Bgr, byte>(filePath).Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
+            CvInvoke.Imshow("Result of triangles and rectangles browsing", detection.GetTrianglesRectangles(imgToRectangles));
+
             var imgToCircles =
                 new Image<Bgr, byte>(filePath).Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
             CvInvoke.Imshow("Result of circles browsing", detection.GetCircles(imgToCircles));
-
-            var imgToRectangles = new Image<Bgr, byte>(filePath).Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
-            CvInvoke.Imshow("Result of triangles and rectangles browsing", detection.GetTrianglesRectangles(imgToRectangles));
         }
 
 
