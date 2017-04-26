@@ -9,6 +9,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Threading;
 using System.Windows.Interop;
+using System.Collections.ObjectModel;
 
 namespace CheckersApplication
 {
@@ -21,9 +22,17 @@ namespace CheckersApplication
 
         public MainWindow()
         {
-            InitializeComponent(); 
+            InitializeComponent();
+            FillChessboard();
         }
 
+        private void FillChessboard()
+        {
+            ChessBoardState chessBoardState = new ChessBoardState();
+            //chessBoardState.TestData();
+            this.ChessBoard.ItemsSource = chessBoardState.pieces;
+        }
+            
         public void updateFrames(object sender, EventArgs e)
         {
             try
@@ -88,5 +97,6 @@ namespace CheckersApplication
             TB_CameraSource.Text = "";
             TB_CameraSource.Foreground = System.Windows.Media.Brushes.Black;
         }
+
     }
 }
