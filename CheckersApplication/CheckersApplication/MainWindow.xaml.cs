@@ -33,31 +33,24 @@ namespace CheckersApplication
 
         public MainWindow()
         {
-            InitializeComponent();
-            
+            InitializeComponent();            
             detection = new Detection();
-
-            discoverUsbCameras();
-
+            DiscoverUsbCameras();
             CvInvoke.UseOpenCL = (bool)CB_OpenCL.IsChecked;
-
             FillChessboard();
         }
 
-        public void discoverUsbCameras()
+        public void DiscoverUsbCameras()
         {
             List<KeyValuePair<int, string>> ListCamerasData = new List<KeyValuePair<int, string>>();
-
             //-> Find systems cameras with DirectShow.Net dll
             DsDevice[] _SystemCamereas = DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice);
-
             int _DeviceIndex = 0;
             foreach (DirectShowLib.DsDevice _Camera in _SystemCamereas)
             {
                 CO_Cameras.Items.Add(new KeyValuePair<int, string>(_DeviceIndex, _Camera.Name));
                 _DeviceIndex++;
             }
-
             if (CO_Cameras.Items.Count > 0)
                 CO_Cameras.SelectedIndex = 0;
         }
@@ -105,15 +98,10 @@ namespace CheckersApplication
         private void BT_Start_Click(object sender, RoutedEventArgs e)
         {
             ChangeBtnStartStop();
-            if (CB_DefaultCamera.IsChecked==true)
-            {
-                if (CO_Cameras.Items.Count > 0)
-                    camera = new Camera(Convert.ToString(CO_Cameras.SelectedIndex));
-            }
+            if (CB_DefaultCamera.IsChecked==true && CO_Cameras.Items.Count>0)     
+                camera = new Camera(Convert.ToString(CO_Cameras.SelectedIndex));
             else
-            {
                 camera = new Camera(TB_CameraSource.Text);
-            }
             CameraShow();
             CO_Cameras.IsEnabled = false;
         }
@@ -125,21 +113,18 @@ namespace CheckersApplication
             camera.capture.Stop();
             camera.capture.Dispose();
             IMG_Camera.Source = null;
-
             CO_Cameras.IsEnabled = true;
         }
 
         private void CB_DefaultCamera_Click(object sender, RoutedEventArgs e)
         {
             CO_Cameras.IsEnabled = !CO_Cameras.IsEnabled;
-
             TB_CameraSource.IsEnabled = !(bool)CB_DefaultCamera.IsChecked;
             if (!TB_CameraSource.IsEnabled)
             {
                 TB_CameraSource.Text = "URL streamu, ID kamery, lub plik wideo,\nnp. (http://IP:PORT/mjpegfeed)";
                 TB_CameraSource.Foreground = System.Windows.Media.Brushes.Gray;
-            }
-            
+            }           
         }
 
         private void CB_OpenCL_Click(object sender, RoutedEventArgs e)
@@ -150,22 +135,16 @@ namespace CheckersApplication
         private void BT_ImageTest_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
-
             openFileDialog1.Filter = "All files (*.*)|*.*";
             openFileDialog1.RestoreDirectory = true;
-
-
             DialogResult result = openFileDialog1.ShowDialog();
-
             string path = String.Empty;
-
             if (result == System.Windows.Forms.DialogResult.OK)
             {
                 try
                 {
                     path = System.IO.Path.GetFileName(openFileDialog1.FileName);
-                    if (path != String.Empty)
-                        Test1OnPicture(path);
+                    Test1OnPicture(path);
                 }
                 catch (Exception ex)
                 {
@@ -180,9 +159,6 @@ namespace CheckersApplication
             TB_CameraSource.Foreground = System.Windows.Media.Brushes.Black;
         }
 
-        /// <summary>
-        /// Tests
-        /// </summary>
         private void Test1OnPicture(string filePath)
         {
             UInt16 width = 8;
@@ -192,7 +168,7 @@ namespace CheckersApplication
             CvInvoke.Imshow("Result of corners browsing", detection.GetInternalCorners(imgToCorners, width, height));
 
             var imgToRectangles = new Image<Bgr, byte>(filePath).Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
-            CvInvoke.Imshow("Result of triangles and rectangles browsing", detection.GetTrianglesRectangles(imgToRectangles, true));
+            CvInvoke.Imshow("Result of rectangles browsing", detection.GetRectangles(imgToRectangles, true));
 
             var imgToCircles =
                 new Image<Bgr, byte>(filePath).Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
@@ -200,7 +176,6 @@ namespace CheckersApplication
             CvInvoke.Imshow("Result of circles browsing", detection.GetCircles(imgToCircles, out cf));
             FillChessboard_tmp(cf);
         }
-
 
         public IImage Test2OnCamera(IImage img, UInt16 width, UInt16 height)
         {
@@ -213,7 +188,7 @@ namespace CheckersApplication
             Bitmap bmp = new Bitmap(img.Bitmap);
             var convertedImg = new Image<Bgr, Byte>(bmp);
 
-            var detRects = detection.GetTrianglesRectangles(convertedImg, false);
+            var detRects = detection.GetRectangles(convertedImg, false);
             //CvInvoke.Imshow("Corners-Circles-Rects", detRects);
             #endregion
             

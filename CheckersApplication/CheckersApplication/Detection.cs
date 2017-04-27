@@ -25,8 +25,7 @@ namespace CheckersApplication
     class Detection
     {
         int RectangleExists = 0;
-        int x1;
-        int y1;
+        int x1, y1;
         Random rnd = new Random();
         //int rnd1;
         int ContourAreaMin;
@@ -39,8 +38,6 @@ namespace CheckersApplication
         int ChessboardIndex2 = 7;
         ChessField[,] ChessboardArray = new ChessField[8, 8];
 
-
-
         public IInputOutputArray GetInternalCorners(IImage inputImage, UInt16 width, UInt16 height)
         {
             IInputOutputArray editableImage = inputImage;
@@ -51,13 +48,11 @@ namespace CheckersApplication
             try
             {
                 CvInvoke.DrawChessboardCorners(editableImage, patternSize, cornerPoints, result);
-
-                if (!result) { MessageBox.Show("Nie wykryto rogów szachownicy"); }
-
+                if (!result)
+                    MessageBox.Show("Nie wykryto rogów szachownicy");
                 return editableImage;
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
-
             return null;
         }
 
@@ -86,7 +81,6 @@ namespace CheckersApplication
             int maxRadius = 30;
             CircleF[] circles = CvInvoke.HoughCircles(
                 uimage, HoughType.Gradient, dp, minDist, cannyThreshold, circleAccumulatorThreshold, minRadius, maxRadius);
-
 
             watch.Stop();
             msgBuilder.Append(String.Format("Hough circles - {0} ms; Number of circles: {1}", watch.ElapsedMilliseconds, circles.Length));
@@ -127,7 +121,7 @@ namespace CheckersApplication
             #endregion
         }
 
-        public IImage GetTrianglesRectangles(Image<Bgr, Byte> img2, bool BlackBox = true)
+        public IImage GetRectangles(Image<Bgr, Byte> img2, bool BlackBox = true)
         {
             ChessboardIndex1 = 7;
             ChessboardIndex2 = 7;
@@ -150,8 +144,6 @@ namespace CheckersApplication
                30, //min Line width
                10); //gap between lines
 
-
-
             watch.Restart();
             List<Triangle2DF> triangleList = new List<Triangle2DF>();
             List<RotatedRect> boxList = new List<RotatedRect>(); //a box is a rotated rectangle
@@ -166,18 +158,8 @@ namespace CheckersApplication
 
             while (boxList.Count() != 64 && calibrationRounds < 3000)
             {
-                //boxList.Clear();
-                //for(int i1=0;i1<1000 && boxList.Count() != 64; i1++)
-                //{
-                //    for (int i2 = 0; i2 < 3000 && boxList.Count() != 64; i2++)
-                //    {
-                //        for (int i3 = 70; i3 < 90 && boxList.Count() != 64; i3++)
-                //        {
-                //            for (int i4 = 90; i4 < 110 && boxList.Count()!=64; i4++)
-                //            {
 
                 calibrationRounds++;
-                //rnd1 = rnd.Next(1, 101); //?
                 ContourAreaMin = rnd.Next(1, 1000);
                 ContourAreaAddtoMin = rnd.Next(1, 3000);
                 AngleMin = rnd.Next(70, 90); //70-90
@@ -194,20 +176,11 @@ namespace CheckersApplication
                         using (VectorOfPoint approxContour = new VectorOfPoint())
                         {
                             CvInvoke.ApproxPolyDP(contour, approxContour, CvInvoke.ArcLength(contour, true) * 0.05, true);
-                            if (CvInvoke.ContourArea(approxContour, false) > ContourAreaMin && CvInvoke.ContourArea(approxContour, false) < ContourAreaMin + ContourAreaAddtoMin) //only consider contours with area greater than 250
+                            if (CvInvoke.ContourArea(approxContour, false) > ContourAreaMin && CvInvoke.ContourArea(approxContour, false) < ContourAreaMin + ContourAreaAddtoMin)
                             {
-                                //if (approxContour.Size == 3) //The contour has 3 vertices, it is a triangle
-                                //{
-                                //    System.Drawing.Point[] pts = approxContour.ToArray();
-                                //    triangleList.Add(new Triangle2DF(
-                                //       pts[0],
-                                //       pts[1],
-                                //       pts[2]
-                                //       ));
-                                //}
                                 if (approxContour.Size == 4) //The contour has 4 vertices.
                                 {
-                                    #region determine if all the angles in the contour are within [80, 100] degree
+                                    #region determine if all the angles in the contour are within [AngleMin, AngleMax] degree
                                     bool isRectangle = true;
                                     System.Drawing.Point[] pts = approxContour.ToArray();
                                     LineSegment2D[] edges = PointCollection.PolyLine(pts, true);
@@ -259,17 +232,11 @@ namespace CheckersApplication
                         }
                     }
                 }
-                //            }
-                //        }
-                //    }
-                //}
 
             }
-            
-            
 
             watch.Stop();
-            msgBuilder.Append(String.Format("Triangles & Rectangles - {0} ms; triangles: {1}, rectangles: {2}", watch.ElapsedMilliseconds, triangleList.Count, boxList.Count));
+            msgBuilder.Append(String.Format("rectangles detections time - {0} ms; rectangles found: {1}", watch.ElapsedMilliseconds, boxList.Count));
             Console.WriteLine(msgBuilder);
 
             Image<Bgr, byte> resultImg;
@@ -279,8 +246,6 @@ namespace CheckersApplication
             }
             else
                 resultImg = img2;
-
-            //foreach (Triangle2DF triangle in triangleList) { resultImg.Draw(triangle, new Bgr(Color.DarkBlue), 2); }
 
             foreach (RotatedRect box in boxList)
             {
