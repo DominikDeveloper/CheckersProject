@@ -37,7 +37,7 @@
                         <Condition Binding="{Binding Player}" Value="{x:Static local:Player.White}"/>
                     </MultiDataTrigger.Conditions>
                     <MultiDataTrigger.Setters>
-                        <Setter Property="Image.Source" Value="http://www.wpclipart.com/recreation/games/chess/chess_set_1/chess_piece_white_pawn_T.png" />
+                        <Setter Property="Image.Source" Value="pack://application:,,,/Resources/piece.png" />
                     </MultiDataTrigger.Setters>
                 </MultiDataTrigger>
                 <MultiDataTrigger>
@@ -45,7 +45,7 @@
                         <Condition Binding="{Binding Player}" Value="{x:Static local:Player.Black}"/>
                     </MultiDataTrigger.Conditions>
                     <MultiDataTrigger.Setters>
-                        <Setter Property="Image.Source" Value="http://www.wpclipart.com/recreation/games/chess/chess_set_1/chess_piece_black_pawn_T.png" />
+                        <Setter Property="Image.Source" Value="pack://application:,,,/Resources/piece.png" />
                     </MultiDataTrigger.Setters>
                 </MultiDataTrigger>
             </Style.Triggers>
