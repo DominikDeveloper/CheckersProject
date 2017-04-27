@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace CheckersApplication
 {
-    class ChessField
+    public class ChessField
     {
         public int x;
         public int y;
 
-        public int Value;
+        public int Value; //1 - square, 2 - piece
 
         public ChessField()
         {

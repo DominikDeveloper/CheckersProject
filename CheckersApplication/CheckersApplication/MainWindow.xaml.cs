@@ -68,7 +68,14 @@ namespace CheckersApplication
             //chessBoardState.TestData();
             this.ChessBoard.ItemsSource = chessBoardState.pieces;
         }
-            
+
+        public void FillChessboard_tmp(ChessField[,] ChessboardArray)
+        {
+            ChessBoardState chessBoardState = new ChessBoardState();
+            chessBoardState.matrixToPieces_tmp(ChessboardArray);
+            this.ChessBoard.ItemsSource = chessBoardState.pieces;
+        }
+
         public void updateFrames(object sender, EventArgs e)
         {
             try
@@ -162,7 +169,7 @@ namespace CheckersApplication
                 }
                 catch (Exception ex)
                 {
-                    System.Windows.MessageBox.Show("Niepoprawny plik. Komunikat błędu: " + ex.Message);
+                    System.Windows.MessageBox.Show("Komunikat błędu: " + ex.Message);
                 }
             }
         }
@@ -185,11 +192,13 @@ namespace CheckersApplication
             CvInvoke.Imshow("Result of corners browsing", detection.GetInternalCorners(imgToCorners, width, height));
 
             var imgToRectangles = new Image<Bgr, byte>(filePath).Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
-            CvInvoke.Imshow("Result of triangles and rectangles browsing", detection.GetTrianglesRectangles(imgToRectangles));
+            CvInvoke.Imshow("Result of triangles and rectangles browsing", detection.GetTrianglesRectangles(imgToRectangles, true));
 
             var imgToCircles =
                 new Image<Bgr, byte>(filePath).Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
-            CvInvoke.Imshow("Result of circles browsing", detection.GetCircles(imgToCircles));
+            ChessField[,] cf = new ChessField[8, 8];
+            CvInvoke.Imshow("Result of circles browsing", detection.GetCircles(imgToCircles, out cf));
+            FillChessboard_tmp(cf);
         }
 
 
@@ -207,12 +216,13 @@ namespace CheckersApplication
             var detRects = detection.GetTrianglesRectangles(convertedImg, false);
             //CvInvoke.Imshow("Corners-Circles-Rects", detRects);
             #endregion
-
+            
             #region circles
-            bmp = new Bitmap(detRects.Bitmap);
+            bmp = new Bitmap(img.Bitmap); //detRects
             convertedImg = new Image<Bgr, Byte>(bmp);
 
-            var detCircles = detection.GetCircles(convertedImg);
+            ChessField[,] cf = new ChessField[8, 8];
+            var detCircles = detection.GetCircles(convertedImg, out cf);
             //CvInvoke.Imshow("Corners-Circles-Rects", detCircles);
             #endregion
 

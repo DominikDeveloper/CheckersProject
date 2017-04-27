@@ -45,5 +45,18 @@ namespace CheckersApplication
             }
         }
 
+        public void matrixToPieces_tmp(ChessField[,] ChessboardArray)
+        {
+            pieces.Clear();
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    if (ChessboardArray[i, j].Value == 2)
+                        pieces.Add(new CheckersPiece { Pos = new System.Drawing.Point(j, i), Player = Player.White });
+                }
+            }
+        }
+
     }
 }

@@ -61,8 +61,8 @@
         <Button x:Name="BT_Stop" Content="Zatrzymaj" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="BT_Stop_Click" IsEnabled="False" Margin="36,237,0,0"/>
         <TextBox x:Name="TB_CameraSource" HorizontalAlignment="Left" Height="41" Margin="36,106,0,0" TextWrapping="Wrap" Text="URL streamu, ID kamery, lub plik wideo,&#xD;&#xA;np. (http://IP:PORT/mjpegfeed)" VerticalAlignment="Top" Width="253" IsEnabled="False" GotFocus="TB_CameraSource_GotFocus" Foreground="Gray"/>
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="300" Margin="962,10,0,0" VerticalAlignment="Top" Width="300"/>
-        <CheckBox x:Name="CB_DefaultCamera" Content="Kamera domyślna" HorizontalAlignment="Left" Margin="36,62,0,0" VerticalAlignment="Top" Width="120" Height="17" IsChecked="True" Click="CB_DefaultCamera_Click" />
-        <CheckBox x:Name="CB_OpenCL" Content="Użyj OpenCL" HorizontalAlignment="Left" Height="23" Margin="36,376,0,0" VerticalAlignment="Top" Width="196" IsChecked="True" Click="CB_OpenCL_Click"/>
+        <CheckBox x:Name="CB_DefaultCamera" Content="Wybór kamery z listy" HorizontalAlignment="Left" Margin="36,62,0,0" VerticalAlignment="Top" Width="134" Height="25" IsChecked="True" Click="CB_DefaultCamera_Click" />
+        <CheckBox x:Name="CB_OpenCL" Content="Użyj OpenCL" HorizontalAlignment="Left" Height="23" Margin="36,376,0,0" VerticalAlignment="Top" Width="120" IsChecked="False" Click="CB_OpenCL_Click"/>
         <Button x:Name="BT_ImageTest" Content="Test wykrywania (wczytane zdj.)" HorizontalAlignment="Left" Height="48" Margin="168,351,0,0" VerticalAlignment="Top" Width="189" Click="BT_ImageTest_Click"/>
         <ComboBox x:Name="CO_Cameras" HorizontalAlignment="Left" Height="25" Margin="188,62,0,0" VerticalAlignment="Top" Width="101" IsEditable="False"/>
 

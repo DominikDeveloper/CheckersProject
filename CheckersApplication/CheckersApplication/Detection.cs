@@ -51,6 +51,9 @@ namespace CheckersApplication
             try
             {
                 CvInvoke.DrawChessboardCorners(editableImage, patternSize, cornerPoints, result);
+
+                if (!result) { MessageBox.Show("Nie wykryto rogów szachownicy"); }
+
                 return editableImage;
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
@@ -58,7 +61,7 @@ namespace CheckersApplication
             return null;
         }
 
-        public IImage GetCircles(Image<Bgr, Byte> img, int thickness = 3)
+        public IImage GetCircles(Image<Bgr, Byte> img, out ChessField[,] cf, int thickness = 3)
         {
             StringBuilder msgBuilder = new StringBuilder("Performance: ");
 
@@ -113,6 +116,8 @@ namespace CheckersApplication
                     }
                 }
             }
+
+            cf = ChessboardArray;
 
             #region draw circles
             foreach (CircleF circle in circles)
@@ -175,8 +180,8 @@ namespace CheckersApplication
                 //rnd1 = rnd.Next(1, 101); //?
                 ContourAreaMin = rnd.Next(1, 1000);
                 ContourAreaAddtoMin = rnd.Next(1, 3000);
-                AngleMin = rnd.Next(70, 90);
-                AngleMax = rnd.Next(90, 110);
+                AngleMin = rnd.Next(70, 90); //70-90
+                AngleMax = rnd.Next(90, 110); //90-110
                 
                 using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
                 {
@@ -235,7 +240,7 @@ namespace CheckersApplication
                                             }
                                         }
                                     }
-                                    if (isRectangle && RectangleExists == 0)
+                                    if (isRectangle && RectangleExists == 0 && ChessboardIndex1 >= 0)
                                     {
                                         boxList.Add(CvInvoke.MinAreaRect(approxContour));
                                         ChessboardArray[ChessboardIndex1, ChessboardIndex2].Value = 1;
@@ -260,6 +265,8 @@ namespace CheckersApplication
                 //}
 
             }
+            
+            
 
             watch.Stop();
             msgBuilder.Append(String.Format("Triangles & Rectangles - {0} ms; triangles: {1}, rectangles: {2}", watch.ElapsedMilliseconds, triangleList.Count, boxList.Count));
