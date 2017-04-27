@@ -9,6 +9,51 @@
       WindowStartupLocation="CenterScreen" 
       Title="Checkers Project">
 
+    <Window.Resources>
+        <DrawingBrush x:Key="CheckerBoard" Stretch="Fill" TileMode="Tile" Viewport="0,0,120,120" ViewportUnits="Absolute">
+            <DrawingBrush.Drawing>
+                <DrawingGroup>
+                    <GeometryDrawing Brush="Tan">
+                        <GeometryDrawing.Geometry>
+                            <RectangleGeometry Rect="0,0,2,2" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="Brown">
+                        <GeometryDrawing.Geometry>
+                            <GeometryGroup>
+                                <RectangleGeometry Rect="0,0,1,1" />
+                                <RectangleGeometry Rect="1,1,1,1" />
+                            </GeometryGroup>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+
+        <Style x:Key="CheckersPieceStyle" TargetType="{x:Type Image}">
+            <Style.Triggers>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Player}" Value="{x:Static local:Player.White}"/>
+                    </MultiDataTrigger.Conditions>
+                    <MultiDataTrigger.Setters>
+                        <Setter Property="Image.Source" Value="http://www.wpclipart.com/recreation/games/chess/chess_set_1/chess_piece_white_pawn_T.png" />
+                    </MultiDataTrigger.Setters>
+                </MultiDataTrigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Player}" Value="{x:Static local:Player.Black}"/>
+                    </MultiDataTrigger.Conditions>
+                    <MultiDataTrigger.Setters>
+                        <Setter Property="Image.Source" Value="http://www.wpclipart.com/recreation/games/chess/chess_set_1/chess_piece_black_pawn_T.png" />
+                    </MultiDataTrigger.Setters>
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+
+    </Window.Resources>
+
+
     <Grid Background="#FFFFFEFE">
         <!-- #2d2d2f -->
         <Image x:Name="IMG_Camera" Margin="962,10,10,379" Width="300" Height="300"/>
@@ -16,9 +61,27 @@
         <Button x:Name="BT_Stop" Content="Zatrzymaj" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="BT_Stop_Click" IsEnabled="False" Margin="36,237,0,0"/>
         <TextBox x:Name="TB_CameraSource" HorizontalAlignment="Left" Height="41" Margin="36,106,0,0" TextWrapping="Wrap" Text="URL streamu, ID kamery, lub plik wideo,&#xD;&#xA;np. (http://IP:PORT/mjpegfeed)" VerticalAlignment="Top" Width="253" IsEnabled="False" GotFocus="TB_CameraSource_GotFocus" Foreground="Gray"/>
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="300" Margin="962,10,0,0" VerticalAlignment="Top" Width="300"/>
-        <CheckBox x:Name="CB_DefaultCamera" Content="Wybierz kamerę z listy" HorizontalAlignment="Left" Margin="36,62,0,0" VerticalAlignment="Top" Width="147" Height="25" IsChecked="True" Click="CB_DefaultCamera_Click"/>
-        <CheckBox x:Name="CB_OpenCL" Content="Użyj OpenCL" HorizontalAlignment="Left" Height="23" Margin="36,376,0,0" VerticalAlignment="Top" Width="196" IsChecked="True" Click="CB_OpenCL_Click"/>
-        <Button x:Name="BT_ImageTest" Content="Przeprowadź test na wczytanym zdjęciu" HorizontalAlignment="Left" Height="48" Margin="168,351,0,0" VerticalAlignment="Top" Width="252" Click="BT_ImageTest_Click"/>
-        <ComboBox x:Name="CO_Cameras" HorizontalAlignment="Left" Height="25" Margin="188,62,0,0" VerticalAlignment="Top" Width="101" IsEditable="False"/>
+        <CheckBox x:Name="CB_DefaultCamera" Content="Kamera domyślna" HorizontalAlignment="Left" Margin="36,62,0,0" VerticalAlignment="Top" Width="120" Height="17" IsChecked="True" Click="CB_DefaultCamera_Click" />
+
+        <ItemsControl Name="ChessBoard" Margin="380,84,448,301">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas Width="480" Height="480" Background="{StaticResource CheckerBoard}"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid Width="60" Height="60">
+                        <Image Width="48" Height="48" Style="{StaticResource CheckersPieceStyle}" />
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemContainerStyle>
+                <Style>
+                    <Setter Property="Canvas.Left" Value="{Binding Pos.X}" />
+                    <Setter Property="Canvas.Top" Value="{Binding Pos.Y}" />
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+        </ItemsControl>
     </Grid>
 </Window>

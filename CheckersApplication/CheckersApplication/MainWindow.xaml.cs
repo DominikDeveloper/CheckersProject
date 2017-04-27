@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using Emgu.CV;
+using Emgu.CV.UI;
+using Emgu.CV.Structure;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -10,6 +13,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Text;
+using System.Collections.ObjectModel;
 
 using Emgu.CV;
 using Emgu.CV.UI;
@@ -58,6 +62,17 @@ namespace CheckersApplication
                 CO_Cameras.SelectedIndex = 0;
         }
 
+            InitializeComponent();
+            FillChessboard();
+        }
+
+        private void FillChessboard()
+        {
+            ChessBoardState chessBoardState = new ChessBoardState();
+            //chessBoardState.TestData();
+            this.ChessBoard.ItemsSource = chessBoardState.pieces;
+        }
+            
         public void updateFrames(object sender, EventArgs e)
         {
             try
