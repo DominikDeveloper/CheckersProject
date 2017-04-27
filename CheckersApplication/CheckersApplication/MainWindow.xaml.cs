@@ -168,12 +168,15 @@ namespace CheckersApplication
             CvInvoke.Imshow("Result of corners browsing", detection.GetInternalCorners(imgToCorners, width, height));
 
             var imgToRectangles = new Image<Bgr, byte>(filePath).Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
-            CvInvoke.Imshow("Result of rectangles browsing", detection.GetRectangles(imgToRectangles, true));
+            List<RotatedRect> rectangles = detection.GetRectangles(ref imgToRectangles);
+            CvInvoke.Imshow("Result of rectangles browsing", imgToRectangles);
 
             var imgToCircles =
                 new Image<Bgr, byte>(filePath).Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
-            ChessField[,] cf = new ChessField[8, 8];
-            CvInvoke.Imshow("Result of circles browsing", detection.GetCircles(imgToCircles, out cf));
+
+            CircleF[] circles = detection.GetCircles(ref imgToCircles);
+            CvInvoke.Imshow("Result of circles browsing", imgToCircles);
+            ChessField[,] cf =  detection.RepresentCircles(circles);
             FillChessboard_tmp(cf);
         }
 
@@ -188,7 +191,7 @@ namespace CheckersApplication
             Bitmap bmp = new Bitmap(img.Bitmap);
             var convertedImg = new Image<Bgr, Byte>(bmp);
 
-            var detRects = detection.GetRectangles(convertedImg, false);
+            var detRects = detection.GetRectangles(ref convertedImg);
             //CvInvoke.Imshow("Corners-Circles-Rects", detRects);
             #endregion
             
@@ -197,11 +200,12 @@ namespace CheckersApplication
             convertedImg = new Image<Bgr, Byte>(bmp);
 
             ChessField[,] cf = new ChessField[8, 8];
-            var detCircles = detection.GetCircles(convertedImg, out cf);
+            //var detCircles = detection.GetCircles(convertedImg, out cf);
             //CvInvoke.Imshow("Corners-Circles-Rects", detCircles);
             #endregion
 
-            return detCircles; //last modified picture
+            //return detCircles; //last modified picture
+            return null;
         }
 
     }
