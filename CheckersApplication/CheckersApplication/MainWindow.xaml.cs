@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using Emgu.CV;
-using Emgu.CV.UI;
-using Emgu.CV.Structure;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -37,11 +34,14 @@ namespace CheckersApplication
         public MainWindow()
         {
             InitializeComponent();
+            
             detection = new Detection();
 
             discoverUsbCameras();
 
             CvInvoke.UseOpenCL = (bool)CB_OpenCL.IsChecked;
+
+            FillChessboard();
         }
 
         public void discoverUsbCameras()
@@ -60,10 +60,6 @@ namespace CheckersApplication
 
             if (CO_Cameras.Items.Count > 0)
                 CO_Cameras.SelectedIndex = 0;
-        }
-
-            InitializeComponent();
-            FillChessboard();
         }
 
         private void FillChessboard()
