@@ -135,7 +135,7 @@ namespace CheckersApplication
         private void BT_ImageTest_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
-            openFileDialog1.Filter = "All files (*.*)|*.*";
+            openFileDialog1.Filter = "Image files (*.jpg, *.png) | *.jpg; *.png";
             openFileDialog1.RestoreDirectory = true;
             DialogResult result = openFileDialog1.ShowDialog();
             string path = String.Empty;
