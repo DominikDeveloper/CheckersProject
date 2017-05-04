@@ -171,8 +171,7 @@ namespace CheckersApplication
             List<RotatedRect> rectangles = detection.GetRectangles(ref imgToRectangles);
             CvInvoke.Imshow("Result of rectangles browsing", imgToRectangles);
 
-            var imgToCircles =
-                new Image<Bgr, byte>(filePath).Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
+            var imgToCircles = new Image<Bgr, byte>(filePath).Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
 
             CircleF[] circles = detection.GetCircles(ref imgToCircles);
             CvInvoke.Imshow("Result of circles browsing", imgToCircles);

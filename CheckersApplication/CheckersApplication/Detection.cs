@@ -80,9 +80,9 @@ namespace CheckersApplication
                         {
                             for (int y = -7; y <= 7; y++)
                             {
-                                if (x1 == ChessboardArray[i, j].x + x && y1 == ChessboardArray[i, j].y + y)
+                                if (x1 == chessFields[i, j].x + x && y1 == chessFields[i, j].y + y)
                                 {
-                                    ChessboardArray[i, j].Value = 2;
+                                    chessFields[i, j].Value = 2;
                                 }
                             }
                         }
