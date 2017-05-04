@@ -62,7 +62,7 @@ namespace CheckersApplication
             this.ChessBoard.ItemsSource = chessBoardState.pieces;
         }
 
-        public void FillChessboard_tmp(ChessField[,] ChessboardArray)
+        public void FillChessboard_tmp(int[,] ChessboardArray)
         {
             ChessBoardState chessBoardState = new ChessBoardState();
             chessBoardState.matrixToPieces_tmp(ChessboardArray);
@@ -164,7 +164,7 @@ namespace CheckersApplication
             UInt16 width = 8;
             UInt16 height = 8;
 
-            var imgToCorners = new Image<Bgr, Byte>(filePath);
+            var imgToCorners = new Image<Bgr, Byte>(filePath).Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
             CvInvoke.Imshow("Result of corners browsing", detection.GetInternalCorners(imgToCorners, width, height));
 
             var imgToRectangles = new Image<Bgr, byte>(filePath).Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
@@ -175,7 +175,7 @@ namespace CheckersApplication
 
             CircleF[] circles = detection.GetCircles(ref imgToCircles);
             CvInvoke.Imshow("Result of circles browsing", imgToCircles);
-            ChessField[,] cf =  detection.RepresentCircles(circles);
+            int[,] cf =  detection.RepresentCircles(circles, rectangles);
             FillChessboard_tmp(cf);
         }
 

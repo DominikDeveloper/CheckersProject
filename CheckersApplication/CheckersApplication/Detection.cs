@@ -1,40 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
-using System.Windows.Interop;
-
 using Emgu.CV;
 using Emgu.CV.CvEnum;
-using Emgu.CV.Features2D;
 using Emgu.CV.Structure;
-using Emgu.CV.UI;
 using Emgu.CV.Util;
-
 
 namespace CheckersApplication
 {
     class Detection
     {
-        int RectangleExists = 0;
-        Random rnd = new Random();
-        int ContourAreaMin;
-        int ContourAreaAddtoMin;
-        int AngleMin;
-        int AngleMax;
-        int calibrationRounds = 0;
-        int ChessboardIndex1 = 7;
-        int ChessboardIndex2 = 7;
-        ChessField[,] ChessboardArray = new ChessField[8, 8];
-
         public IInputOutputArray GetInternalCorners(IImage inputImage, UInt16 width, UInt16 height)
         {
             IInputOutputArray editableImage = inputImage;
@@ -64,32 +40,30 @@ namespace CheckersApplication
             return uimage;
         }
 
-        public ChessField[,] RepresentCircles(CircleF[] circles)
+        public int[,] RepresentCircles(CircleF[] circles, List<RotatedRect> rectangles)
         {
-            ChessField[,] chessFields = new ChessField[8,8];
+            int[,] matrix = new int[8, 8];
             foreach (CircleF circle in circles)
             {
-                for (int i = 0; i < 8; i++)
+                int circleX = Convert.ToInt32(circle.Center.X);
+                int circleY = Convert.ToInt32(circle.Center.Y);
+                foreach(var rectangle in rectangles)
                 {
-                    for (int j = 0; j < 8; j++)
+                    int rectangleX = Convert.ToInt32(rectangle.Center.X);
+                    int rectangleY = Convert.ToInt32(rectangle.Center.Y);
+                    for (int x = -7; x <= 7; x++)
                     {
-                        chessFields[i, j] = new ChessField();
-                        int x1 = Convert.ToInt32(circle.Center.X);
-                        int y1 = Convert.ToInt32(circle.Center.Y);
-                        for (int x = -7; x <= 7; x++)
+                        for (int y = -7; y <= 7; y++)
                         {
-                            for (int y = -7; y <= 7; y++)
-                            {
-                                if (x1 == chessFields[i, j].x + x && y1 == chessFields[i, j].y + y)
-                                {
-                                    chessFields[i, j].Value = 2;
-                                }
+                            if (circleX == rectangleX + x && circleY == rectangleY + y)
+                            {                               
+                                matrix[0, 0] = 2;
                             }
                         }
                     }
                 }
             }
-            return chessFields;
+            return matrix;
         }
 
         public CircleF[] GetCircles(ref Image<Bgr, Byte> img, int thickness = 3)
@@ -114,12 +88,13 @@ namespace CheckersApplication
         {
             double cannyThresholdLinking = 120.0;
             double cannyThreshold = 140.0;
+            bool alreadyExists = false;
 
             Image<Bgr, Byte> img3 = img.CopyBlank();
 
             UMat cannyEdges = new UMat();
             CvInvoke.Canny(img, cannyEdges, cannyThreshold, cannyThresholdLinking);
-
+            CvInvoke.Imshow("Canny edges", cannyEdges);
             LineSegment2D[] lines = CvInvoke.HoughLinesP(
                cannyEdges,
                1, //Distance resolution in pixel-related units
@@ -130,13 +105,10 @@ namespace CheckersApplication
 
             List<RotatedRect> boxList = new List<RotatedRect>(); //a box is a rotated rectangle
 
-            while (boxList.Count() != 64 && calibrationRounds < 3000)
-            {
-                calibrationRounds++;
-                ContourAreaMin = rnd.Next(1, 1000);
-                ContourAreaAddtoMin = rnd.Next(1, 3000);
-                AngleMin = 85;
-                AngleMax = 95;
+                int contourAreaMin = 300;
+                int contourAreaMax = 20000;
+                int angleMin = 75;
+                int angleMax = 105;
                 
                 using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
                 {
@@ -148,7 +120,8 @@ namespace CheckersApplication
                         using (VectorOfPoint approxContour = new VectorOfPoint())
                         {
                             CvInvoke.ApproxPolyDP(contour, approxContour, CvInvoke.ArcLength(contour, true) * 0.05, true);
-                            if (CvInvoke.ContourArea(approxContour, false) > ContourAreaMin && CvInvoke.ContourArea(approxContour, false) < ContourAreaMin + ContourAreaAddtoMin)
+                            double contourArea = CvInvoke.ContourArea(approxContour, false);
+                            if (contourArea > contourAreaMin && contourArea < contourAreaMax)
                             {
                                 if (approxContour.Size == 4)
                                 {
@@ -160,7 +133,7 @@ namespace CheckersApplication
                                     {
                                         double angle = Math.Abs(
                                            edges[(j + 1) % edges.Length].GetExteriorAngleDegree(edges[j]));
-                                        if (angle < AngleMin || angle > AngleMax)
+                                        if (angle < angleMin || angle > angleMax)
                                         {
                                             isRectangle = false;
                                             break;
@@ -177,32 +150,37 @@ namespace CheckersApplication
                                             {
                                                 if (x1 == Convert.ToInt32(r.Center.X) + x && y1 == Convert.ToInt32(r.Center.Y) + y)
                                                 {
-                                                    RectangleExists = 1;
+                                                    alreadyExists = true;
                                                 }
                                             }
                                         }
                                     }
-                                    if (isRectangle && RectangleExists == 0 && ChessboardIndex1 >= 0)
+                                    if (isRectangle && alreadyExists == false)
                                     {
                                         boxList.Add(CvInvoke.MinAreaRect(approxContour));
                                     }
-                                    RectangleExists = 0;
+                                 alreadyExists = false;
                                 }
                             }
                         }
                     }
                 }
 
-            }
-
-
 
             foreach (RotatedRect box in boxList)
             {
-                img.Draw(box, new Bgr(Color.DarkOrange), 1);
+                RotatedRect r = new RotatedRect();
+                r.Center = box.Center;
+                r.Size = new SizeF(3.0f,3.0f);
+                img.Draw(r, new Bgr(Color.DarkOrange), 2);
             }
 
-            return boxList;
+            foreach (RotatedRect box in boxList)
+            {
+                img.Draw(box, new Bgr(Color.DarkOrange), 2);
+            }
+
+                return boxList;
         }
     }
 }
