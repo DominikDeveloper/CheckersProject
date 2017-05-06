@@ -95,15 +95,8 @@ namespace CheckersApplication
             UMat cannyEdges = new UMat();
             CvInvoke.Canny(img, cannyEdges, cannyThreshold, cannyThresholdLinking);
             CvInvoke.Imshow("Canny edges", cannyEdges);
-            LineSegment2D[] lines = CvInvoke.HoughLinesP(
-               cannyEdges,
-               1, //Distance resolution in pixel-related units
-               Math.PI / 45.0, //Angle resolution measured in radians.
-               20, //threshold
-               30, //min Line width
-               10); //gap between lines
 
-            List<RotatedRect> boxList = new List<RotatedRect>(); //a box is a rotated rectangle
+            List<RotatedRect> rectangles = new List<RotatedRect>(); //a box is a rotated rectangle
 
                 int contourAreaMin = 300;
                 int contourAreaMax = 20000;
@@ -113,8 +106,7 @@ namespace CheckersApplication
                 using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
                 {
                     CvInvoke.FindContours(cannyEdges, contours, null, RetrType.List, ChainApproxMethod.ChainApproxSimple);
-                    int count = contours.Size;
-                    for (int i = 0; i < count; i++)
+                    for (int i = 0; i < contours.Size; i++)
                     {
                         using (VectorOfPoint contour = contours[i])
                         using (VectorOfPoint approxContour = new VectorOfPoint())
@@ -139,7 +131,7 @@ namespace CheckersApplication
                                             break;
                                         }
                                     }
-                                    foreach (RotatedRect r in boxList)
+                                    foreach (RotatedRect r in rectangles)
                                     {
                                         int x1 = ((approxContour[0].X + approxContour[1].X + approxContour[2].X + approxContour[3].X) / 4);
                                         int y1 = ((approxContour[0].Y + approxContour[1].Y + approxContour[2].Y + approxContour[3].Y) / 4);
@@ -157,7 +149,7 @@ namespace CheckersApplication
                                     }
                                     if (isRectangle && alreadyExists == false)
                                     {
-                                        boxList.Add(CvInvoke.MinAreaRect(approxContour));
+                                        rectangles.Add(CvInvoke.MinAreaRect(approxContour));
                                     }
                                  alreadyExists = false;
                                 }
@@ -167,7 +159,7 @@ namespace CheckersApplication
                 }
 
 
-            foreach (RotatedRect box in boxList)
+            foreach (RotatedRect box in rectangles)
             {
                 RotatedRect r = new RotatedRect();
                 r.Center = box.Center;
@@ -175,12 +167,12 @@ namespace CheckersApplication
                 img.Draw(r, new Bgr(Color.DarkOrange), 2);
             }
 
-            foreach (RotatedRect box in boxList)
+            foreach (RotatedRect box in rectangles)
             {
                 img.Draw(box, new Bgr(Color.DarkOrange), 2);
             }
 
-                return boxList;
+                return rectangles;
         }
     }
 }
