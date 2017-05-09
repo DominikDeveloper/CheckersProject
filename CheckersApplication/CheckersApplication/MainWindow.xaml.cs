@@ -163,17 +163,25 @@ namespace CheckersApplication
             UInt16 width = 8;
             UInt16 height = 8;
 
-            var imgToCorners = new Image<Bgr, Byte>(filePath).Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
-            CvInvoke.Imshow("Result of corners browsing", detection.GetInternalCorners(imgToCorners, width, height));
+            var loadedImage = new Image<Bgr, Byte>(filePath).Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
+            ImageData testImage1 = new ImageData(loadedImage, width, height);
 
-            var imgToRectangles = new Image<Bgr, byte>(filePath).Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
-            List<RotatedRect> rectangles = detection.GetRectangles(ref imgToRectangles);
+            //CORNERS
+            var cornerPoints = testImage1.GetInternalCorners();
+            var imgWithCorners = testImage1.GetDrawingCorners(cornerPoints);
+            CvInvoke.Imshow("Result of corners browsing", imgWithCorners);
+
+            //RECTANGLES
+            List<RotatedRect> rectangles = testImage1.GetRectangles();
+            var imgToRectangles = testImage1.GetDrawingRectangles(rectangles);
             CvInvoke.Imshow("Result of rectangles browsing", imgToRectangles);
 
-            var imgToCircles = new Image<Bgr, byte>(filePath).Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
-
-            CircleF[] circles = detection.GetCircles(ref imgToCircles);
+            //CIRCLES
+            CircleF[] circles = testImage1.GetCirclesPositions();
+            var imgToCircles = testImage1.GetDrawingCircles(circles);
             CvInvoke.Imshow("Result of circles browsing", imgToCircles);
+
+
             int[,] cf =  detection.RepresentCircles(circles, rectangles);
             FillChessboard_tmp(cf);
         }
