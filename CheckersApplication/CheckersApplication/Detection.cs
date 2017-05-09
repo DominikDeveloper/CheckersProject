@@ -29,6 +29,33 @@ namespace CheckersApplication
             return null;
         }
 
+        public VectorOfPointF _GetInternalCorners(IImage editableImage, System.Drawing.Size patternSize)
+        {
+            var cornerPoints = new VectorOfPointF();
+            bool result = CvInvoke.FindChessboardCorners(
+                editableImage, patternSize, cornerPoints, Emgu.CV.CvEnum.CalibCbType.AdaptiveThresh | Emgu.CV.CvEnum.CalibCbType.FilterQuads);
+
+            if (!result) { MessageBox.Show("Nie wykryto rogów szachownicy"); }
+
+            return cornerPoints;
+        }
+
+        public IImage _DrawChessboardCorners(IImage inputImage, System.Drawing.Size patternSize, VectorOfPointF cornerPoints, bool result)
+        {
+            IImage outputImage = (IImage)inputImage.Clone();
+
+            try
+            {
+                CvInvoke.DrawChessboardCorners(outputImage, patternSize, cornerPoints, result);
+                if (!result)
+                    MessageBox.Show("Nie wykryto rogów szachownicy");
+                return outputImage;
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+
+            return null;
+        }
+
         //Convert the image to grayscale and filter out the noise
         public UMat ConvertClearImage(Image<Bgr, Byte> img)
         {

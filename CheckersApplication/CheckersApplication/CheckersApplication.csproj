@@ -106,6 +106,7 @@
     <Compile Include="Detection.cs" />
     <Compile Include="CheckersPiece.cs" />
     <Compile Include="ChessBoardState.cs" />
+    <Compile Include="ImageData.cs" />
     <Compile Include="ToBitmapConverter.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
