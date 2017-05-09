@@ -143,8 +143,7 @@ namespace CheckersApplication
             {
                 try
                 {
-                    path = System.IO.Path.GetFileName(openFileDialog1.FileName);
-                    Test1OnPicture(path);
+                    Test1OnPicture(openFileDialog1.FileName);
                 }
                 catch (Exception ex)
                 {
