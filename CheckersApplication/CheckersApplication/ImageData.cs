@@ -137,8 +137,8 @@ namespace CheckersApplication
 
             List<RotatedRect> rectangles = new List<RotatedRect>(); //a box is a rotated rectangle
 
-            int contourAreaMin = 300;
-            int contourAreaMax = 20000;
+            int contourAreaMin = 10000;//300
+            int contourAreaMax = 500000;
             int angleMin = 75;
             int angleMax = 105;
 
@@ -207,7 +207,7 @@ namespace CheckersApplication
         public Image<Bgr, byte> GetDrawingRectangles(List<RotatedRect> rectangles, bool ShowCenterPointsOfRects = true)
         {
             Image<Bgr, byte> outputImage = image.Copy();
-
+            SquareTo64Squares(rectangles); //test
             //CENTERPOINTS
             if (ShowCenterPointsOfRects)
             {
@@ -227,6 +227,95 @@ namespace CheckersApplication
             }
 
             return outputImage;
+        }
+
+        public void SquareTo64Squares(List<RotatedRect> rectangles)
+        {
+            int size = rectangles.Count;
+            List<RotatedRect>[] littleSquares = new List<RotatedRect>[size];
+            for (int i = 0; i < size; i++)
+                littleSquares[i] = new List<RotatedRect>();
+
+            int counter = 0;
+            foreach (RotatedRect box in rectangles)
+            {
+                //definition of board size
+                var vertices = box.GetVertices();
+
+                var compareForRight1 = Math.Max(vertices[0].X, vertices[1].X);
+                var compareForRight2 = Math.Max(vertices[2].X, vertices[3].X);
+                var extremeRight = Math.Max(compareForRight1, compareForRight2);
+                var compareForLeft1 = Math.Min(vertices[0].X, vertices[1].X);
+                var compareForLeft2 = Math.Min(vertices[2].X, vertices[3].X);
+                var extremeLeft = Math.Min(compareForLeft1, compareForLeft2);
+
+                var width_board = Math.Abs(extremeRight - extremeLeft);
+
+                var compareForBottom1 = Math.Max(vertices[0].Y, vertices[1].Y);
+                var compareForBottom2 = Math.Max(vertices[2].Y, vertices[3].Y);
+                var extremeDown = Math.Max(compareForBottom1, compareForBottom2);
+                var compareForTop1 = Math.Min(vertices[0].Y, vertices[1].Y);
+                var compareForTop2 = Math.Min(vertices[2].Y, vertices[3].Y);
+                var extremeUp = Math.Min(compareForTop1, compareForTop2);
+
+                var height_board = Math.Abs(extremeDown - extremeUp);
+                //
+
+                //size one square
+                var width_square = width_board / 8;
+                var height_square = height_board / 8;
+                //
+
+                //finding index of left-top vertice
+                var list = new List<float> { vertices[0].X, vertices[1].X, vertices[2].X, vertices[3].X };
+                var list_copy = new List<float> { vertices[0].X, vertices[1].X, vertices[2].X, vertices[3].X };
+                list_copy.Sort();
+                int j = -1;
+                do
+                {
+                    j++;
+                } while (list_copy.ElementAt(0) != list.ElementAt(j));
+                int k = -1;
+                do
+                {
+                    k++;
+                } while (list_copy.ElementAt(1) != list.ElementAt(k));
+
+                int index = 0;
+                if (Math.Min(vertices[j].Y, vertices[k].Y) == vertices[j].Y)
+                    index = j;
+                else
+                    index = k;
+                //
+
+                float offset_X = 0; float offset_Y = 0;
+                for (int i = 0; i < 64; i++)
+                {
+                    System.Drawing.PointF[] pts = new System.Drawing.PointF[4];
+                    pts[0] = new System.Drawing.PointF(vertices[index].X + offset_X, vertices[index].Y + offset_Y);
+                    pts[1] = new System.Drawing.PointF(vertices[index].X + offset_X + width_square, vertices[index].Y + offset_Y);
+                    pts[2] = new System.Drawing.PointF(vertices[index].X + offset_X, vertices[index].Y + offset_Y + height_square);
+                    pts[3] = new System.Drawing.PointF(vertices[index].X + offset_X + width_square, vertices[index].Y + offset_Y + height_square);
+                    littleSquares[counter].Add(CvInvoke.MinAreaRect(pts));
+                    offset_X += width_square;
+                    if ((i+1) % 8 == 0 && i != 0)
+                    {
+                        offset_X = 0;
+                        offset_Y += height_square;
+                    }
+                }
+                counter++;
+            }
+
+            Image<Bgr, byte> outputImage = image.Copy();
+            if (littleSquares.Count() > 0)
+            {
+                foreach (RotatedRect box in littleSquares[0])
+                {
+                    outputImage.Draw(box, new Bgr(Color.Green), 2);
+                }
+                CvInvoke.Imshow("One square to 64 squares", outputImage);
+            }
         }
 
         public UMat GetCanny(double cannyThreshold = 140.0, double cannyThresholdLinking = 120.0)
