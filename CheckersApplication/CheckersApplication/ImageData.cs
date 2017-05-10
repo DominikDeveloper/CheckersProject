@@ -118,19 +118,13 @@ namespace CheckersApplication
             return outputImage;
         }
 
-        public List<RotatedRect> GetRectangles()
+        public List<RotatedRect> GetRectangles(bool ShowCanny = true)
         {
-            double cannyThresholdLinking = 120.0;
-            double cannyThreshold = 140.0;
             bool alreadyExists = false;
 
             Image<Bgr, Byte> img = image.Copy();
 
             Image<Bgr, Byte> img3 = img.CopyBlank();
-
-            UMat cannyEdges = new UMat();
-            CvInvoke.Canny(img, cannyEdges, cannyThreshold, cannyThresholdLinking);
-            CvInvoke.Imshow("Canny edges", cannyEdges);
 
             List<RotatedRect> rectangles = new List<RotatedRect>(); //a box is a rotated rectangle
 
@@ -138,6 +132,10 @@ namespace CheckersApplication
             int contourAreaMax = 20000;
             int angleMin = 75;
             int angleMax = 105;
+
+            UMat cannyEdges = GetCanny();
+            if (ShowCanny)
+                CvInvoke.Imshow("Canny edges", cannyEdges);
 
             using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
             {
@@ -197,17 +195,20 @@ namespace CheckersApplication
             return rectangles;
         }
 
-        public Image<Bgr, byte> GetDrawingRectangles(List<RotatedRect> rectangles)
+        public Image<Bgr, byte> GetDrawingRectangles(List<RotatedRect> rectangles, bool ShowCenterPointsOfRects = true)
         {
             Image<Bgr, byte> outputImage = image.Copy();
 
             //CENTERPOINTS
-            foreach (RotatedRect box in rectangles)
+            if (ShowCenterPointsOfRects)
             {
-                RotatedRect r = new RotatedRect();
-                r.Center = box.Center;
-                r.Size = new SizeF(3.0f, 3.0f);
-                outputImage.Draw(r, new Bgr(Color.DarkOrange), 2);
+                foreach (RotatedRect box in rectangles)
+                {
+                    RotatedRect r = new RotatedRect();
+                    r.Center = box.Center;
+                    r.Size = new SizeF(3.0f, 3.0f);
+                    outputImage.Draw(r, new Bgr(Color.DarkOrange), 2);
+                }
             }
 
             //EDGES
@@ -217,6 +218,14 @@ namespace CheckersApplication
             }
 
             return outputImage;
+        }
+
+        public UMat GetCanny(double cannyThreshold = 140.0, double cannyThresholdLinking = 120.0)
+        {
+            UMat cannyEdges = new UMat();
+            CvInvoke.Canny(image, cannyEdges, cannyThreshold, cannyThresholdLinking);
+
+            return cannyEdges;
         }
     }
 }
