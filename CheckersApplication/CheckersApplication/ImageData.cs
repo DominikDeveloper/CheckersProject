@@ -288,20 +288,71 @@ namespace CheckersApplication
                     index = k;
                 //
 
+                //finding index of right-top vertice
+                var list1_copy = new List<float> { vertices[0].X, vertices[1].X, vertices[2].X, vertices[3].X };
+                list1_copy.Sort();
+                int j1 = -1;
+                do
+                {
+                    j1++;
+                } while (list1_copy.ElementAt(list1_copy.Count - 1) != list.ElementAt(j1));
+                int k1 = -1;
+                do
+                {
+                    k1++;
+                } while (list_copy.ElementAt(list1_copy.Count - 2) != list.ElementAt(k1));
+
+                int index1 = 0;
+                if (Math.Min(vertices[j1].Y, vertices[k1].Y) == vertices[j1].Y)
+                    index1 = j1;
+                else
+                    index1 = k1;
+                //
+
+                //finding index of left-bottom vertice
+                var list2 = new List<PointF>();
+                int element = 0;
+                foreach (var item in vertices)
+                {
+                    if (element != index && element != index1)
+                        list2.Add(item);
+                    element++;
+                }
+
+                var LeftBottomPointX = Math.Min(list2.ElementAt(0).X, list2.ElementAt(1).X);
+                //
+
+                //till (horizontal)
+                var level = vertices[index1].Y - vertices[index].Y;
+                float till_level_input = level / 8;
+                float current_till_horiz = 0;
+
+                //till (vertical)
+                var plumb = LeftBottomPointX - vertices[index].X;
+                float till_plumb_input = plumb / 8;
+                float current_till_vert = 0;
+
                 float offset_X = 0; float offset_Y = 0;
                 for (int i = 0; i < 64; i++)
                 {
                     System.Drawing.PointF[] pts = new System.Drawing.PointF[4];
-                    pts[0] = new System.Drawing.PointF(vertices[index].X + offset_X, vertices[index].Y + offset_Y);
-                    pts[1] = new System.Drawing.PointF(vertices[index].X + offset_X + width_square, vertices[index].Y + offset_Y);
-                    pts[2] = new System.Drawing.PointF(vertices[index].X + offset_X, vertices[index].Y + offset_Y + height_square);
-                    pts[3] = new System.Drawing.PointF(vertices[index].X + offset_X + width_square, vertices[index].Y + offset_Y + height_square);
+                    pts[0] = new System.Drawing.PointF(
+                        vertices[index].X + offset_X + current_till_vert, vertices[index].Y + offset_Y + current_till_horiz);
+                    pts[1] = new System.Drawing.PointF(
+                        vertices[index].X + offset_X + width_square + current_till_vert, vertices[index].Y + offset_Y + current_till_horiz);
+                    pts[2] = new System.Drawing.PointF(
+                        vertices[index].X + offset_X + current_till_vert, vertices[index].Y + offset_Y + height_square + current_till_horiz);
+                    pts[3] = new System.Drawing.PointF(
+                        vertices[index].X + offset_X + width_square + current_till_vert, vertices[index].Y + offset_Y + height_square + current_till_horiz);
                     littleSquares[counter].Add(CvInvoke.MinAreaRect(pts));
                     offset_X += width_square;
+                    current_till_horiz += till_level_input;
                     if ((i+1) % 8 == 0 && i != 0)
                     {
                         offset_X = 0;
                         offset_Y += height_square;
+                        current_till_horiz = 0;
+                        current_till_vert += till_plumb_input;
                     }
                 }
                 counter++;
