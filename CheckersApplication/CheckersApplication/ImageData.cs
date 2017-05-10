@@ -35,6 +35,15 @@ namespace CheckersApplication
             this.ifPatternWasFound = false;
         }
 
+        public ImageData(IImage _image, UInt16 width, UInt16 height)
+        {
+            Bitmap bmp = new Bitmap(_image.Bitmap);
+            this.image = new Image<Bgr, Byte>(bmp);
+
+            this.patternSize = new System.Drawing.Size(width - 1, height - 1); //-1 for chessboard
+            this.ifPatternWasFound = false;
+        }
+
         public bool IfPatternFound()
         {
             if (!ifGettingCorners)

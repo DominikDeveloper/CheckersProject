@@ -188,29 +188,38 @@ namespace CheckersApplication
 
         public IImage Test2OnCamera(IImage img, UInt16 width, UInt16 height)
         {
-            #region corners
-            var detCorners = detection.GetInternalCorners(img, width, height);
-            //CvInvoke.Imshow("Corners-Circles-Rects", detCorners);
-            #endregion
+            try
+            {
+                ImageData testImage1 = new ImageData(img, width, height);
 
-            #region 3/4 -angles
-            Bitmap bmp = new Bitmap(img.Bitmap);
-            var convertedImg = new Image<Bgr, Byte>(bmp);
+                #region corners
+                var cornersPoints = testImage1.GetInternalCorners();
+                var imgWithCorners = testImage1.GetDrawingCorners(cornersPoints);
+                #endregion
 
-            var detRects = detection.GetRectangles(ref convertedImg);
-            //CvInvoke.Imshow("Corners-Circles-Rects", detRects);
-            #endregion
+                #region 3/4 -angles
+                ImageData testImage2 = new ImageData(imgWithCorners, width, height);
+
+                var rectangles = testImage2.GetRectangles();
+                var imgWithRects = testImage2.GetDrawingRectangles(rectangles);
+                #endregion
+
+                #region circles
+                ImageData testImage3 = new ImageData(imgWithRects, width, height);
+
+                ChessField[,] cf = new ChessField[8, 8];
+                var circles = testImage3.GetRectangles();
+                var imgWithCircles = testImage3.GetDrawingRectangles(rectangles);
+                #endregion
+
+                ImageData testImageResult = new ImageData(imgWithCircles, width, height);
+                return testImageResult.GetSourceImage(); //last modified picture
+
+            } catch (Exception excpt)
+            {
+
+            }
             
-            #region circles
-            bmp = new Bitmap(img.Bitmap); //detRects
-            convertedImg = new Image<Bgr, Byte>(bmp);
-
-            ChessField[,] cf = new ChessField[8, 8];
-            //var detCircles = detection.GetCircles(convertedImg, out cf);
-            //CvInvoke.Imshow("Corners-Circles-Rects", detCircles);
-            #endregion
-
-            //return detCircles; //last modified picture
             return null;
         }
 
