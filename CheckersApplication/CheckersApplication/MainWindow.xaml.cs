@@ -147,7 +147,7 @@ namespace CheckersApplication
         private void Detect(string filePath = null, Image<Bgr, byte> cameraCapture = null)
         {
             Image<Bgr, byte> image, resultImage;
-
+            chessBoardState.Clear();
 
             if (filePath != null)
                 image = new Image<Bgr, byte>(filePath).Resize(400, 400, Inter.Linear, true);
@@ -175,6 +175,7 @@ namespace CheckersApplication
 
                         ChessField.Pons(fields, circles);
                         chessBoardState.AddPieces(fields);
+
                     }
                 }
             }

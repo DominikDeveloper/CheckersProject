@@ -23,5 +23,10 @@ namespace CheckersApplication
             }
         }
 
+        public void Clear()
+        {
+            pieces.Clear();
+        }
+
     }
 }
