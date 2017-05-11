@@ -61,7 +61,7 @@ namespace CheckersApplication
                 camera.imageViewer.Image = camera.capture.QueryFrame(); //.QuerySmallFrame(); --> what better?
                 IMG_Camera.Source = ToBitmapConverter.Convert(camera.imageViewer.Image);
                 var image = new Image<Bgr, Byte>(camera.imageViewer.Image.Bitmap);
-                Detect("",image);
+                Detect(cameraCapture: image);
             }
             catch (Exception ex) {
                 ComponentDispatcher.ThreadIdle -= new EventHandler(updateFrames);
