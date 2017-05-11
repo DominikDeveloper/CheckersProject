@@ -160,7 +160,8 @@ namespace CheckersApplication
             CircleF[] circles = detection.GetCircles(ref imgToCircles);
             CvInvoke.Imshow("Result of circles browsing", imgToCircles);
 
-            ChessField[,] fields = ChessField.GetChessFields(points, ref imgToRectangle);
+            ChessField[,] fields = new ChessField[8,8];
+            fields = ChessField.GetChessFields(points, ref imgToRectangle);
             CvInvoke.Imshow("Result of finding fields", imgToRectangle);
             ChessField.Pons(fields, circles);
             chessBoardState.AddPieces(fields);

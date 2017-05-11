@@ -40,6 +40,32 @@ namespace CheckersApplication
             return uimage;
         }
 
+        public int[,] RepresentCircles(CircleF[] circles, List<RotatedRect> rectangles)
+        {
+            int[,] matrix = new int[8, 8];
+            foreach (CircleF circle in circles)
+            {
+                int circleX = Convert.ToInt32(circle.Center.X);
+                int circleY = Convert.ToInt32(circle.Center.Y);
+                foreach(var rectangle in rectangles)
+                {
+                    int rectangleX = Convert.ToInt32(rectangle.Center.X);
+                    int rectangleY = Convert.ToInt32(rectangle.Center.Y);
+                    for (int x = -7; x <= 7; x++)
+                    {
+                        for (int y = -7; y <= 7; y++)
+                        {
+                            if (circleX == rectangleX + x && circleY == rectangleY + y)
+                            {                               
+                                matrix[0, 0] = 2;
+                            }
+                        }
+                    }
+                }
+            }
+            return matrix;
+        }
+
         public CircleF[] GetCircles(ref Image<Bgr, Byte> img, int thickness = 3)
         {
             UMat uimage = ConvertClearImage(img);
@@ -121,6 +147,5 @@ namespace CheckersApplication
                 }
             return null;
         }
-
     }
 }

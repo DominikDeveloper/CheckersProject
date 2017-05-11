@@ -11,7 +11,7 @@ namespace CheckersApplication
 {
     public class ChessField
     {
-        public Point[] points = new Point[4];
+        private Point[] points = new Point[4];
         public int Value; 
 
         public ChessField(Point[] points)
