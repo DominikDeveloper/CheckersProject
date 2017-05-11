@@ -221,8 +221,8 @@ namespace CheckersApplication
                     int[,] boardState = detection.RepresentCircles(circles, foundFields);
                     FillChessboard_tmp(boardState);
                 }
-                
-                ImageData testImageResult = new ImageData(imgWithRects, width, height); //Circles
+
+                ImageData testImageResult = new ImageData(imgWithCircles, width, height);
                 return testImageResult.GetSourceImage(); //last modified picture
 
             } catch (Exception excpt)
