@@ -146,30 +146,32 @@ namespace CheckersApplication
 
         private void Detect(string filePath = null, Image<Bgr, byte> cameraCapture = null)
         {
-            //if (filePath != null)
-               // var image = new Image<Bgr, byte>(filePath).Resize(400, 400, Inter.Linear, true);
-           // else
-                var image = cameraCapture;
+            Image<Bgr, byte> image, resultImage;
 
-            System.Drawing.Point[]points = Detection.GetRectanglePoints(image);
-            
 
+            if (filePath != null)
+                image = new Image<Bgr, byte>(filePath).Resize(400, 400, Inter.Linear, true);
+            else
+                image = cameraCapture;
+
+            resultImage = image.Copy();
+            System.Drawing.Point[]points = Detection.GetRectanglePoints(image);           
 
             if (points != null)
             {
-                image.Draw(points, new Bgr(Color.DarkOrange), 2);
-                ChessField[,] fields = ChessField.GetChessFields(points, image);
+                resultImage.Draw(points, new Bgr(Color.DarkOrange), 2);
+                ChessField[,] fields = ChessField.GetChessFields(points);
                 if (fields != null)
                 {
                      foreach (var field in fields)
-                         image.Draw(field.points, new Bgr(Color.Green), 3);
+                        resultImage.Draw(field.points, new Bgr(Color.Green), 2);
 
-                    CircleF[] circles = Detection.GetCircles(image);
+                     CircleF[] circles = Detection.GetCircles(image);
 
                       if (circles != null)
                       {
                           foreach (CircleF circle in circles)
-                               image.Draw(circle, new Bgr(Color.Blue), 3);
+                            resultImage.Draw(circle, new Bgr(Color.Blue), 3);
 
                         ChessField.Pons(fields, circles);
                         chessBoardState.AddPieces(fields);
@@ -177,14 +179,7 @@ namespace CheckersApplication
                 }
             }
 
-
-
-
-
-
-
-            IMG_Detected.Source = ToBitmapConverter.Convert(image);
-
+            IMG_Detected.Source = ToBitmapConverter.Convert(resultImage);
         }
 
     }
