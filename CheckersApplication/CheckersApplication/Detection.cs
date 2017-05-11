@@ -27,9 +27,9 @@ namespace CheckersApplication
             int[,] matrix = new int[8, 8];
 
             int tolerance = 20;
+            int i = 0, j = 0;
             foreach (var rectangle in rectangles)
             {
-                int i = 0, j = 0;
                 int rectangleX = Convert.ToInt32(rectangle.Center.X);
                 int rectangleY = Convert.ToInt32(rectangle.Center.Y);
                 foreach (CircleF circle in circles)
