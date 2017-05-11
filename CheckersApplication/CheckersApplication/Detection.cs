@@ -25,25 +25,31 @@ namespace CheckersApplication
         public int[,] RepresentCircles(CircleF[] circles, List<RotatedRect> rectangles)
         {
             int[,] matrix = new int[8, 8];
-            foreach (CircleF circle in circles)
+
+            int tolerance = 20;
+            foreach (var rectangle in rectangles)
             {
-                int circleX = Convert.ToInt32(circle.Center.X);
-                int circleY = Convert.ToInt32(circle.Center.Y);
-                foreach(var rectangle in rectangles)
+                int i = 0, j = 0;
+                int rectangleX = Convert.ToInt32(rectangle.Center.X);
+                int rectangleY = Convert.ToInt32(rectangle.Center.Y);
+                foreach (CircleF circle in circles)
                 {
-                    int rectangleX = Convert.ToInt32(rectangle.Center.X);
-                    int rectangleY = Convert.ToInt32(rectangle.Center.Y);
-                    for (int x = -7; x <= 7; x++)
-                    {
-                        for (int y = -7; y <= 7; y++)
-                        {
-                            if (circleX == rectangleX + x && circleY == rectangleY + y)
-                            {                               
-                                matrix[0, 0] = 2;
+                    int circleX = Convert.ToInt32(circle.Center.X);
+                    int circleY = Convert.ToInt32(circle.Center.Y);
+
+                            if ((circleX >= rectangleX - tolerance && circleX <= rectangleX + tolerance) && (circleY >= rectangleY - tolerance && circleY <= rectangleY + tolerance))
+                            {
+                                matrix[i, j] = 2;
                             }
-                        }
-                    }
                 }
+                j++;
+                if ((j % 8) == 0 && j > 0)
+                {
+                    j = 0;
+                    i++;
+                }
+                if (i >= 8)
+                    break;
             }
             return matrix;
         }

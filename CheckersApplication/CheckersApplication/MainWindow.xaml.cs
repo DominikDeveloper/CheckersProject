@@ -181,8 +181,9 @@ namespace CheckersApplication
             var imgToCircles = testImage1.GetDrawingCircles(circles);
             CvInvoke.Imshow("Result of circles browsing", imgToCircles);
 
-
-            int[,] cf =  detection.RepresentCircles(circles, rectangles);
+            var foundFields = testImage1.SquareTo64Squares(rectangles); //test
+            Detection detection = new Detection();
+            int[,] cf =  detection.RepresentCircles(circles, foundFields);
             FillChessboard_tmp(cf);
         }
 
@@ -203,16 +204,25 @@ namespace CheckersApplication
                 var rectangles = testImage2.GetRectangles();
                 var imgWithRects = testImage2.GetDrawingRectangles(rectangles);
                 #endregion
-
+                
                 #region circles
                 ImageData testImage3 = new ImageData(imgWithRects, width, height);
 
-                ChessField[,] cf = new ChessField[8, 8];
-                var circles = testImage3.GetRectangles();
-                var imgWithCircles = testImage3.GetDrawingRectangles(rectangles);
+                var circles = testImage3.GetCirclesPositions();
+                var imgWithCircles = testImage3.GetDrawingCircles(circles);
                 #endregion
+                
+                var foundFields = testImage3.SquareTo64Squares(rectangles); //test
 
-                ImageData testImageResult = new ImageData(imgWithCircles, width, height);
+                Detection detection = new Detection();
+
+                if (foundFields != null)
+                {
+                    int[,] boardState = detection.RepresentCircles(circles, foundFields);
+                    FillChessboard_tmp(boardState);
+                }
+                
+                ImageData testImageResult = new ImageData(imgWithRects, width, height); //Circles
                 return testImageResult.GetSourceImage(); //last modified picture
 
             } catch (Exception excpt)

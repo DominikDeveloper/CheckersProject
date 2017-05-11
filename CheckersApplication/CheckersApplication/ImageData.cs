@@ -229,7 +229,7 @@ namespace CheckersApplication
             return outputImage;
         }
 
-        public void SquareTo64Squares(List<RotatedRect> rectangles)
+        public List<RotatedRect> SquareTo64Squares(List<RotatedRect> rectangles)
         {
             int size = rectangles.Count;
             List<RotatedRect>[] littleSquares = new List<RotatedRect>[size];
@@ -359,7 +359,7 @@ namespace CheckersApplication
             }
 
             Image<Bgr, byte> outputImage = image.Copy();
-            if (littleSquares.Count() > 0)
+            if (littleSquares != null && littleSquares.Count() > 0)
             {
                 foreach (RotatedRect box in littleSquares[0])
                 {
@@ -367,6 +367,11 @@ namespace CheckersApplication
                 }
                 CvInvoke.Imshow("One square to 64 squares", outputImage);
             }
+
+            if (littleSquares.Length > 0)
+                return littleSquares[0];
+
+            return null;
         }
 
         public UMat GetCanny(double cannyThreshold = 140.0, double cannyThresholdLinking = 120.0)
