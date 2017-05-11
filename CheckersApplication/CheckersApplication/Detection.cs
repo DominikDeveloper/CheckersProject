@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows;
 using Emgu.CV;
@@ -9,28 +8,10 @@ using Emgu.CV.Util;
 
 namespace CheckersApplication
 {
-    class Detection
+    abstract class Detection
     {
-        public IInputOutputArray GetInternalCorners(IImage inputImage, UInt16 width, UInt16 height)
-        {
-            IInputOutputArray editableImage = inputImage;
-            System.Drawing.Size patternSize = new System.Drawing.Size(width - 1, height - 1);
-            var cornerPoints = new VectorOfPointF();
-            bool result = CvInvoke.FindChessboardCorners(
-                editableImage, patternSize, cornerPoints, Emgu.CV.CvEnum.CalibCbType.AdaptiveThresh | Emgu.CV.CvEnum.CalibCbType.FilterQuads);
-            try
-            {
-                CvInvoke.DrawChessboardCorners(editableImage, patternSize, cornerPoints, result);
-                if (!result)
-                    MessageBox.Show("Nie wykryto rogów szachownicy");
-                return editableImage;
-            }
-            catch (Exception ex) { MessageBox.Show(ex.Message); }
-            return null;
-        }
-
         //Convert the image to grayscale and filter out the noise
-        public UMat ConvertClearImage(Image<Bgr, Byte> img)
+        public static UMat ConvertClearImage(Image<Bgr, Byte> img)
         {
             UMat uimage = new UMat();
             CvInvoke.CvtColor(img, uimage, ColorConversion.Bgr2Gray);
@@ -40,33 +21,7 @@ namespace CheckersApplication
             return uimage;
         }
 
-        public int[,] RepresentCircles(CircleF[] circles, List<RotatedRect> rectangles)
-        {
-            int[,] matrix = new int[8, 8];
-            foreach (CircleF circle in circles)
-            {
-                int circleX = Convert.ToInt32(circle.Center.X);
-                int circleY = Convert.ToInt32(circle.Center.Y);
-                foreach(var rectangle in rectangles)
-                {
-                    int rectangleX = Convert.ToInt32(rectangle.Center.X);
-                    int rectangleY = Convert.ToInt32(rectangle.Center.Y);
-                    for (int x = -7; x <= 7; x++)
-                    {
-                        for (int y = -7; y <= 7; y++)
-                        {
-                            if (circleX == rectangleX + x && circleY == rectangleY + y)
-                            {                               
-                                matrix[0, 0] = 2;
-                            }
-                        }
-                    }
-                }
-            }
-            return matrix;
-        }
-
-        public CircleF[] GetCircles(ref Image<Bgr, Byte> img, int thickness = 3)
+        public static CircleF[] GetCircles(Image<Bgr, Byte> img)
         {
             UMat uimage = ConvertClearImage(img);
             double cannyThreshold = 140.0;
@@ -78,13 +33,10 @@ namespace CheckersApplication
             CircleF[] circles = CvInvoke.HoughCircles(
                 uimage, HoughType.Gradient, dp, minDist, cannyThreshold, circleAccumulatorThreshold, minRadius, maxRadius);
 
-            foreach (CircleF circle in circles)
-                img.Draw(circle, new Bgr(Color.Blue), thickness);
-
             return circles;
         }
 
-        bool CheckAngles(LineSegment2D[] edges, int angleMin, int angleMax)
+        private static bool CheckAngles(LineSegment2D[] edges, int angleMin, int angleMax)
         {
             for (int j = 0; j < edges.Length; j++)
             {
@@ -98,21 +50,19 @@ namespace CheckersApplication
             return true;
         }
 
-        public System.Drawing.Point[] GetRectanglePoints(ref Image<Bgr, Byte> img)
+        public static System.Drawing.Point[] GetRectanglePoints(Image<Bgr, Byte> img)
         {
             double cannyThresholdLinking = 120.0;
             double cannyThreshold = 140.0;
 
-            Image<Bgr, Byte> img3 = img.CopyBlank();
             UMat cannyEdges = new UMat();
 
             CvInvoke.Canny(img, cannyEdges, cannyThreshold, cannyThresholdLinking);
-            CvInvoke.Imshow("Canny edges", cannyEdges);
 
                 int contourAreaMin = 10000;
                 int contourAreaMax = 200000;
-                int angleMin = 75;
-                int angleMax = 105;
+                int angleMin = 85;
+                int angleMax = 95;
                 System.Drawing.Point[] points = null;
                 using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
                 {
@@ -130,9 +80,8 @@ namespace CheckersApplication
                                 {
                                     points  = approxContour.ToArray();
                                     LineSegment2D[] edges = PointCollection.PolyLine(points, true);
-                                    if(CheckAngles(edges, angleMin, angleMax))
+                                    if(Detection.CheckAngles(edges, angleMin, angleMax))
                                     {
-                                        img.Draw(points, new Bgr(Color.DarkOrange), 2);
                                         return points;
                                     }
                                     else

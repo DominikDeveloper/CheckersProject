@@ -11,7 +11,7 @@ namespace CheckersApplication
 {
     public class ChessField
     {
-        private Point[] points = new Point[4];
+        public Point[] points { get; } = new Point[4];
         public int Value; 
 
         public ChessField(Point[] points)
@@ -20,7 +20,7 @@ namespace CheckersApplication
             this.points = (Point[])points.Clone();
         }
 
-        public static ChessField[,] GetChessFields(Point[] rectangle, ref Image<Bgr, Byte> img)
+        public static ChessField[,] GetChessFields(Point[] rectangle, Image<Bgr, Byte> img)
         {
             int width = rectangle[1].X - rectangle[0].X;
             int height = rectangle[3].Y - rectangle[0].Y;
@@ -41,7 +41,6 @@ namespace CheckersApplication
                     field[2].X = rectangle[0].X + j * fieldWidht + fieldWidht;
                     field[3].X = rectangle[0].X + j * fieldWidht;
                     fields[i, j] = new ChessField(field);
-                    img.Draw(field, new Bgr(Color.Green), 2);
                 }
             }
             return fields;            
