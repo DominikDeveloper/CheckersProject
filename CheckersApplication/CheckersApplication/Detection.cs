@@ -40,32 +40,6 @@ namespace CheckersApplication
             return uimage;
         }
 
-        public int[,] RepresentCircles(CircleF[] circles, List<RotatedRect> rectangles)
-        {
-            int[,] matrix = new int[8, 8];
-            foreach (CircleF circle in circles)
-            {
-                int circleX = Convert.ToInt32(circle.Center.X);
-                int circleY = Convert.ToInt32(circle.Center.Y);
-                foreach(var rectangle in rectangles)
-                {
-                    int rectangleX = Convert.ToInt32(rectangle.Center.X);
-                    int rectangleY = Convert.ToInt32(rectangle.Center.Y);
-                    for (int x = -7; x <= 7; x++)
-                    {
-                        for (int y = -7; y <= 7; y++)
-                        {
-                            if (circleX == rectangleX + x && circleY == rectangleY + y)
-                            {                               
-                                matrix[0, 0] = 2;
-                            }
-                        }
-                    }
-                }
-            }
-            return matrix;
-        }
-
         public CircleF[] GetCircles(ref Image<Bgr, Byte> img, int thickness = 3)
         {
             UMat uimage = ConvertClearImage(img);
@@ -84,25 +58,36 @@ namespace CheckersApplication
             return circles;
         }
 
-        public List<RotatedRect> GetRectangles(ref Image<Bgr, Byte> img)
+        bool CheckAngles(LineSegment2D[] edges, int angleMin, int angleMax)
+        {
+            for (int j = 0; j < edges.Length; j++)
+            {
+                double angle = Math.Abs(
+                   edges[(j + 1) % edges.Length].GetExteriorAngleDegree(edges[j]));
+                if (angle < angleMin || angle > angleMax)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public System.Drawing.Point[] GetRectanglePoints(ref Image<Bgr, Byte> img)
         {
             double cannyThresholdLinking = 120.0;
             double cannyThreshold = 140.0;
-            bool alreadyExists = false;
 
             Image<Bgr, Byte> img3 = img.CopyBlank();
-
             UMat cannyEdges = new UMat();
+
             CvInvoke.Canny(img, cannyEdges, cannyThreshold, cannyThresholdLinking);
             CvInvoke.Imshow("Canny edges", cannyEdges);
 
-            List<RotatedRect> rectangles = new List<RotatedRect>(); //a box is a rotated rectangle
-
-                int contourAreaMin = 300;
-                int contourAreaMax = 20000;
+                int contourAreaMin = 10000;
+                int contourAreaMax = 200000;
                 int angleMin = 75;
                 int angleMax = 105;
-                
+                System.Drawing.Point[] points = null;
                 using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
                 {
                     CvInvoke.FindContours(cannyEdges, contours, null, RetrType.List, ChainApproxMethod.ChainApproxSimple);
@@ -117,62 +102,25 @@ namespace CheckersApplication
                             {
                                 if (approxContour.Size == 4)
                                 {
-                                    bool isRectangle = true;
-                                    System.Drawing.Point[] pts = approxContour.ToArray();
-                                    LineSegment2D[] edges = PointCollection.PolyLine(pts, true);
+                                points  = approxContour.ToArray();
+                                LineSegment2D[] edges = PointCollection.PolyLine(points, true);
+                                    if(CheckAngles(edges, angleMin, angleMax))
+                                    {
+                                        img.Draw(points, new Bgr(Color.DarkOrange), 2);
+                                        return points;
+                                    }
+                                    else
+                                    {
+                                        continue;
+                                    }
 
-                                    for (int j = 0; j < edges.Length; j++)
-                                    {
-                                        double angle = Math.Abs(
-                                           edges[(j + 1) % edges.Length].GetExteriorAngleDegree(edges[j]));
-                                        if (angle < angleMin || angle > angleMax)
-                                        {
-                                            isRectangle = false;
-                                            break;
-                                        }
-                                    }
-                                    foreach (RotatedRect r in rectangles)
-                                    {
-                                        int x1 = ((approxContour[0].X + approxContour[1].X + approxContour[2].X + approxContour[3].X) / 4);
-                                        int y1 = ((approxContour[0].Y + approxContour[1].Y + approxContour[2].Y + approxContour[3].Y) / 4);
-
-                                        for (int x = -5; x <= 5; x++)
-                                        {
-                                            for (int y = -5; y <= 5; y++)
-                                            {
-                                                if (x1 == Convert.ToInt32(r.Center.X) + x && y1 == Convert.ToInt32(r.Center.Y) + y)
-                                                {
-                                                    alreadyExists = true;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    if (isRectangle && alreadyExists == false)
-                                    {
-                                        rectangles.Add(CvInvoke.MinAreaRect(approxContour));
-                                    }
-                                 alreadyExists = false;
                                 }
                             }
                         }
                     }
                 }
-
-
-            foreach (RotatedRect box in rectangles)
-            {
-                RotatedRect r = new RotatedRect();
-                r.Center = box.Center;
-                r.Size = new SizeF(3.0f,3.0f);
-                img.Draw(r, new Bgr(Color.DarkOrange), 2);
-            }
-
-            foreach (RotatedRect box in rectangles)
-            {
-                img.Draw(box, new Bgr(Color.DarkOrange), 2);
-            }
-
-                return rectangles;
+            return null;
         }
+
     }
 }

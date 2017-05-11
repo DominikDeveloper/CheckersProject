@@ -30,6 +30,7 @@ namespace CheckersApplication
     {
         Camera camera;
         Detection detection;
+        ChessBoardState chessBoardState = new ChessBoardState();
 
         public MainWindow()
         {
@@ -37,7 +38,7 @@ namespace CheckersApplication
             detection = new Detection();
             DiscoverUsbCameras();
             CvInvoke.UseOpenCL = (bool)CB_OpenCL.IsChecked;
-            FillChessboard();
+            this.ChessBoard.ItemsSource = chessBoardState.pieces;
         }
 
         public void DiscoverUsbCameras()
@@ -54,27 +55,12 @@ namespace CheckersApplication
             if (CO_Cameras.Items.Count > 0)
                 CO_Cameras.SelectedIndex = 0;
         }
-
-        private void FillChessboard()
-        {
-            ChessBoardState chessBoardState = new ChessBoardState();
-            //chessBoardState.TestData();
-            this.ChessBoard.ItemsSource = chessBoardState.pieces;
-        }
-
-        public void FillChessboard_tmp(int[,] ChessboardArray)
-        {
-            ChessBoardState chessBoardState = new ChessBoardState();
-            chessBoardState.matrixToPieces_tmp(ChessboardArray);
-            this.ChessBoard.ItemsSource = chessBoardState.pieces;
-        }
-
+                
         public void updateFrames(object sender, EventArgs e)
         {
             try
             {
                 camera.imageViewer.Image = camera.capture.QueryFrame(); //.QuerySmallFrame(); --> what better?
-                camera.imageViewer.Image = Test2OnCamera(camera.imageViewer.Image, 8, 8); //after testing, delete it
                 IMG_Camera.Source = ToBitmapConverter.Convert(camera.imageViewer.Image);              
             }
             catch (Exception ex) {
@@ -143,7 +129,7 @@ namespace CheckersApplication
             {
                 try
                 {
-                    Test1OnPicture(openFileDialog1.FileName);
+                    Detect(openFileDialog1.FileName);
                 }
                 catch (Exception ex)
                 {
@@ -158,7 +144,7 @@ namespace CheckersApplication
             TB_CameraSource.Foreground = System.Windows.Media.Brushes.Black;
         }
 
-        private void Test1OnPicture(string filePath)
+        private void Detect(string filePath)
         {
             UInt16 width = 8;
             UInt16 height = 8;
@@ -166,44 +152,18 @@ namespace CheckersApplication
             var imgToCorners = new Image<Bgr, Byte>(filePath).Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
             CvInvoke.Imshow("Result of corners browsing", detection.GetInternalCorners(imgToCorners, width, height));
 
-            var imgToRectangles = new Image<Bgr, byte>(filePath).Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
-            List<RotatedRect> rectangles = detection.GetRectangles(ref imgToRectangles);
-            CvInvoke.Imshow("Result of rectangles browsing", imgToRectangles);
+            var imgToRectangle = new Image<Bgr, byte>(filePath).Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
+            System.Drawing.Point[]points = detection.GetRectanglePoints(ref imgToRectangle);
+            CvInvoke.Imshow("Result of rectangles browsing", imgToRectangle);
 
             var imgToCircles = new Image<Bgr, byte>(filePath).Resize(400, 400, Emgu.CV.CvEnum.Inter.Linear, true);
-
             CircleF[] circles = detection.GetCircles(ref imgToCircles);
             CvInvoke.Imshow("Result of circles browsing", imgToCircles);
-            int[,] cf =  detection.RepresentCircles(circles, rectangles);
-            FillChessboard_tmp(cf);
-        }
 
-        public IImage Test2OnCamera(IImage img, UInt16 width, UInt16 height)
-        {
-            #region corners
-            var detCorners = detection.GetInternalCorners(img, width, height);
-            //CvInvoke.Imshow("Corners-Circles-Rects", detCorners);
-            #endregion
-
-            #region 3/4 -angles
-            Bitmap bmp = new Bitmap(img.Bitmap);
-            var convertedImg = new Image<Bgr, Byte>(bmp);
-
-            var detRects = detection.GetRectangles(ref convertedImg);
-            //CvInvoke.Imshow("Corners-Circles-Rects", detRects);
-            #endregion
-            
-            #region circles
-            bmp = new Bitmap(img.Bitmap); //detRects
-            convertedImg = new Image<Bgr, Byte>(bmp);
-
-            ChessField[,] cf = new ChessField[8, 8];
-            //var detCircles = detection.GetCircles(convertedImg, out cf);
-            //CvInvoke.Imshow("Corners-Circles-Rects", detCircles);
-            #endregion
-
-            //return detCircles; //last modified picture
-            return null;
+            ChessField[,] fields = ChessField.GetChessFields(points, ref imgToRectangle);
+            CvInvoke.Imshow("Result of finding fields", imgToRectangle);
+            ChessField.Pons(fields, circles);
+            chessBoardState.AddPieces(fields);
         }
 
     }
