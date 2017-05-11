@@ -108,6 +108,7 @@ namespace CheckersApplication
                 circles = CvInvoke.HoughCircles(
                     uimage, HoughType.Gradient, dp, minDist, cannyThreshold, circleAccumulatorThreshold, minRadius, maxRadius);
 
+                circles = DrawColorCircle(); //test
                 return circles;
             } catch (Exception ex)
             {
@@ -127,7 +128,65 @@ namespace CheckersApplication
             return outputImage;
         }
 
-        public List<RotatedRect> GetRectangles(bool ShowCanny = true)
+        public CircleF[] DrawColorCircle() //Red
+        {
+            // Load input image
+            Mat bgr_image = image.Mat;
+
+            Mat orig_image = bgr_image.Clone();
+
+            CvInvoke.MedianBlur(bgr_image, bgr_image, 3);
+
+            // Convert input image to HSV
+            Mat hsv_image = new Mat();
+            CvInvoke.CvtColor(bgr_image, hsv_image, ColorConversion.Bgr2Hsv);
+
+            // Threshold the HSV image, keep only the red pixels
+            Mat lower_red_hue_range = new Mat();
+            Mat upper_red_hue_range = new Mat();
+            
+            CvInvoke.InRange(hsv_image, new ScalarArray(new MCvScalar(0, 100, 100)), new ScalarArray(new MCvScalar(10, 255, 255)), lower_red_hue_range); //red: 0,100,100 // 10,255,255
+            CvInvoke.InRange(hsv_image, new ScalarArray(new MCvScalar(160, 100, 100)), new ScalarArray(new MCvScalar(179, 255, 255)), upper_red_hue_range); //red: 160,100,100 // 179,255,255
+
+            // Combine the above two images
+            Mat red_hue_image = new Mat();
+            CvInvoke.AddWeighted(lower_red_hue_range, 1.0, upper_red_hue_range, 1.0, 0.0, red_hue_image);
+            CvInvoke.GaussianBlur(red_hue_image, red_hue_image, new System.Drawing.Size(9, 9), 2, 2);
+
+            // Use the Hough transform to detect circles in the combined threshold image
+            var circles = new VectorOfPoint3D32F();//??? //std::vector<cv::Vec3f> circles;
+            var circ = CvInvoke.HoughCircles(red_hue_image, HoughType.Gradient, 1, red_hue_image.Rows / 8, 100, 20, 0, 0); //CvInvoke.HoughCircles(red_hue_image, circles, HoughType.Gradient, 1, red_hue_image.Rows / 8, 100, 20, 0, 0);
+            CvInvoke.HoughCircles(red_hue_image, circles, HoughType.Gradient, 1, red_hue_image.Rows / 8, 100, 20, 0, 0);
+
+            // Loop over all detected circles and outline them on the original image
+            if (circles.Size == 0)
+                return null;
+            for (int current_circle = 0; current_circle < circles.Size; ++current_circle)
+            {
+                System.Drawing.Point center = new System.Drawing.Point(
+                    Convert.ToInt32(Math.Round(circles[current_circle].X)), Convert.ToInt32(Math.Round(circles[current_circle].Y)));
+                //cv::Point center(std::round(circles[current_circle][0]), std::round(circles[current_circle][1]));
+                double radius = Math.Round(circles[current_circle].Z);
+
+                CvInvoke.Circle(orig_image, center, Convert.ToInt32(radius), new MCvScalar(0, 255, 0), 5);
+            }
+
+            // Show images
+            /*CvInvoke.NamedWindow("Threshold lower image", NamedWindowType.AutoSize);
+            CvInvoke.Imshow("Threshold lower image", lower_red_hue_range);
+            CvInvoke.NamedWindow("Threshold upper image", NamedWindowType.AutoSize);
+            CvInvoke.Imshow("Threshold upper image", upper_red_hue_range);
+            CvInvoke.NamedWindow("Combined threshold images", NamedWindowType.AutoSize);
+            CvInvoke.Imshow("Combined threshold images", red_hue_image);*/
+            
+            //CvInvoke.NamedWindow("Detected red circles on the input image", NamedWindowType.AutoSize);
+            CvInvoke.Imshow("Detected red circles on the input image", orig_image);
+
+
+	        return circ;
+        }
+
+    public List<RotatedRect> GetRectangles(bool ShowCanny = false)
         {
             bool alreadyExists = false;
 

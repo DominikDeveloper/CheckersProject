@@ -204,15 +204,16 @@ namespace CheckersApplication
                 var rectangles = testImage2.GetRectangles();
                 var imgWithRects = testImage2.GetDrawingRectangles(rectangles);
                 #endregion
-                
+
+                var foundFields = testImage2.SquareTo64Squares(rectangles); //test
+
                 #region circles
-                ImageData testImage3 = new ImageData(imgWithRects, width, height);
+                ImageData testImage3 = new ImageData(img, width, height); //imgWithRects
 
                 var circles = testImage3.GetCirclesPositions();
                 var imgWithCircles = testImage3.GetDrawingCircles(circles);
                 #endregion
                 
-                var foundFields = testImage3.SquareTo64Squares(rectangles); //test
 
                 Detection detection = new Detection();
 
