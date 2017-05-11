@@ -17,7 +17,7 @@ namespace CheckersApplication
         public ChessField(Point[] points)
         {
             Value = 0;
-            this.points = points;
+            this.points = (Point[])points.Clone();
         }
 
         public static ChessField[,] GetChessFields(Point[] rectangle, ref Image<Bgr, Byte> img)
@@ -26,7 +26,7 @@ namespace CheckersApplication
             int height = rectangle[3].Y - rectangle[0].Y;
             int fieldWidht = width / 8;
             int fieldHeight = height / 8;
-            Point[] field = new System.Drawing.Point[4];
+            Point[] field = new Point[4];
             ChessField[,] fields = new ChessField[8,8];
             for(int i = 0; i < 8; i++)
             {

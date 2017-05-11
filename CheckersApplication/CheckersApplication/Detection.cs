@@ -128,8 +128,8 @@ namespace CheckersApplication
                             {
                                 if (approxContour.Size == 4)
                                 {
-                                points  = approxContour.ToArray();
-                                LineSegment2D[] edges = PointCollection.PolyLine(points, true);
+                                    points  = approxContour.ToArray();
+                                    LineSegment2D[] edges = PointCollection.PolyLine(points, true);
                                     if(CheckAngles(edges, angleMin, angleMax))
                                     {
                                         img.Draw(points, new Bgr(Color.DarkOrange), 2);

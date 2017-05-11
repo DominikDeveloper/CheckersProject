@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
+using System.Drawing;
 
 namespace CheckersApplication
 {
@@ -20,9 +16,9 @@ namespace CheckersApplication
                 for (int j = 0; j < 8; j++)
                 {
                     if (fields[i, j].Value == 1)
-                        pieces.Add(new CheckersPiece { Pos = new System.Drawing.Point(i, j), Player = Player.White });
+                        pieces.Add(new CheckersPiece { Pos = new Point(j, i), Player = Player.White });
                     else if (fields[i, j].Value == 2)
-                        pieces.Add(new CheckersPiece { Pos = new System.Drawing.Point(i, j), Player = Player.Black });
+                        pieces.Add(new CheckersPiece { Pos = new Point(j, i), Player = Player.Black });
                 }
             }
         }
