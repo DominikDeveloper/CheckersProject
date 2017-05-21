@@ -36,6 +36,41 @@ namespace CheckersApplication
             return circles;
         }
 
+        public static CircleF[] DrawColorCircle(Image<Bgr, Byte> image, MCvScalar[] mcvs) //change word 'red'
+        {
+            // Load input image
+            Mat bgr_image = image.Mat;
+
+            Mat orig_image = bgr_image.Clone();
+
+            CvInvoke.MedianBlur(bgr_image, bgr_image, 3);
+
+            // Convert input image to HSV
+            Mat hsv_image = new Mat();
+            CvInvoke.CvtColor(bgr_image, hsv_image, ColorConversion.Bgr2Hsv);
+
+            // Threshold the HSV image, keep only the selected color pixels
+            Mat lower_color_hue_range = new Mat();
+            Mat upper_color_hue_range = new Mat();
+
+            CvInvoke.InRange(hsv_image, new ScalarArray(mcvs[0]), new ScalarArray(mcvs[1]), lower_color_hue_range);
+            CvInvoke.InRange(hsv_image, new ScalarArray(mcvs[2]), new ScalarArray(mcvs[3]), upper_color_hue_range);
+
+            // Combine the above two images
+            Mat color_hue_image = new Mat();
+            CvInvoke.AddWeighted(lower_color_hue_range, 1.0, upper_color_hue_range, 1.0, 0.0, color_hue_image);
+            CvInvoke.GaussianBlur(color_hue_image, color_hue_image, new System.Drawing.Size(9, 9), 2, 2);
+
+            // Use the Hough transform to detect circles in the combined threshold image
+            var circ = CvInvoke.HoughCircles(color_hue_image, HoughType.Gradient, 1, color_hue_image.Rows / 8, 100, 20, 0, 0); 
+
+            // Return detected circles
+            if (circ.Length == 0)
+                return (new CircleF[0]);
+
+            return circ;
+        }
+
         private static bool CheckAngles(LineSegment2D[] edges, int angleMin, int angleMax)
         {
             for (int j = 0; j < edges.Length; j++)

@@ -146,6 +146,14 @@ namespace CheckersApplication
 
         private void Detect(string filePath = null, Image<Bgr, byte> cameraCapture = null)
         {
+            MCvScalar[][] hsvColors = new MCvScalar[4][]
+            {
+                new MCvScalar[4] { new MCvScalar(0, 100, 100), new MCvScalar(10, 255, 255), new MCvScalar(160, 100, 100), new MCvScalar(179, 255, 255) }, //red
+                new MCvScalar[4] { new MCvScalar(40, 100, 100), new MCvScalar(80, 255, 255), new MCvScalar(40, 100, 100), new MCvScalar(80, 255, 255) }, //green
+                new MCvScalar[4] { new MCvScalar(93, 100, 100), new MCvScalar(130, 255, 255), new MCvScalar(93, 100, 100), new MCvScalar(130, 255, 255) }, //blue
+                new MCvScalar[4] { new MCvScalar(23, 100, 100), new MCvScalar(33, 255, 255), new MCvScalar(23, 100, 100), new MCvScalar(33, 255, 255) } //yellow
+            };
+
             Image<Bgr, byte> image, resultImage;
             chessBoardState.Clear();
 
@@ -170,10 +178,29 @@ namespace CheckersApplication
 
                       if (circles != null)
                       {
-                          foreach (CircleF circle in circles)
+                        CircleF[] circlesRed = Detection.DrawColorCircle(image, hsvColors[0]);
+                        CircleF[] circlesGreen = Detection.DrawColorCircle(image, hsvColors[1]);
+                        CircleF[] circlesBlue = Detection.DrawColorCircle(image, hsvColors[2]);
+                        CircleF[] circlesYellow = Detection.DrawColorCircle(image, hsvColors[3]);
+
+                        foreach (CircleF circle in circlesRed)
                             resultImage.Draw(circle, new Bgr(Color.Blue), 3);
 
-                        ChessField.Pons(fields, circles);
+                        foreach (CircleF circle in circlesGreen)
+                            resultImage.Draw(circle, new Bgr(Color.Blue), 3);
+
+                        foreach (CircleF circle in circlesBlue)
+                            resultImage.Draw(circle, new Bgr(Color.Green), 3);
+
+                        foreach (CircleF circle in circlesYellow)
+                            resultImage.Draw(circle, new Bgr(Color.Blue), 3);
+
+                        ChessField.Pons(fields, circlesRed, (int)Player.Black);
+                        ChessField.Pons(fields, circlesGreen, (int)Player.White);
+                        ChessField.Pons(fields, circlesBlue, (int)Player.Black);
+                        ChessField.Pons(fields, circlesYellow, (int)Player.White);
+
+
                         chessBoardState.AddPieces(fields);
 
                     }

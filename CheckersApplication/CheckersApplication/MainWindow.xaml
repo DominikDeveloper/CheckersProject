@@ -45,7 +45,7 @@
                         <Condition Binding="{Binding Player}" Value="{x:Static local:Player.Black}"/>
                     </MultiDataTrigger.Conditions>
                     <MultiDataTrigger.Setters>
-                        <Setter Property="Image.Source" Value="pack://application:,,,/Resources/piece.png" />
+                        <Setter Property="Image.Source" Value="pack://application:,,,/Resources/piece_black.png" />
                     </MultiDataTrigger.Setters>
                 </MultiDataTrigger>
             </Style.Triggers>

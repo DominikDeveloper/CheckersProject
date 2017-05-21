@@ -46,14 +46,14 @@ namespace CheckersApplication
             return fields;            
         }
 
-        public static void Pons(ChessField[,] fields, CircleF[] circles)
+        public static void Pons(ChessField[,] fields, CircleF[] circles, int putValue)
         {
             foreach (CircleF circle in circles)
             {
                 foreach (ChessField field in fields)
                 {
                     if(circle.Center.X>field.points[0].X && circle.Center.X < field.points[1].X && circle.Center.Y > field.points[0].Y && circle.Center.Y < field.points[3].Y)
-                        field.Value = 2;
+                        field.Value = putValue;
                 }
             }
         }
