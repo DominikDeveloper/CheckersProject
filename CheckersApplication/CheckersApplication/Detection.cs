@@ -36,7 +36,7 @@ namespace CheckersApplication
             return circles;
         }
 
-        public static CircleF[] DrawColorCircle(Image<Bgr, Byte> image, MCvScalar[] mcvs) //change word 'red'
+        public static CircleF[] DrawColorCircle(Image<Bgr, Byte> image, MCvScalar[] mcvs)
         {
             // Load input image
             Mat bgr_image = image.Mat;

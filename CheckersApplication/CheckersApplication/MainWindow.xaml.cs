@@ -174,10 +174,6 @@ namespace CheckersApplication
                      foreach (var field in fields)
                         resultImage.Draw(field.points, new Bgr(Color.Green), 2);
 
-                     CircleF[] circles = Detection.GetCircles(image);
-
-                      if (circles != null)
-                      {
                         CircleF[] circlesRed = Detection.DrawColorCircle(image, hsvColors[0]);
                         CircleF[] circlesGreen = Detection.DrawColorCircle(image, hsvColors[1]);
                         CircleF[] circlesBlue = Detection.DrawColorCircle(image, hsvColors[2]);
@@ -203,7 +199,6 @@ namespace CheckersApplication
 
                         chessBoardState.AddPieces(fields);
 
-                    }
                 }
             }
 
