@@ -88,6 +88,10 @@ namespace CheckersApplication
                 camera = new Camera(Convert.ToString(CO_Cameras.SelectedIndex));
             else
                 camera = new Camera(TB_CameraSource.Text);
+
+            CamConfigWindow ccw = new CamConfigWindow(camera);
+            ccw.ShowDialog();
+
             CameraShow();
             CO_Cameras.IsEnabled = false;
         }
@@ -146,13 +150,13 @@ namespace CheckersApplication
 
         private void Detect(string filePath = null, Image<Bgr, byte> cameraCapture = null)
         {
-            MCvScalar[][] hsvColors = new MCvScalar[4][]
+            /*MCvScalar[][] hsvColors = new MCvScalar[4][]
             {
                 new MCvScalar[4] { new MCvScalar(0, 100, 100), new MCvScalar(10, 255, 255), new MCvScalar(160, 100, 100), new MCvScalar(179, 255, 255) }, //red
                 new MCvScalar[4] { new MCvScalar(40, 100, 100), new MCvScalar(80, 255, 255), new MCvScalar(40, 100, 100), new MCvScalar(80, 255, 255) }, //green
                 new MCvScalar[4] { new MCvScalar(93, 100, 100), new MCvScalar(130, 255, 255), new MCvScalar(93, 100, 100), new MCvScalar(130, 255, 255) }, //blue
                 new MCvScalar[4] { new MCvScalar(23, 100, 100), new MCvScalar(33, 255, 255), new MCvScalar(23, 100, 100), new MCvScalar(33, 255, 255) } //yellow
-            };
+            };*/
 
             Image<Bgr, byte> image, resultImage;
             chessBoardState.Clear();
@@ -174,27 +178,29 @@ namespace CheckersApplication
                      foreach (var field in fields)
                         resultImage.Draw(field.points, new Bgr(Color.Green), 2);
 
-                        CircleF[] circlesRed = Detection.DrawColorCircle(image, hsvColors[0]);
-                        CircleF[] circlesGreen = Detection.DrawColorCircle(image, hsvColors[1]);
-                        CircleF[] circlesBlue = Detection.DrawColorCircle(image, hsvColors[2]);
-                        CircleF[] circlesYellow = Detection.DrawColorCircle(image, hsvColors[3]);
+                        CircleF[] circlesPlayer1 = Detection.GetColorCircles(image, HSV_PiecesColors.Player1_MCvS_Data);
+                        CircleF[] circlesPlayer2 = Detection.GetColorCircles(image, HSV_PiecesColors.Player2_MCvS_Data);
+                        /*CircleF[] circlesBlue = Detection.DrawColorCircle(image, hsvColors[2]);
+                        CircleF[] circlesYellow = Detection.DrawColorCircle(image, hsvColors[3]);*/
 
-                        foreach (CircleF circle in circlesRed)
+                        foreach (CircleF circle in circlesPlayer1)
                             resultImage.Draw(circle, new Bgr(Color.Blue), 3);
 
-                        foreach (CircleF circle in circlesGreen)
+                        foreach (CircleF circle in circlesPlayer2)
                             resultImage.Draw(circle, new Bgr(Color.Blue), 3);
 
+                        /*
                         foreach (CircleF circle in circlesBlue)
                             resultImage.Draw(circle, new Bgr(Color.Green), 3);
 
                         foreach (CircleF circle in circlesYellow)
                             resultImage.Draw(circle, new Bgr(Color.Blue), 3);
+                        */
 
-                        ChessField.Pons(fields, circlesRed, (int)Player.Black);
-                        ChessField.Pons(fields, circlesGreen, (int)Player.White);
-                        ChessField.Pons(fields, circlesBlue, (int)Player.Black);
-                        ChessField.Pons(fields, circlesYellow, (int)Player.White);
+                        ChessField.Pons(fields, circlesPlayer1, (int)Player.Black);
+                        ChessField.Pons(fields, circlesPlayer2, (int)Player.White);
+                        /*ChessField.Pons(fields, circlesBlue, (int)Player.Black);
+                        ChessField.Pons(fields, circlesYellow, (int)Player.White);*/
 
 
                         chessBoardState.AddPieces(fields);
@@ -204,6 +210,8 @@ namespace CheckersApplication
 
             IMG_Detected.Source = ToBitmapConverter.Convert(resultImage);
         }
+
+
 
     }
 }

@@ -36,7 +36,7 @@ namespace CheckersApplication
             return circles;
         }
 
-        public static CircleF[] DrawColorCircle(Image<Bgr, Byte> image, MCvScalar[] mcvs)
+        public static CircleF[] GetColorCircles(Image<Bgr, Byte> image, MCvScalar[] mcvs)
         {
             // Load input image
             Mat bgr_image = image.Mat;
@@ -50,15 +50,11 @@ namespace CheckersApplication
             CvInvoke.CvtColor(bgr_image, hsv_image, ColorConversion.Bgr2Hsv);
 
             // Threshold the HSV image, keep only the selected color pixels
-            Mat lower_color_hue_range = new Mat();
-            Mat upper_color_hue_range = new Mat();
-
-            CvInvoke.InRange(hsv_image, new ScalarArray(mcvs[0]), new ScalarArray(mcvs[1]), lower_color_hue_range);
-            CvInvoke.InRange(hsv_image, new ScalarArray(mcvs[2]), new ScalarArray(mcvs[3]), upper_color_hue_range);
-
-            // Combine the above two images
             Mat color_hue_image = new Mat();
-            CvInvoke.AddWeighted(lower_color_hue_range, 1.0, upper_color_hue_range, 1.0, 0.0, color_hue_image);
+
+            CvInvoke.InRange(hsv_image, new ScalarArray(mcvs[0]), new ScalarArray(mcvs[1]), color_hue_image);
+
+            // GaussianBlur
             CvInvoke.GaussianBlur(color_hue_image, color_hue_image, new System.Drawing.Size(9, 9), 2, 2);
 
             // Use the Hough transform to detect circles in the combined threshold image
@@ -69,6 +65,46 @@ namespace CheckersApplication
                 return (new CircleF[0]);
 
             return circ;
+        }
+
+        public static Mat DrawDetectedColorCircle(Bitmap bmp, String[] minHSV, String[] maxHSV, ref MCvScalar[] mcvs)
+        {
+            var fromCam = new Image<Bgr, byte>(bmp);
+
+            Mat bgr_image = fromCam.Mat;
+
+            Mat orig_image = bgr_image.Clone();
+
+            CvInvoke.MedianBlur(bgr_image, bgr_image, 3);
+
+            // Convert input image to HSV
+            Mat hsv_image = new Mat();
+            CvInvoke.CvtColor(bgr_image, hsv_image, ColorConversion.Bgr2Hsv);
+
+            // Threshold the HSV image, keep only the selected color pixels
+            Mat color_hue_image = new Mat();
+
+            // Color values
+            try
+            {
+                mcvs = new MCvScalar[2] {
+                        new MCvScalar(Convert.ToInt32(minHSV[0]), Convert.ToInt32(minHSV[1]), Convert.ToInt32(minHSV[2])),
+                        new MCvScalar(Convert.ToInt32(maxHSV[0]), Convert.ToInt32(maxHSV[1]), Convert.ToInt32(maxHSV[2]))
+                    };
+
+            }
+            catch (Exception)
+            {
+                //do nothing
+            }
+            CvInvoke.InRange(hsv_image, new ScalarArray(mcvs[0]), new ScalarArray(mcvs[1]), color_hue_image);
+            CvInvoke.GaussianBlur(color_hue_image, color_hue_image, new System.Drawing.Size(9, 9), 2, 2);
+
+            // Use the Hough transform to detect circles in the combined threshold image
+            var circles = new VectorOfPoint3D32F();
+            CvInvoke.HoughCircles(color_hue_image, circles, HoughType.Gradient, 1, color_hue_image.Rows / 8, 100, 20, 0, 0);
+
+            return color_hue_image;
         }
 
         private static bool CheckAngles(LineSegment2D[] edges, int angleMin, int angleMax)

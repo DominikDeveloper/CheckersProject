@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 
 namespace CheckersApplication
 {
-    class Camera
+    public class Camera
     {
         public ImageViewer imageViewer;
         public Capture capture;
