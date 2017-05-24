@@ -13,25 +13,6 @@
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="300" Margin="10,10,0,0" VerticalAlignment="Top" Width="221">
             <Image x:Name="IMG_Camera"/>
         </Border>
-        <Grid Margin="0,10,0,179" HorizontalAlignment="Right" Width="292">
-            <Label Content="Dama gracza 1" HorizontalAlignment="Left" Height="27" Margin="10,0,0,0" VerticalAlignment="Top" Width="174"/>
-            <Grid Margin="0,27,0,48">
-                <TextBox x:Name="minH_Play1_King" HorizontalAlignment="Left" Height="23" Margin="28,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="69"/>
-                <TextBox x:Name="minS_Play1_King" HorizontalAlignment="Left" Height="23" Margin="120,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="69"/>
-                <TextBox x:Name="minV_Play1_King" HorizontalAlignment="Left" Height="23" Margin="207,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="69"/>
-                <Label Content="H" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" VerticalAlignment="Top" Width="18" RenderTransformOrigin="1.178,0.722"/>
-                <Label Content="S" HorizontalAlignment="Left" Height="23" Margin="102,10,0,0" VerticalAlignment="Top" Width="18" RenderTransformOrigin="1.178,0.722"/>
-                <Label Content="V" HorizontalAlignment="Left" Height="23" Margin="189,10,0,0" VerticalAlignment="Top" Width="18" RenderTransformOrigin="1.178,0.722"/>
-            </Grid>
-            <Grid Margin="0,71,0,10">
-                <TextBox x:Name="maxH_Play1_King" HorizontalAlignment="Left" Height="23" Margin="28,0,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="69"/>
-                <TextBox x:Name="maxS_Play1_King" HorizontalAlignment="Left" Height="23" Margin="120,0,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="69"/>
-                <TextBox x:Name="maxV_Play1_King" HorizontalAlignment="Left" Height="23" Margin="207,0,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="69"/>
-                <Label Content="V" HorizontalAlignment="Left" Height="23" Margin="189,0,0,0" VerticalAlignment="Top" Width="18" RenderTransformOrigin="1.178,0.722"/>
-                <Label Content="S" HorizontalAlignment="Left" Height="23" Margin="102,0,0,0" VerticalAlignment="Top" Width="18" RenderTransformOrigin="1.178,0.722"/>
-                <Label Content="H" HorizontalAlignment="Left" Height="23" Margin="10,0,0,0" VerticalAlignment="Top" Width="18" RenderTransformOrigin="1.178,0.722"/>
-            </Grid>
-        </Grid>
         <Grid Margin="0,10,297,113" HorizontalAlignment="Right" Width="292" Height="280">
             <Label Content="Pionek gracza 1" HorizontalAlignment="Left" Height="27" Margin="10,0,0,0" VerticalAlignment="Top" Width="174"/>
             <Grid Margin="0,-100,0,0" Height="70" VerticalAlignment="Center">
@@ -42,7 +23,7 @@
                 <Label Content="H" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" VerticalAlignment="Top" Width="18" RenderTransformOrigin="1.178,0.722"/>
                 <Label Content="S" HorizontalAlignment="Left" Height="23" Margin="102,10,0,0" VerticalAlignment="Top" Width="18" RenderTransformOrigin="1.178,0.722"/>
                 <Label Content="V" HorizontalAlignment="Left" Height="23" Margin="189,10,0,0" VerticalAlignment="Top" Width="18" RenderTransformOrigin="1.178,0.722"/>
-                <xctk:IntegerUpDown x:Name="IUD_MinH" Value="160" Height="23" Margin="33,28,132.5,19" Minimum="0" Maximum="179"/>
+                <xctk:IntegerUpDown x:Name="IUD_MinH" Value="160" Height="23" Margin="33,28,132.5,19" Minimum="0" Maximum="180"/>
                 <xctk:IntegerUpDown x:Name="IUD_MinS" Value="100" Height="23" Margin="120,29,45.5,18" Minimum="0" Maximum="255"/>
                 <xctk:IntegerUpDown x:Name="IUD_MinV" Value="100" Height="23" Margin="212,29,16,18" Minimum="0" Maximum="255" Grid.ColumnSpan="2"/>
                 <Label Content="Minimum" HorizontalAlignment="Left" Height="28" Margin="209,1,0,0" VerticalAlignment="Top" Width="73" Grid.ColumnSpan="2"/>
@@ -55,7 +36,7 @@
                 <Label Content="V" HorizontalAlignment="Left" Height="23" Margin="189,0,0,0" VerticalAlignment="Top" Width="18" RenderTransformOrigin="1.178,0.722"/>
                 <Label Content="S" HorizontalAlignment="Left" Height="23" Margin="102,0,0,0" VerticalAlignment="Top" Width="18" RenderTransformOrigin="1.178,0.722"/>
                 <Label Content="H" HorizontalAlignment="Left" Height="23" Margin="10,0,0,0" VerticalAlignment="Top" Width="18" RenderTransformOrigin="1.178,0.722"/>
-                <xctk:IntegerUpDown x:Name="IUD_MaxH" Value="179" Height="23" Margin="33,1,122,8" Minimum="0" Maximum="179"/>
+                <xctk:IntegerUpDown x:Name="IUD_MaxH" Value="179" Height="23" Margin="33,1,122,8" Minimum="0" Maximum="180"/>
                 <xctk:IntegerUpDown x:Name="IUD_MaxS" Value="255" Height="23" Margin="120,1,35,8" Minimum="0" Maximum="255"/>
                 <xctk:IntegerUpDown x:Name="IUD_MaxV" Value="255" Height="23" Margin="212,10,14,17" Minimum="0" Maximum="255" Grid.ColumnSpan="2"/>
                 <Label Content="Maksimum" HorizontalAlignment="Left" Height="28" Margin="212,-5,0,0" VerticalAlignment="Top" Width="73" Grid.ColumnSpan="2"/>
@@ -63,5 +44,11 @@
         </Grid>
         <Button x:Name="BTN_Next" Content="Dalej" HorizontalAlignment="Left" Height="28" Margin="673,282,0,0" VerticalAlignment="Top" Width="147" Click="BTN_Next_Click"/>
         <Label Content="Przypisanie pionkom kolorów. Proszę umieścić na planszy pionki" HorizontalAlignment="Left" Height="31" Margin="252,282,0,0" VerticalAlignment="Top" Width="374"/>
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="60" Margin="577,46,0,0" VerticalAlignment="Top" Width="60">
+            <Image x:Name="IMG_ShowMinColor" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        </Border>
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="60" Margin="577,173,0,0" VerticalAlignment="Top" Width="60">
+            <Image x:Name="IMG_ShowMaxColor" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        </Border>
     </Grid>
 </Page>

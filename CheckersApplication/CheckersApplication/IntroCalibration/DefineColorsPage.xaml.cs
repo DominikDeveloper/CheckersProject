@@ -61,12 +61,23 @@ namespace CheckersApplication
                     camera.imageViewer.Image.Bitmap, minHSV, maxHSV, ref HSV_PiecesColors.Player1_MCvS_Data);
 
                 IMG_Camera.Source = ToBitmapConverter.Convert(color_hue_image);
+
+                IMG_ShowMinColor.Source = PreviewColor(HSV_PiecesColors.Player1_MCvS_Data[(int)ColorValArray.Minimum]);
+                IMG_ShowMaxColor.Source = PreviewColor(HSV_PiecesColors.Player1_MCvS_Data[(int)ColorValArray.Maximum]);
             }
             catch (Exception ex)
             {
                 ComponentDispatcher.ThreadIdle -= new EventHandler(updateFrames);
                 System.Windows.MessageBox.Show(ex.Message);
             }
+        }
+
+        private BitmapSource PreviewColor(MCvScalar color, int width = 60, int height = 60)
+        {
+            Image<Hsv, byte> image = new Image<Hsv, byte>(width, height);
+            CvInvoke.Rectangle(image, new System.Drawing.Rectangle(0, 0, width, height), color, -1);
+
+            return ToBitmapConverter.Convert(image);
         }
     }
 }
