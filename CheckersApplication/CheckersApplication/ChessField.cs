@@ -22,6 +22,30 @@ namespace CheckersApplication
 
         public static ChessField[,] GetChessFields(Point[] rectangle)
         {
+            Point[] rectangle2 = rectangle;
+            IEnumerable<Point> query = rectangle2.OrderBy(r => r.X);
+            if (query.ElementAt<Point>(0).Y < query.ElementAt<Point>(1).Y)
+            {
+                rectangle[0] = query.ElementAt<Point>(0);
+                rectangle[2] = query.ElementAt<Point>(1);
+            }
+            else
+            {
+                rectangle[0] = query.ElementAt<Point>(1);
+                rectangle[2] = query.ElementAt<Point>(0);
+            }
+
+            if (query.ElementAt<Point>(2).Y < query.ElementAt<Point>(3).Y)
+            {
+                rectangle[1] = query.ElementAt<Point>(2);
+                rectangle[3] = query.ElementAt<Point>(3);
+            }
+            else
+            {
+                rectangle[1] = query.ElementAt<Point>(3);
+                rectangle[3] = query.ElementAt<Point>(2);
+            }
+
             int width = rectangle[1].X - rectangle[0].X;
             int height = rectangle[3].Y - rectangle[0].Y;
             int fieldWidht = width / 8;

@@ -58,7 +58,7 @@ namespace CheckersApplication
         {
             try
             {
-                camera.imageViewer.Image = camera.capture.QueryFrame(); //.QuerySmallFrame(); --> what better?
+                camera.imageViewer.Image = camera.capture.QueryFrame();
                 IMG_Camera.Source = ToBitmapConverter.Convert(camera.imageViewer.Image);
                 var image = new Image<Bgr, Byte>(camera.imageViewer.Image.Bitmap);
                 Detect(cameraCapture: image);
@@ -147,7 +147,7 @@ namespace CheckersApplication
         private void Detect(string filePath = null, Image<Bgr, byte> cameraCapture = null)
         {
             Image<Bgr, byte> image, resultImage;
-            chessBoardState.Clear();
+
 
             if (filePath != null)
                 image = new Image<Bgr, byte>(filePath).Resize(400, 400, Inter.Linear, true);
@@ -155,7 +155,7 @@ namespace CheckersApplication
                 image = cameraCapture;
 
             resultImage = image.Copy();
-            System.Drawing.Point[]points = Detection.GetRectanglePoints(image);           
+            System.Drawing.Point[]points = Detection.GetRectanglePoints(image);
 
             if (points != null)
             {
@@ -163,23 +163,23 @@ namespace CheckersApplication
                 ChessField[,] fields = ChessField.GetChessFields(points);
                 if (fields != null)
                 {
-                     foreach (var field in fields)
+                    foreach (var field in fields)
                         resultImage.Draw(field.points, new Bgr(Color.Green), 2);
 
-                     CircleF[] circles = Detection.GetCircles(image);
+                    CircleF[] circles = Detection.GetCircles(image);
 
-                      if (circles != null)
-                      {
-                          foreach (CircleF circle in circles)
+                    if (circles != null)
+                    {
+                        foreach (CircleF circle in circles)
                             resultImage.Draw(circle, new Bgr(Color.Blue), 3);
 
                         ChessField.Pons(fields, circles);
+                        chessBoardState.Clear();
                         chessBoardState.AddPieces(fields);
 
                     }
                 }
             }
-
             IMG_Detected.Source = ToBitmapConverter.Convert(resultImage);
         }
 
