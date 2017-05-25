@@ -5,9 +5,10 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:CheckersApplication"
       mc:Ignorable="d" 
-      Height="720" Width="1280"
+      Height="580" Width="1280"
       WindowStartupLocation="CenterScreen" 
-      Title="Checkers Project">
+      ResizeMode="CanMinimize"
+        Title="Checkers Project">
 
     <Window.Resources>
         <DrawingBrush x:Key="CheckerBoard" Stretch="Fill" TileMode="Tile" Viewport="0,0,120,120" ViewportUnits="Absolute">
@@ -56,19 +57,19 @@
 
     <Grid Background="#FFFFFEFE">
         <!-- #2d2d2f -->
-        <Button x:Name="BT_Start" Content="Rozpocznij" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="BT_Start_Click" Margin="36,181,0,0"/>
-        <Button x:Name="BT_Stop" Content="Zatrzymaj" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="BT_Stop_Click" IsEnabled="False" Margin="36,237,0,0"/>
-        <TextBox x:Name="TB_CameraSource" HorizontalAlignment="Left" Height="41" Margin="36,106,0,0" TextWrapping="Wrap" Text="URL streamu, ID kamery, lub plik wideo,&#xD;&#xA;np. (http://IP:PORT/mjpegfeed)" VerticalAlignment="Top" Width="253" IsEnabled="False" GotFocus="TB_CameraSource_GotFocus" Foreground="Gray"/>
-        <CheckBox x:Name="CB_DefaultCamera" Content="Wybór kamery z listy" HorizontalAlignment="Left" Margin="36,62,0,0" VerticalAlignment="Top" Width="134" Height="25" IsChecked="True" Click="CB_DefaultCamera_Click" />
-        <CheckBox x:Name="CB_OpenCL" Content="Użyj OpenCL" HorizontalAlignment="Left" Height="23" Margin="36,376,0,0" VerticalAlignment="Top" Width="120" IsChecked="False" Click="CB_OpenCL_Click"/>
-        <Button x:Name="BT_ImageTest" Content="Test wykrywania (wczytane zdj.)" HorizontalAlignment="Left" Height="48" Margin="168,351,0,0" VerticalAlignment="Top" Width="189" Click="BT_ImageTest_Click"/>
-        <ComboBox x:Name="CO_Cameras" HorizontalAlignment="Left" Height="25" Margin="188,62,0,0" VerticalAlignment="Top" Width="101" IsEditable="False"/>
-        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Right" Height="400" Margin="100,90,0,0" VerticalAlignment="Top" Width="400">
+        <Button x:Name="BT_Start" Content="Rozpocznij" HorizontalAlignment="Left" VerticalAlignment="Top" Width="122" Click="BT_Start_Click" Margin="14,126,0,0"/>
+        <Button x:Name="BT_Stop" Content="Zatrzymaj" HorizontalAlignment="Left" VerticalAlignment="Top" Width="126" Click="BT_Stop_Click" IsEnabled="False" Margin="141,126,0,0"/>
+        <TextBox x:Name="TB_CameraSource" HorizontalAlignment="Left" Height="41" Margin="14,71,0,0" TextWrapping="Wrap" Text="URL streamu, ID kamery, lub plik wideo,&#xD;&#xA;np. (http://IP:PORT/mjpegfeed)" VerticalAlignment="Top" Width="253" IsEnabled="False" GotFocus="TB_CameraSource_GotFocus" Foreground="Gray"/>
+        <CheckBox x:Name="CB_DefaultCamera" Content="Wybór kamery z listy" HorizontalAlignment="Left" Margin="14,30,0,0" VerticalAlignment="Top" Width="134" Height="25" IsChecked="True" Click="CB_DefaultCamera_Click" />
+        <CheckBox x:Name="CB_OpenCL" Content="Użyj OpenCL" HorizontalAlignment="Left" Height="23" Margin="16,312,0,0" VerticalAlignment="Top" Width="120" IsChecked="False" Click="CB_OpenCL_Click"/>
+        <Button x:Name="BT_ImageTest" Content="Test wykrywania (wczytane zdj.)" HorizontalAlignment="Left" Height="48" Margin="14,175,0,0" VerticalAlignment="Top" Width="189" Click="BT_ImageTest_Click"/>
+        <ComboBox x:Name="CO_Cameras" HorizontalAlignment="Left" Height="25" Margin="166,30,0,0" VerticalAlignment="Top" Width="101" IsEditable="False"/>
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Right" Height="480" Margin="100,30,17,0" VerticalAlignment="Top" Width="480">
             <Image x:Name="IMG_Detected"/>
         </Border>
 
 
-        <ItemsControl Name="ChessBoard" Margin="380,84,448,301">
+        <ItemsControl Name="ChessBoard" Margin="210,30,448,301">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Canvas Width="480" Height="480" Background="{StaticResource CheckerBoard}"/>
