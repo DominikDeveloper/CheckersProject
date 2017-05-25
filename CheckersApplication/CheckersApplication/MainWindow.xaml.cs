@@ -59,7 +59,6 @@ namespace CheckersApplication
             try
             {
                 camera.imageViewer.Image = camera.capture.QueryFrame();
-                IMG_Camera.Source = ToBitmapConverter.Convert(camera.imageViewer.Image);
                 var image = new Image<Bgr, Byte>(camera.imageViewer.Image.Bitmap);
                 Detect(cameraCapture: image);
             }
@@ -98,7 +97,6 @@ namespace CheckersApplication
             ComponentDispatcher.ThreadIdle -= new EventHandler(updateFrames);
             camera.capture.Stop();
             camera.capture.Dispose();
-            IMG_Camera.Source = null;
             CO_Cameras.IsEnabled = true;
         }
 
