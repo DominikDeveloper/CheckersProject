@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:CheckersApplication"
       mc:Ignorable="d" 
-      Height="580" Width="1280"
+      Height="720" Width="1280"
       WindowStartupLocation="CenterScreen" 
       ResizeMode="CanMinimize"
         Title="Checkers Project">
@@ -55,7 +55,7 @@
     </Window.Resources>
 
 
-    <Grid Background="#FFFFFEFE">
+    <Grid Background="#FFFFFEFE" Margin="0,0,0,0">
         <!-- #2d2d2f -->
         <Button x:Name="BT_Start" Content="Rozpocznij" HorizontalAlignment="Left" VerticalAlignment="Top" Width="122" Click="BT_Start_Click" Margin="14,126,0,0"/>
         <Button x:Name="BT_Stop" Content="Zatrzymaj" HorizontalAlignment="Left" VerticalAlignment="Top" Width="126" Click="BT_Stop_Click" IsEnabled="False" Margin="141,126,0,0"/>
@@ -64,12 +64,12 @@
         <CheckBox x:Name="CB_OpenCL" Content="Użyj OpenCL" HorizontalAlignment="Left" Height="23" Margin="16,241,0,0" VerticalAlignment="Top" Width="120" IsChecked="False" Click="CB_OpenCL_Click"/>
         <Button x:Name="BT_ImageTest" Content="Test wykrywania (wczytane zdj.)" HorizontalAlignment="Left" Height="48" Margin="14,175,0,0" VerticalAlignment="Top" Width="189" Click="BT_ImageTest_Click"/>
         <ComboBox x:Name="CO_Cameras" HorizontalAlignment="Left" Height="25" Margin="166,30,0,0" VerticalAlignment="Top" Width="101" IsEditable="False"/>
-        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Right" Height="480" Margin="100,30,17,0" VerticalAlignment="Top" Width="480">
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Right" Height="480" Margin="0,30,17,0" VerticalAlignment="Top" Width="450">
             <Image x:Name="IMG_Detected"/>
         </Border>
 
 
-        <ItemsControl Name="ChessBoard" Margin="282,30,512,41">
+        <ItemsControl Name="ChessBoard" Margin="310,30,512,181">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Canvas Width="480" Height="480" Background="{StaticResource CheckerBoard}"/>
@@ -99,6 +99,45 @@
         </Border>
         <TextBlock HorizontalAlignment="Left" Margin="16,325,0,0" TextWrapping="Wrap" Text="Player1 color:" VerticalAlignment="Top"/>
         <TextBlock HorizontalAlignment="Left" Margin="166,325,0,0" TextWrapping="Wrap" Text="Player2 color:" VerticalAlignment="Top"/>
-        <CheckBox Content="Użyj automatycznie wykrytych kolorów" HorizontalAlignment="Left" Margin="16,305,0,0" VerticalAlignment="Top" Width="250"/>
+        <CheckBox x:Name="CB_AutoDetectColors" Content="Wykryj kolory pionków" HorizontalAlignment="Left" Margin="16,305,0,0" VerticalAlignment="Top" Width="250" Click="CB_AutoDetectColors_Click"/>
+
+        <StackPanel Margin="0,451,1126,135">
+            <StackPanel Orientation="Horizontal">
+                <Label Width="21">R:</Label>
+                <Slider Minimum="0" Maximum="255" x:Name="redSlider1" TickFrequency="1" ValueChanged="RGBplayer1_ValueChanged" Width="83" IsSnapToTickEnabled="True" VerticalAlignment="Center" />
+                <Label Content="{Binding ElementName=redSlider1, Path=Value}" Width="44"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Width="21">G:</Label>
+                <Slider Minimum="0" Maximum="255" x:Name="greenSlider1" TickFrequency="1" ValueChanged="RGBplayer1_ValueChanged" Width="83" IsSnapToTickEnabled="True" VerticalAlignment="Center"/>
+                <Label Content="{Binding ElementName=greenSlider1, Path=Value}" Width="44"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Width="21">B:</Label>
+                <Slider Minimum="0" Maximum="255" x:Name="blueSlider1" TickFrequency="1" ValueChanged="RGBplayer1_ValueChanged" Width="83" IsSnapToTickEnabled="True" VerticalAlignment="Center"/>
+                <Label Content="{Binding ElementName=blueSlider1, Path=Value}" Width="44"/>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Margin="150,451,964,155">
+            <StackPanel Orientation="Horizontal">
+                <Label Width="21">R:</Label>
+                <Slider Minimum="0" Maximum="255" x:Name="redSlider2" TickFrequency="1" ValueChanged="RGBplayer2_ValueChanged" Width="83" IsSnapToTickEnabled="True" VerticalAlignment="Center" />
+                <Label Content="{Binding ElementName=redSlider2, Path=Value}" Width="43"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Width="21">G:</Label>
+                <Slider Minimum="0" Maximum="255" x:Name="greenSlider2" TickFrequency="1" ValueChanged="RGBplayer2_ValueChanged" Width="83" IsSnapToTickEnabled="True" VerticalAlignment="Center" />
+                <Label Content="{Binding ElementName=greenSlider2, Path=Value}" Width="43"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Width="21">B:</Label>
+                <Slider Minimum="0" Maximum="255" x:Name="blueSlider2" TickFrequency="1" ValueChanged="RGBplayer2_ValueChanged" Width="83" IsSnapToTickEnabled="True" VerticalAlignment="Center"/>
+                <Label Content="{Binding ElementName=blueSlider2, Path=Value}" Width="43"/>
+            </StackPanel>
+        </StackPanel>
+
     </Grid>
+
+
 </Window>

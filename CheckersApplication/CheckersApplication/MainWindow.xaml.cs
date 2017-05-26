@@ -180,14 +180,56 @@ namespace CheckersApplication
                             ChessField.Pons(fields, circles);
                             chessBoardState.Clear();
                             chessBoardState.AddPieces(fields);
-                            Detection.DetectPlayersColors(ref player1Color, ref player2Color, image);
+                            if(CB_AutoDetectColors.IsChecked==true)
+                                Detection.DetectPlayersColors(circles, ref player1Color, ref player2Color, image);
                         }
                         CV_Player1Color.Background = new System.Windows.Media.SolidColorBrush(player1Color);
+                        redSlider1.Value = player1Color.R;
+                        greenSlider1.Value = player1Color.G;
+                        blueSlider1.Value = player1Color.B;
                         CV_Player2Color.Background = new System.Windows.Media.SolidColorBrush(player2Color);
+                        redSlider2.Value = player2Color.R;
+                        greenSlider2.Value = player2Color.G;
+                        blueSlider2.Value = player2Color.B;
                     }
                 }
             }
             IMG_Detected.Source = ToBitmapConverter.Convert(resultImage);
         }
+
+        private void RGBplayer1_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            System.Windows.Media.Color color = System.Windows.Media.Color.FromRgb((byte)redSlider1.Value, (byte)greenSlider1.Value, (byte)blueSlider1.Value);
+            CV_Player1Color.Background = new System.Windows.Media.SolidColorBrush(color);
+        }
+
+        private void RGBplayer2_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            System.Windows.Media.Color color = System.Windows.Media.Color.FromRgb((byte)redSlider2.Value, (byte)greenSlider2.Value, (byte)blueSlider2.Value);
+            CV_Player2Color.Background = new System.Windows.Media.SolidColorBrush(color);
+        }
+
+        private void CB_AutoDetectColors_Click(object sender, RoutedEventArgs e)
+        {
+            if (CB_AutoDetectColors.IsChecked == true)
+            {
+                redSlider1.IsEnabled = false;
+                redSlider2.IsEnabled = false;
+                blueSlider1.IsEnabled = false;
+                blueSlider2.IsEnabled = false;
+                greenSlider1.IsEnabled = false;
+                greenSlider2.IsEnabled = false;
+            }
+            else
+            {
+                redSlider1.IsEnabled = true;
+                redSlider2.IsEnabled = true;
+                blueSlider1.IsEnabled = true;
+                blueSlider2.IsEnabled = true;
+                greenSlider1.IsEnabled = true;
+                greenSlider2.IsEnabled = true;
+            }
+        }
     }
+
 }

@@ -51,10 +51,9 @@ namespace CheckersApplication
             return true;
         }
 
-        public static void DetectPlayersColors(ref System.Windows.Media.Color player1, ref System.Windows.Media.Color player2, Image<Bgr, byte> image)
+        public static void DetectPlayersColors(CircleF []circles, ref System.Windows.Media.Color player1, ref System.Windows.Media.Color player2, Image<Bgr, byte> image)
         {
             int lastChange=2;
-            CircleF[] circles = Detection.GetCircles(image);
             List<Color> currentColors = new List<Color>();
             System.Windows.Media.Color color = new System.Windows.Media.Color();
             if (circles != null)
@@ -93,18 +92,18 @@ namespace CheckersApplication
                         color = System.Windows.Media.Color.FromRgb((byte)r, (byte)g, (byte)b);
 
 
-                        if (player1.R > color.R - 5 &&
-                            player1.R < color.R + 5 &&
-                            player1.G > color.G - 5 &&
-                            player1.G < color.G + 5 &&
-                            player1.B > color.B - 5 &&
-                            player1.B < color.B + 5||
-                            player2.R > color.R - 5 &&
-                            player2.R < color.R + 5 &&
-                            player2.G > color.G - 5 &&
-                            player2.G < color.G + 5 &&
-                            player2.B > color.B - 5 &&
-                            player2.B < color.B + 5)
+                        if (player1.R > color.R - 50 &&
+                            player1.R < color.R + 50 &&
+                            player1.G > color.G - 50 &&
+                            player1.G < color.G + 50 &&
+                            player1.B > color.B - 50 &&
+                            player1.B < color.B + 50 ||
+                            player2.R > color.R - 50 &&
+                            player2.R < color.R + 50 &&
+                            player2.G > color.G - 50 &&
+                            player2.G < color.G + 50 &&
+                            player2.B > color.B - 50 &&
+                            player2.B < color.B + 50)
                             continue;
                         else if (MainWindow.player1Detected == false)
                         {
