@@ -5,6 +5,7 @@ using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
+using System.Collections.Generic;
 
 namespace CheckersApplication
 {
@@ -48,6 +49,99 @@ namespace CheckersApplication
                 }
             }
             return true;
+        }
+
+        public static void DetectPlayersColors(ref System.Windows.Media.Color player1, ref System.Windows.Media.Color player2, Image<Bgr, byte> image)
+        {
+            int lastChange=2;
+            CircleF[] circles = Detection.GetCircles(image);
+            List<Color> currentColors = new List<Color>();
+            System.Windows.Media.Color color = new System.Windows.Media.Color();
+            if (circles != null)
+            {
+                foreach (CircleF circle in circles)
+                {
+                    //resultImage.Draw(circle, new Bgr(Color.Blue), 3);
+                    try
+                    {
+                        currentColors.Clear();
+                        for (int i = 0; i < circle.Radius - 2; i++)
+                        {
+                            currentColors.Add(image.Bitmap.GetPixel((int)circle.Center.X + i, (int)circle.Center.Y));
+                            currentColors.Add(image.Bitmap.GetPixel((int)circle.Center.X - i, (int)circle.Center.Y));
+                            currentColors.Add(image.Bitmap.GetPixel((int)circle.Center.X, (int)circle.Center.Y + i));
+                            currentColors.Add(image.Bitmap.GetPixel((int)circle.Center.X, (int)circle.Center.Y - i));
+                            currentColors.Add(image.Bitmap.GetPixel((int)circle.Center.X + i, (int)circle.Center.Y + i));
+                            currentColors.Add(image.Bitmap.GetPixel((int)circle.Center.X - i, (int)circle.Center.Y - i));
+                            currentColors.Add(image.Bitmap.GetPixel((int)circle.Center.X + i, (int)circle.Center.Y - i));
+                            currentColors.Add(image.Bitmap.GetPixel((int)circle.Center.X - i, (int)circle.Center.Y + i));
+                        }
+
+                        int r = 0, g = 0, b = 0, counter = 0;
+                        foreach (Color clr in currentColors)
+                        {
+                            counter++;
+                            r += (int)clr.R;
+                            g += (int)clr.G;
+                            b += (int)clr.B;
+                        }
+                        r = r / counter;
+                        g = g / counter;
+                        b = b / counter;
+                        CircleF c = new CircleF(circle.Center, 5);
+                        //resultImage.Draw(c, new Bgr(Color.Yellow), 3);
+                        color = System.Windows.Media.Color.FromRgb((byte)r, (byte)g, (byte)b);
+
+
+                        if (player1.R > color.R - 5 &&
+                            player1.R < color.R + 5 &&
+                            player1.G > color.G - 5 &&
+                            player1.G < color.G + 5 &&
+                            player1.B > color.B - 5 &&
+                            player1.B < color.B + 5||
+                            player2.R > color.R - 5 &&
+                            player2.R < color.R + 5 &&
+                            player2.G > color.G - 5 &&
+                            player2.G < color.G + 5 &&
+                            player2.B > color.B - 5 &&
+                            player2.B < color.B + 5)
+                            continue;
+                        else if (MainWindow.player1Detected == false)
+                        {
+                            player1 = color;
+                            lastChange = 1;
+                            MainWindow.player1Detected = true;
+                            continue;
+                        }
+                        else if (MainWindow.player2Detected == false)
+                        {
+                            player2 = color;
+                            lastChange = 2;
+                            MainWindow.player2Detected = true;
+                        }
+                        else
+                        {
+                            if (lastChange == 1)
+                            {
+                                player2 = color;
+                                lastChange = 2;
+                            }
+
+                            else{
+                                player1 = color;
+                                lastChange = 1;
+                            }
+
+                            MainWindow.player1Detected = true;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
+
+                }
+            }
         }
 
         public static System.Drawing.Point[] GetRectanglePoints(Image<Bgr, Byte> img)

@@ -30,10 +30,14 @@ namespace CheckersApplication
     {
         Camera camera;
         ChessBoardState chessBoardState = new ChessBoardState();
+        public static  System.Windows.Media.Color player1Color = new System.Windows.Media.Color();
+        public static  System.Windows.Media.Color player2Color = new System.Windows.Media.Color();
+        public static bool player1Detected = false;
+        public static bool player2Detected = false;
 
         public MainWindow()
         {
-            InitializeComponent();            
+            InitializeComponent();
             DiscoverUsbCameras();
             CvInvoke.UseOpenCL = (bool)CB_OpenCL.IsChecked;
             this.ChessBoard.ItemsSource = chessBoardState.pieces;
@@ -53,7 +57,7 @@ namespace CheckersApplication
             if (CO_Cameras.Items.Count > 0)
                 CO_Cameras.SelectedIndex = 0;
         }
-                
+
         public void updateFrames(object sender, EventArgs e)
         {
             try
@@ -62,7 +66,8 @@ namespace CheckersApplication
                 var image = new Image<Bgr, Byte>(camera.imageViewer.Image.Bitmap);
                 Detect(cameraCapture: image);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 ComponentDispatcher.ThreadIdle -= new EventHandler(updateFrames);
                 System.Windows.MessageBox.Show(ex.Message);
                 ChangeBtnStartStop();
@@ -83,7 +88,7 @@ namespace CheckersApplication
         private void BT_Start_Click(object sender, RoutedEventArgs e)
         {
             ChangeBtnStartStop();
-            if (CB_DefaultCamera.IsChecked==true && CO_Cameras.Items.Count>0)     
+            if (CB_DefaultCamera.IsChecked == true && CO_Cameras.Items.Count > 0)
                 camera = new Camera(Convert.ToString(CO_Cameras.SelectedIndex));
             else
                 camera = new Camera(TB_CameraSource.Text);
@@ -108,7 +113,7 @@ namespace CheckersApplication
             {
                 TB_CameraSource.Text = "URL streamu, ID kamery, lub plik wideo,\nnp. (http://IP:PORT/mjpegfeed)";
                 TB_CameraSource.Foreground = System.Windows.Media.Brushes.Gray;
-            }           
+            }
         }
 
         private void CB_OpenCL_Click(object sender, RoutedEventArgs e)
@@ -146,11 +151,6 @@ namespace CheckersApplication
         {
             Image<Bgr, byte> image, resultImage;
             List<Color> currentColors = new List<Color>();
-            System.Windows.Media.Color color = new System.Windows.Media.Color();
-            System.Windows.Media.Color player1Color = new System.Windows.Media.Color();
-            System.Windows.Media.Color player2Color = new System.Windows.Media.Color();
-            bool player1Detected = false;
-            bool player2Detected = false;
 
 
             if (filePath != null)
@@ -159,7 +159,7 @@ namespace CheckersApplication
                 image = cameraCapture;
 
             resultImage = image.Copy();
-            System.Drawing.Point[]points = Detection.GetRectanglePoints(image);
+            System.Drawing.Point[] points = Detection.GetRectanglePoints(image);
 
             if (points != null)
             {
@@ -177,66 +177,17 @@ namespace CheckersApplication
                         foreach (CircleF circle in circles)
                         {
                             resultImage.Draw(circle, new Bgr(Color.Blue), 3);
-                            try
-                            {
-                                currentColors.Clear();
-                                for (int i = 0; i < circle.Radius-2; i++)
-                                {
-                                    currentColors.Add(image.Bitmap.GetPixel((int)circle.Center.X + i, (int)circle.Center.Y));
-                                    currentColors.Add(image.Bitmap.GetPixel((int)circle.Center.X - i, (int)circle.Center.Y));
-                                    currentColors.Add(image.Bitmap.GetPixel((int)circle.Center.X, (int)circle.Center.Y+i));
-                                    currentColors.Add(image.Bitmap.GetPixel((int)circle.Center.X, (int)circle.Center.Y-i));
-                                    currentColors.Add(image.Bitmap.GetPixel((int)circle.Center.X + i, (int)circle.Center.Y+i));
-                                    currentColors.Add(image.Bitmap.GetPixel((int)circle.Center.X - i, (int)circle.Center.Y-i));
-                                    currentColors.Add(image.Bitmap.GetPixel((int)circle.Center.X + i, (int)circle.Center.Y-i));
-                                    currentColors.Add(image.Bitmap.GetPixel((int)circle.Center.X - i, (int)circle.Center.Y+i));
-                                }
-
-
-                                int r = 0, g = 0, b = 0, counter = 0;
-                                foreach (Color clr in currentColors)
-                                {
-                                    counter++;
-                                    r += (int)clr.R;
-                                    g += (int)clr.G;
-                                    b += (int)clr.B;
-                                }
-                                r = r / counter;
-                                g = g / counter;
-                                b = b / counter;
-                                CircleF c = new CircleF(circle.Center, 5);
-                                resultImage.Draw(c, new Bgr(Color.Yellow), 3);
-                                color = System.Windows.Media.Color.FromRgb((byte)r, (byte)g, (byte)b);
-
-                                if (player1Detected==false)
-                                {
-                                    player1Color = color;
-                                    player1Detected = true;
-                                }
-
-                                else if (player2Detected == false)
-                                {
-                                    player2Color = color;
-                                    player2Detected = true;
-                                }
-
-                            }
-                            catch(Exception e)
-                            {
-
-                            }
+                            ChessField.Pons(fields, circles);
+                            chessBoardState.Clear();
+                            chessBoardState.AddPieces(fields);
+                            Detection.DetectPlayersColors(ref player1Color, ref player2Color, image);
                         }
-
-                        ChessField.Pons(fields, circles);
-                        chessBoardState.Clear();
-                        chessBoardState.AddPieces(fields);
+                        CV_Player1Color.Background = new System.Windows.Media.SolidColorBrush(player1Color);
+                        CV_Player2Color.Background = new System.Windows.Media.SolidColorBrush(player2Color);
                     }
                 }
             }
             IMG_Detected.Source = ToBitmapConverter.Convert(resultImage);
-            CV_Player1Color.Background = new System.Windows.Media.SolidColorBrush(player1Color);
-            CV_Player2Color.Background = new System.Windows.Media.SolidColorBrush(player2Color);
         }
-
     }
 }
