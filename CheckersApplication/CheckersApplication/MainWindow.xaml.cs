@@ -204,7 +204,7 @@ namespace CheckersApplication
                             foreach (CircleF circle in circles)
                             {
                                 resultImage.Draw(circle, new Bgr(Color.Red), 3);
-                                ChessField.Pons(fields, circles);
+                                ChessField.Pons(fields, circles, (int)Player.White); //only white?!
                                 chessBoardState.Clear();
                                 chessBoardState.AddPieces(fields);
                             }
@@ -238,14 +238,14 @@ namespace CheckersApplication
                             foreach (CircleF circle in circleFor1)
                             {
                                 resultImage.Draw(circle, new Bgr(Color.Green), 3);
-                                ChessField.Pons(fields, circles);
+                                ChessField.Pons(fields, circleFor1, (int)Player.Black);
                                 chessBoardState.AddPieces(fields);
                             }
 
                             foreach (CircleF circle in circleFor2)
                             {
                                 resultImage.Draw(circle, new Bgr(Color.Blue), 3);
-                                ChessField.Pons(fields, circles);
+                                ChessField.Pons(fields, circleFor2, (int)Player.White);
                                 chessBoardState.AddPieces(fields);
                             }
 
