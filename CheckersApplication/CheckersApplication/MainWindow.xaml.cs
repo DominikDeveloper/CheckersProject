@@ -191,6 +191,9 @@ namespace CheckersApplication
 
                     CircleF[] circles = Detection.GetCircles(image);
 
+                    //define color of board fields
+                    fields = DifferenceBoardSquareColors(fields);
+                    //
 
                     Mat filtring1 = new Mat();
                     Mat filtring2 = new Mat();
@@ -204,7 +207,7 @@ namespace CheckersApplication
                             foreach (CircleF circle in circles)
                             {
                                 resultImage.Draw(circle, new Bgr(Color.Red), 3);
-                                ChessField.Pons(fields, circles, (int)Player.White); //only white?!
+                                ChessField.Pons(fields, circles, (int)Player.WhiteMen); //only white?!
                                 chessBoardState.Clear();
                                 chessBoardState.AddPieces(fields);
                             }
@@ -238,25 +241,82 @@ namespace CheckersApplication
                             foreach (CircleF circle in circleFor1)
                             {
                                 resultImage.Draw(circle, new Bgr(Color.Green), 3);
-                                ChessField.Pons(fields, circleFor1, (int)Player.Black);
+                                ChessField.Pons(fields, circleFor1, (int)Player.BlackMen);
                                 chessBoardState.AddPieces(fields);
                             }
 
                             foreach (CircleF circle in circleFor2)
                             {
                                 resultImage.Draw(circle, new Bgr(Color.Blue), 3);
-                                ChessField.Pons(fields, circleFor2, (int)Player.White);
+                                ChessField.Pons(fields, circleFor2, (int)Player.WhiteMen);
                                 chessBoardState.AddPieces(fields);
                             }
 
                             IMG_Filter1.Source = ToBitmapConverter.Convert(filtring1);
                             IMG_Filter2.Source = ToBitmapConverter.Convert(filtring2);
+
+                            //Show correct moves/jumps
+                            PutMoveJumpsToDatagrid(fields);
+                            //
                         }
                         
                     }
                 }
             }
             IMG_Detected.Source = ToBitmapConverter.Convert(resultImage);
+        }
+
+        private ChessField[,] DifferenceBoardSquareColors(ChessField[,] fields)
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j += 2)
+                {
+                    if (i % 2 == 0)
+                    {
+                        fields[i, j].Value = (int)Player.BlackEmptySquare;
+                        fields[i, j + 1].Value = (int)Player.WhiteSquare;
+                    }
+                    else
+                    {
+                        fields[i, j].Value = (int)Player.WhiteSquare;
+                        fields[i, j + 1].Value = (int)Player.BlackEmptySquare;
+                    }
+                }
+            }
+
+            return fields;
+        }
+
+        private void PutMoveJumpsToDatagrid(ChessField[,] fields)
+        {
+            //Show correct moves/jumps (static methods - no change sequence of calling methods
+
+            MovesJumps.CheckMovesForWhite(fields);
+            MovesJumps.CheckJumpsForWhite(fields);
+            MovesJumps.CheckMovesForBlack(fields);
+            MovesJumps.CheckJumpsForBlack(fields);
+
+            List<MovesBody> list1 = new List<MovesBody>();
+            foreach (var item in MovesJumps.jump_buffer_white)
+            {
+                list1.Add(item);
+            }
+            foreach (var item in MovesJumps.move_buffer_white)
+            {
+                list1.Add(item);
+            }
+            foreach (var item in MovesJumps.jump_buffer_black)
+            {
+                list1.Add(item);
+            }
+            foreach (var item in MovesJumps.move_buffer_black)
+            {
+                list1.Add(item);
+            }
+
+            DG_Moves.ItemsSource = null;
+            DG_Moves.ItemsSource = list1;
         }
 
         private void RGBplayer1_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

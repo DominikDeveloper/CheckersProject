@@ -35,7 +35,7 @@
             <Style.Triggers>
                 <MultiDataTrigger>
                     <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding Player}" Value="{x:Static local:Player.White}"/>
+                        <Condition Binding="{Binding Player}" Value="{x:Static local:Player.WhiteMen}"/>
                     </MultiDataTrigger.Conditions>
                     <MultiDataTrigger.Setters>
                         <Setter Property="Image.Source" Value="pack://application:,,,/Resources/piece_white.png" />
@@ -43,7 +43,7 @@
                 </MultiDataTrigger>
                 <MultiDataTrigger>
                     <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding Player}" Value="{x:Static local:Player.Black}"/>
+                        <Condition Binding="{Binding Player}" Value="{x:Static local:Player.BlackMen}"/>
                     </MultiDataTrigger.Conditions>
                     <MultiDataTrigger.Setters>
                         <Setter Property="Image.Source" Value="pack://application:,,,/Resources/piece_black.png" />
@@ -189,6 +189,14 @@
                 <Image x:Name="IMG_Filter2"/>
             </Border>
         </Grid>
+        <DataGrid x:Name="DG_Moves" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="153" Margin="1046,528,0,0" VerticalAlignment="Top" Width="211">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Z" Width="50" IsReadOnly="True" SortDirection="Ascending" Binding="{Binding BoardLocationFrom}"/>
+                <DataGridTextColumn Header="Do" Width="50" IsReadOnly="True" Binding="{Binding BoardLocationTo}"/>
+                <DataGridTextColumn Header="Bić" Width="50" IsReadOnly="True" Binding="{Binding NumberOfJumps}"/>
+                <DataGridTextColumn Header="Kto?" Width="50" IsReadOnly="True" Binding="{Binding Player}"/>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 
 

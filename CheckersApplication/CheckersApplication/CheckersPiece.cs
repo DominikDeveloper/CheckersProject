@@ -10,8 +10,10 @@ namespace CheckersApplication
 {
     public enum Player
     {
-        White = 1,
-        Black = 2
+        BlackEmptySquare = 0,
+        WhiteSquare = 1,
+        BlackMen = 2,
+        WhiteMen = 3
     }
 
     class CheckersPiece : ViewModelBase
