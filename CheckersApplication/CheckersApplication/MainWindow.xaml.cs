@@ -39,8 +39,27 @@ namespace CheckersApplication
         {
             InitializeComponent();
             DiscoverUsbCameras();
+            InitValuePickers();
             CvInvoke.UseOpenCL = (bool)CB_OpenCL.IsChecked;
             this.ChessBoard.ItemsSource = chessBoardState.pieces;
+        }
+
+        private void InitValuePickers() //set values for white
+        {
+            blueSlider1.Value = blueSlider1.Maximum;
+            blueSlider2.Value = blueSlider2.Maximum;
+            blueSlider3.Value = blueSlider3.Maximum;
+            blueSlider4.Value = blueSlider4.Maximum;
+
+            greenSlider1.Value = greenSlider1.Maximum;
+            greenSlider2.Value = greenSlider2.Maximum;
+            greenSlider3.Value = greenSlider3.Maximum;
+            greenSlider4.Value = greenSlider4.Maximum;
+
+            redSlider1.Value = redSlider1.Maximum;
+            redSlider2.Value = redSlider2.Maximum;
+            redSlider3.Value = redSlider3.Maximum;
+            redSlider4.Value = redSlider4.Maximum;
         }
 
         public void DiscoverUsbCameras()
@@ -172,25 +191,68 @@ namespace CheckersApplication
 
                     CircleF[] circles = Detection.GetCircles(image);
 
+
+                    Mat filtring1 = new Mat();
+                    Mat filtring2 = new Mat();
+
+                    int[] minColorVal = new int[] { 3, 2, 1 };
+
                     if (circles != null)
                     {
-                        foreach (CircleF circle in circles)
+                        if (CB_AutoDetectColors.IsChecked == true)
                         {
-                            resultImage.Draw(circle, new Bgr(Color.Blue), 3);
-                            ChessField.Pons(fields, circles);
-                            chessBoardState.Clear();
-                            chessBoardState.AddPieces(fields);
-                            if(CB_AutoDetectColors.IsChecked==true)
-                                Detection.DetectPlayersColors(circles, ref player1Color, ref player2Color, image);
+                            foreach (CircleF circle in circles)
+                            {
+                                resultImage.Draw(circle, new Bgr(Color.Red), 3);
+                                ChessField.Pons(fields, circles);
+                                chessBoardState.Clear();
+                                chessBoardState.AddPieces(fields);
+                            }
+
+                            Detection.DetectPlayersColors(circles, ref player1Color, ref player2Color, image);
+
+                            CV_Player1Color.Background = new System.Windows.Media.SolidColorBrush(player1Color);
+                            redSlider1.Value = player1Color.R;
+                            greenSlider1.Value = player1Color.G;
+                            blueSlider1.Value = player1Color.B;
+                            CV_Player2Color.Background = new System.Windows.Media.SolidColorBrush(player2Color);
+                            redSlider2.Value = player2Color.R;
+                            greenSlider2.Value = player2Color.G;
+                            blueSlider2.Value = player2Color.B;
                         }
-                        CV_Player1Color.Background = new System.Windows.Media.SolidColorBrush(player1Color);
-                        redSlider1.Value = player1Color.R;
-                        greenSlider1.Value = player1Color.G;
-                        blueSlider1.Value = player1Color.B;
-                        CV_Player2Color.Background = new System.Windows.Media.SolidColorBrush(player2Color);
-                        redSlider2.Value = player2Color.R;
-                        greenSlider2.Value = player2Color.G;
-                        blueSlider2.Value = player2Color.B;
+                        else
+                        {
+                            var circleFor1 = Detection.FilterSomeColors(
+                                image,
+                                ref filtring1,
+                                new double[] { blueSlider1.Value, greenSlider1.Value, redSlider1.Value },
+                                new double[] { blueSlider3.Value, greenSlider3.Value, redSlider3.Value });
+                            var circleFor2 = Detection.FilterSomeColors(
+                                image,
+                                ref filtring2,
+                                new double[] { blueSlider2.Value, greenSlider2.Value, redSlider2.Value },
+                                new double[] { blueSlider4.Value, greenSlider4.Value, redSlider4.Value });
+
+                            chessBoardState.Clear();
+
+                            foreach (CircleF circle in circleFor1)
+                            {
+                                resultImage.Draw(circle, new Bgr(Color.Green), 3);
+                                ChessField.Pons(fields, circles);
+                                chessBoardState.AddPieces(fields);
+                            }
+
+                            foreach (CircleF circle in circleFor2)
+                            {
+                                resultImage.Draw(circle, new Bgr(Color.Blue), 3);
+                                ChessField.Pons(fields, circles);
+                                chessBoardState.AddPieces(fields);
+                            }
+
+                            IMG_Filter1.Source = ToBitmapConverter.Convert(filtring1);
+                            IMG_Filter2.Source = ToBitmapConverter.Convert(filtring2);
+                        }
+                        
                     }
                 }
             }
@@ -209,6 +271,18 @@ namespace CheckersApplication
             CV_Player2Color.Background = new System.Windows.Media.SolidColorBrush(color);
         }
 
+        private void RGBplayer3_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            System.Windows.Media.Color color = System.Windows.Media.Color.FromRgb((byte)redSlider3.Value, (byte)greenSlider3.Value, (byte)blueSlider3.Value);
+            CV_Player1Color_Max.Background = new System.Windows.Media.SolidColorBrush(color);
+        }
+
+        private void RGBplayer4_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            System.Windows.Media.Color color = System.Windows.Media.Color.FromRgb((byte)redSlider4.Value, (byte)greenSlider4.Value, (byte)blueSlider4.Value);
+            CV_Player2Color_Max.Background = new System.Windows.Media.SolidColorBrush(color);
+        }
+
         private void CB_AutoDetectColors_Click(object sender, RoutedEventArgs e)
         {
             if (CB_AutoDetectColors.IsChecked == true)
@@ -219,6 +293,8 @@ namespace CheckersApplication
                 blueSlider2.IsEnabled = false;
                 greenSlider1.IsEnabled = false;
                 greenSlider2.IsEnabled = false;
+                GD_MaxSettingColors.Visibility = Visibility.Hidden;
+                GD_FilterImages.Visibility = Visibility.Hidden;
             }
             else
             {
@@ -228,6 +304,8 @@ namespace CheckersApplication
                 blueSlider2.IsEnabled = true;
                 greenSlider1.IsEnabled = true;
                 greenSlider2.IsEnabled = true;
+                GD_MaxSettingColors.Visibility = Visibility.Visible;
+                GD_FilterImages.Visibility = Visibility.Visible;
             }
         }
     }

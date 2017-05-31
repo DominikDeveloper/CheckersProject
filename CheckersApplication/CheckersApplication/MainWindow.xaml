@@ -136,7 +136,59 @@
                 <Label Content="{Binding ElementName=blueSlider2, Path=Value}" Width="43"/>
             </StackPanel>
         </StackPanel>
+        <Grid x:Name="GD_MaxSettingColors" HorizontalAlignment="Left" Height="140" Margin="16,541,0,0" VerticalAlignment="Top" Width="547" Visibility="Visible">
+            <TextBlock HorizontalAlignment="Left" Margin="10,2,0,0" TextWrapping="Wrap" Text="Player1 color (max):" VerticalAlignment="Top"/>
+            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="100" Margin="10,23,0,0" VerticalAlignment="Top" Width="100">
+                <Canvas x:Name="CV_Player1Color_Max"/>
+            </Border>
+            <TextBlock HorizontalAlignment="Left" Margin="276,2,0,0" TextWrapping="Wrap" Text="Player2 color (max):" VerticalAlignment="Top"/>
+            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="100" Margin="280,23,0,0" VerticalAlignment="Top" Width="100">
+                <Canvas x:Name="CV_Player2Color_Max" Margin="0,0,0,0"/>
+            </Border>
+            <StackPanel Margin="130,22,252,18">
+                <StackPanel Orientation="Horizontal">
+                    <Label Width="21" Content="R:"/>
+                    <Slider Minimum="0" Maximum="255" x:Name="redSlider3" TickFrequency="1" ValueChanged="RGBplayer3_ValueChanged" Width="83" IsSnapToTickEnabled="True" VerticalAlignment="Center" />
+                    <Label Content="{Binding Value, ElementName=redSlider3}" Width="44"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Width="21" Content="G:"/>
+                    <Slider Minimum="0" Maximum="255" x:Name="greenSlider3" TickFrequency="1" ValueChanged="RGBplayer3_ValueChanged" Width="83" IsSnapToTickEnabled="True" VerticalAlignment="Center"/>
+                    <Label Content="{Binding Value, ElementName=greenSlider3}" Width="44"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Width="21" Content="B:"/>
+                    <Slider Minimum="0" Maximum="255" x:Name="blueSlider3" TickFrequency="1" ValueChanged="RGBplayer3_ValueChanged" Width="83" IsSnapToTickEnabled="True" VerticalAlignment="Center"/>
+                    <Label Content="{Binding Value, ElementName=blueSlider3}" Width="44"/>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Margin="391,22,10,18">
+                <StackPanel Orientation="Horizontal">
+                    <Label Width="21" Content="R:"/>
+                    <Slider Minimum="0" Maximum="255" x:Name="redSlider4" TickFrequency="1" ValueChanged="RGBplayer4_ValueChanged" Width="83" IsSnapToTickEnabled="True" VerticalAlignment="Center" />
+                    <Label Content="{Binding Value, ElementName=redSlider4}" Width="44"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Width="21" Content="G:"/>
+                    <Slider Minimum="0" Maximum="255" x:Name="greenSlider4" TickFrequency="1" ValueChanged="RGBplayer4_ValueChanged" Width="83" IsSnapToTickEnabled="True" VerticalAlignment="Center"/>
+                    <Label Content="{Binding Value, ElementName=greenSlider4}" Width="44"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Width="21" Content="B:"/>
+                    <Slider Minimum="0" Maximum="255" x:Name="blueSlider4" TickFrequency="1" ValueChanged="RGBplayer4_ValueChanged" Width="83" IsSnapToTickEnabled="True" VerticalAlignment="Center"/>
+                    <Label Content="{Binding Value, ElementName=blueSlider4}" Width="44"/>
+                </StackPanel>
+            </StackPanel>
 
+        </Grid>
+        <Grid x:Name="GD_FilterImages" HorizontalAlignment="Left" Height="153" Margin="578,528,0,0" VerticalAlignment="Top" Width="420">
+            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Right" VerticalAlignment="Top" Width="149" Height="135" Margin="0,10,261,0">
+                <Image x:Name="IMG_Filter1"/>
+            </Border>
+            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Right" VerticalAlignment="Top" Width="149" Height="135" Margin="0,10,10,0">
+                <Image x:Name="IMG_Filter2"/>
+            </Border>
+        </Grid>
     </Grid>
 
 

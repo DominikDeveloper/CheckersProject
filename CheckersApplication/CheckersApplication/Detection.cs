@@ -143,6 +143,35 @@ namespace CheckersApplication
             }
         }
 
+
+        public static CircleF[] FilterSomeColors(Image<Bgr, Byte> image, ref Mat effectMat, double[] minColorsValues, double[] maxColorsValues)
+        {
+            // Load input image
+            Mat bgr_image = image.Mat;
+
+            Mat orig_image = bgr_image.Clone();
+
+            CvInvoke.MedianBlur(bgr_image, bgr_image, 3);
+
+            // Threshold the BGR image, keep only the selected color pixels
+            Mat color_hue_image = new Mat();
+            
+            CvInvoke.InRange(
+                bgr_image, 
+                new ScalarArray(new MCvScalar(Convert.ToInt32(minColorsValues[0]), Convert.ToInt32(minColorsValues[1]), Convert.ToInt32(minColorsValues[2]))),
+                new ScalarArray(new MCvScalar(Convert.ToInt32(maxColorsValues[0]), Convert.ToInt32(maxColorsValues[1]), Convert.ToInt32(maxColorsValues[2]))),
+                color_hue_image);
+
+            CvInvoke.GaussianBlur(color_hue_image, color_hue_image, new System.Drawing.Size(9, 9), 2, 2);
+
+            effectMat = color_hue_image;
+
+            // Use the Hough transform to detect circles in the combined threshold image
+            var circlesArray = CvInvoke.HoughCircles(color_hue_image, HoughType.Gradient, 1, color_hue_image.Rows / 8, 100, 20, 0, 0);
+
+            return circlesArray;
+        }
+
         public static System.Drawing.Point[] GetRectanglePoints(Image<Bgr, Byte> img)
         {
             double cannyThresholdLinking = 120.0;
