@@ -1,0 +1,6 @@
+C:\Users\Avi\Documents\Visual Studio 2017\Projects\CheckersPossibleMoves\CheckersPossibleMovesMatrices\bin\Debug\CheckersPossibleMovesMatrices.exe.config
+C:\Users\Avi\Documents\Visual Studio 2017\Projects\CheckersPossibleMoves\CheckersPossibleMovesMatrices\bin\Debug\CheckersPossibleMovesMatrices.exe
+C:\Users\Avi\Documents\Visual Studio 2017\Projects\CheckersPossibleMoves\CheckersPossibleMovesMatrices\bin\Debug\CheckersPossibleMovesMatrices.pdb
+C:\Users\Avi\Documents\Visual Studio 2017\Projects\CheckersPossibleMoves\CheckersPossibleMovesMatrices\obj\Debug\CheckersPossibleMovesMatrices.exe
+C:\Users\Avi\Documents\Visual Studio 2017\Projects\CheckersPossibleMoves\CheckersPossibleMovesMatrices\obj\Debug\CheckersPossibleMovesMatrices.pdb
+C:\Users\Avi\Documents\Visual Studio 2017\Projects\CheckersPossibleMoves\CheckersPossibleMovesMatrices\obj\Debug\CheckersPossibleMovesMatrices.csprojResolveAssemblyReference.cache

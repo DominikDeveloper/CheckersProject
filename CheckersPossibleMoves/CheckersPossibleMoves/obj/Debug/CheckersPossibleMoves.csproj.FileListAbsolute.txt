@@ -1,0 +1,6 @@
+c:\users\avi\documents\visual studio 2017\Projects\CheckersPossibleMoves\CheckersPossibleMoves\bin\Debug\CheckersPossibleMoves.exe.config
+c:\users\avi\documents\visual studio 2017\Projects\CheckersPossibleMoves\CheckersPossibleMoves\bin\Debug\CheckersPossibleMoves.exe
+c:\users\avi\documents\visual studio 2017\Projects\CheckersPossibleMoves\CheckersPossibleMoves\bin\Debug\CheckersPossibleMoves.pdb
+c:\users\avi\documents\visual studio 2017\Projects\CheckersPossibleMoves\CheckersPossibleMoves\obj\Debug\CheckersPossibleMoves.csprojResolveAssemblyReference.cache
+c:\users\avi\documents\visual studio 2017\Projects\CheckersPossibleMoves\CheckersPossibleMoves\obj\Debug\CheckersPossibleMoves.exe
+c:\users\avi\documents\visual studio 2017\Projects\CheckersPossibleMoves\CheckersPossibleMoves\obj\Debug\CheckersPossibleMoves.pdb

@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("CheckersPossibleMoves")]
+[assembly: AssemblyTitle("CheckersPossibleMovesMatrices")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("CheckersPossibleMoves")]
+[assembly: AssemblyProduct("CheckersPossibleMovesMatrices")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("ebc2f8c0-a4c1-4b9a-82b8-3b7be7299c05")]
+[assembly: Guid("fa31a3ef-68c6-47de-b1fc-4a7c1f41547c")]
 
 // Version information for an assembly consists of the following four values:
 //
