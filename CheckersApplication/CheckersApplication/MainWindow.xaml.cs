@@ -222,6 +222,15 @@ namespace CheckersApplication
                             redSlider2.Value = player2Color.R;
                             greenSlider2.Value = player2Color.G;
                             blueSlider2.Value = player2Color.B;
+
+                            CV_Player1Color_Max.Background = new System.Windows.Media.SolidColorBrush(player1Color);
+                            redSlider3.Value = player1Color.R;
+                            greenSlider3.Value = player1Color.G;
+                            blueSlider3.Value = player1Color.B;
+                            CV_Player2Color_Max.Background = new System.Windows.Media.SolidColorBrush(player2Color);
+                            redSlider4.Value = player2Color.R;
+                            greenSlider4.Value = player2Color.G;
+                            blueSlider4.Value = player2Color.B;
                         }
                         else
                         {
@@ -353,8 +362,6 @@ namespace CheckersApplication
                 blueSlider2.IsEnabled = false;
                 greenSlider1.IsEnabled = false;
                 greenSlider2.IsEnabled = false;
-                GD_MaxSettingColors.Visibility = Visibility.Hidden;
-                GD_FilterImages.Visibility = Visibility.Hidden;
             }
             else
             {
@@ -364,8 +371,6 @@ namespace CheckersApplication
                 blueSlider2.IsEnabled = true;
                 greenSlider1.IsEnabled = true;
                 greenSlider2.IsEnabled = true;
-                GD_MaxSettingColors.Visibility = Visibility.Visible;
-                GD_FilterImages.Visibility = Visibility.Visible;
             }
         }
     }
