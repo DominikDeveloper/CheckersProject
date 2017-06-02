@@ -34,10 +34,13 @@ namespace CheckersApplication
         public static  System.Windows.Media.Color player2Color = new System.Windows.Media.Color();
         public static bool player1Detected = false;
         public static bool player2Detected = false;
+        private bool ifInitComponent;
 
         public MainWindow()
         {
+            ifInitComponent = false;
             InitializeComponent();
+            ifInitComponent = true;
             DiscoverUsbCameras();
             InitValuePickers();
             CvInvoke.UseOpenCL = (bool)CB_OpenCL.IsChecked;
@@ -46,20 +49,7 @@ namespace CheckersApplication
 
         private void InitValuePickers() //set values for white
         {
-            blueSlider1.Value = blueSlider1.Maximum;
-            blueSlider2.Value = blueSlider2.Maximum;
-            blueSlider3.Value = blueSlider3.Maximum;
-            blueSlider4.Value = blueSlider4.Maximum;
-
-            greenSlider1.Value = greenSlider1.Maximum;
-            greenSlider2.Value = greenSlider2.Maximum;
-            greenSlider3.Value = greenSlider3.Maximum;
-            greenSlider4.Value = greenSlider4.Maximum;
-
-            redSlider1.Value = redSlider1.Maximum;
-            redSlider2.Value = redSlider2.Maximum;
-            redSlider3.Value = redSlider3.Maximum;
-            redSlider4.Value = redSlider4.Maximum;
+            //maybe use in future
         }
 
         public void DiscoverUsbCameras()
@@ -214,36 +204,36 @@ namespace CheckersApplication
 
                             Detection.DetectPlayersColors(circles, ref player1Color, ref player2Color, image);
 
-                            CV_Player1Color.Background = new System.Windows.Media.SolidColorBrush(player1Color);
-                            redSlider1.Value = player1Color.R;
-                            greenSlider1.Value = player1Color.G;
-                            blueSlider1.Value = player1Color.B;
-                            CV_Player2Color.Background = new System.Windows.Media.SolidColorBrush(player2Color);
-                            redSlider2.Value = player2Color.R;
-                            greenSlider2.Value = player2Color.G;
-                            blueSlider2.Value = player2Color.B;
-
+                            CV_Player1Color_Min.Background = new System.Windows.Media.SolidColorBrush(player1Color);
+                            RS_Slider1R.LowerValue = player1Color.R;
+                            RS_Slider1G.LowerValue = player1Color.G;
+                            RS_Slider1B.LowerValue = player1Color.B;
                             CV_Player1Color_Max.Background = new System.Windows.Media.SolidColorBrush(player1Color);
-                            redSlider3.Value = player1Color.R;
-                            greenSlider3.Value = player1Color.G;
-                            blueSlider3.Value = player1Color.B;
+                            RS_Slider1R.HigherValue = player1Color.R;
+                            RS_Slider1G.HigherValue = player1Color.G;
+                            RS_Slider1B.HigherValue = player1Color.B;
+
+                            CV_Player2Color_Min.Background = new System.Windows.Media.SolidColorBrush(player2Color);
+                            RS_Slider2R.LowerValue = player2Color.R;
+                            RS_Slider2G.LowerValue = player2Color.G;
+                            RS_Slider2B.LowerValue = player2Color.B;
                             CV_Player2Color_Max.Background = new System.Windows.Media.SolidColorBrush(player2Color);
-                            redSlider4.Value = player2Color.R;
-                            greenSlider4.Value = player2Color.G;
-                            blueSlider4.Value = player2Color.B;
+                            RS_Slider2R.HigherValue = player2Color.R;
+                            RS_Slider2G.HigherValue = player2Color.G;
+                            RS_Slider2B.HigherValue = player2Color.B;
                         }
                         else
                         {
                             var circleFor1 = Detection.FilterSomeColors(
                                 image,
                                 ref filtring1,
-                                new double[] { blueSlider1.Value, greenSlider1.Value, redSlider1.Value },
-                                new double[] { blueSlider3.Value, greenSlider3.Value, redSlider3.Value });
+                                new double[] { RS_Slider1B.LowerValue, RS_Slider1G.LowerValue, RS_Slider1R.LowerValue },
+                                new double[] { RS_Slider1B.HigherValue, RS_Slider1G.HigherValue, RS_Slider1R.HigherValue });
                             var circleFor2 = Detection.FilterSomeColors(
                                 image,
                                 ref filtring2,
-                                new double[] { blueSlider2.Value, greenSlider2.Value, redSlider2.Value },
-                                new double[] { blueSlider4.Value, greenSlider4.Value, redSlider4.Value });
+                                new double[] { RS_Slider2B.LowerValue, RS_Slider2G.LowerValue, RS_Slider2R.LowerValue },
+                                new double[] { RS_Slider2B.HigherValue, RS_Slider2G.HigherValue, RS_Slider2R.HigherValue });
 
                             chessBoardState.Clear();
 
@@ -328,49 +318,58 @@ namespace CheckersApplication
             DG_Moves.ItemsSource = list1;
         }
 
-        private void RGBplayer1_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            System.Windows.Media.Color color = System.Windows.Media.Color.FromRgb((byte)redSlider1.Value, (byte)greenSlider1.Value, (byte)blueSlider1.Value);
-            CV_Player1Color.Background = new System.Windows.Media.SolidColorBrush(color);
-        }
-
-        private void RGBplayer2_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            System.Windows.Media.Color color = System.Windows.Media.Color.FromRgb((byte)redSlider2.Value, (byte)greenSlider2.Value, (byte)blueSlider2.Value);
-            CV_Player2Color.Background = new System.Windows.Media.SolidColorBrush(color);
-        }
-
-        private void RGBplayer3_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            System.Windows.Media.Color color = System.Windows.Media.Color.FromRgb((byte)redSlider3.Value, (byte)greenSlider3.Value, (byte)blueSlider3.Value);
-            CV_Player1Color_Max.Background = new System.Windows.Media.SolidColorBrush(color);
-        }
-
-        private void RGBplayer4_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            System.Windows.Media.Color color = System.Windows.Media.Color.FromRgb((byte)redSlider4.Value, (byte)greenSlider4.Value, (byte)blueSlider4.Value);
-            CV_Player2Color_Max.Background = new System.Windows.Media.SolidColorBrush(color);
-        }
 
         private void CB_AutoDetectColors_Click(object sender, RoutedEventArgs e)
         {
             if (CB_AutoDetectColors.IsChecked == true)
             {
-                redSlider1.IsEnabled = false;
-                redSlider2.IsEnabled = false;
-                blueSlider1.IsEnabled = false;
-                blueSlider2.IsEnabled = false;
-                greenSlider1.IsEnabled = false;
-                greenSlider2.IsEnabled = false;
+                RS_Slider1R.IsEnabled = false;
+                RS_Slider2R.IsEnabled = false;
+                RS_Slider1G.IsEnabled = false;
+                RS_Slider2G.IsEnabled = false;
+                RS_Slider1B.IsEnabled = false;
+                RS_Slider2B.IsEnabled = false;
             }
             else
             {
-                redSlider1.IsEnabled = true;
-                redSlider2.IsEnabled = true;
-                blueSlider1.IsEnabled = true;
-                blueSlider2.IsEnabled = true;
-                greenSlider1.IsEnabled = true;
-                greenSlider2.IsEnabled = true;
+                RS_Slider1R.IsEnabled = true;
+                RS_Slider2R.IsEnabled = true;
+                RS_Slider1G.IsEnabled = true;
+                RS_Slider2G.IsEnabled = true;
+                RS_Slider1B.IsEnabled = true;
+                RS_Slider2B.IsEnabled = true;
+            }
+        }
+
+        private void RangeSlider_Player1_ValueChanged(object sender, RoutedEventArgs e)
+        {
+            if (ifInitComponent)
+            {
+                LB_Range1R.Content = RS_Slider1R.LowerValue.ToString() + " - " + RS_Slider1R.HigherValue.ToString();
+                LB_Range1G.Content = RS_Slider1G.LowerValue.ToString() + " - " + RS_Slider1G.HigherValue.ToString();
+                LB_Range1B.Content = RS_Slider1B.LowerValue.ToString() + " - " + RS_Slider1B.HigherValue.ToString();
+
+                System.Windows.Media.Color minColor = System.Windows.Media.Color.FromRgb((byte)RS_Slider1R.LowerValue, (byte)RS_Slider1G.LowerValue, (byte)RS_Slider1B.LowerValue);
+                CV_Player1Color_Min.Background = new System.Windows.Media.SolidColorBrush(minColor);
+
+                System.Windows.Media.Color maxColor = System.Windows.Media.Color.FromRgb((byte)RS_Slider1R.HigherValue, (byte)RS_Slider1G.HigherValue, (byte)RS_Slider1B.HigherValue);
+                CV_Player1Color_Max.Background = new System.Windows.Media.SolidColorBrush(maxColor);
+            }
+        }
+
+        private void RangeSlider_Player2_ValueChanged(object sender, RoutedEventArgs e)
+        {
+            if (ifInitComponent)
+            {
+                LB_Range2R.Content = RS_Slider2R.LowerValue.ToString() + " - " + RS_Slider2R.HigherValue.ToString();
+                LB_Range2G.Content = RS_Slider2G.LowerValue.ToString() + " - " + RS_Slider2G.HigherValue.ToString();
+                LB_Range2B.Content = RS_Slider2B.LowerValue.ToString() + " - " + RS_Slider2B.HigherValue.ToString();
+
+                System.Windows.Media.Color minColor = System.Windows.Media.Color.FromRgb((byte)RS_Slider2R.LowerValue, (byte)RS_Slider2G.LowerValue, (byte)RS_Slider2B.LowerValue);
+                CV_Player2Color_Min.Background = new System.Windows.Media.SolidColorBrush(minColor);
+
+                System.Windows.Media.Color maxColor = System.Windows.Media.Color.FromRgb((byte)RS_Slider2R.HigherValue, (byte)RS_Slider2G.HigherValue, (byte)RS_Slider2B.HigherValue);
+                CV_Player2Color_Max.Background = new System.Windows.Media.SolidColorBrush(maxColor);
             }
         }
     }
