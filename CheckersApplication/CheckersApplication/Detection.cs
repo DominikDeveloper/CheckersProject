@@ -25,7 +25,7 @@ namespace CheckersApplication
         public static CircleF[] GetCircles(Image<Bgr, Byte> img)
         {
             UMat uimage = ConvertClearImage(img);
-            double cannyThreshold = 140.0;
+            double cannyThreshold = 130.0;
             double circleAccumulatorThreshold = 40.0;
             double dp = 2.0;
             double minDist = 30.0;
@@ -167,7 +167,15 @@ namespace CheckersApplication
             effectMat = color_hue_image;
 
             // Use the Hough transform to detect circles in the combined threshold image
-            var circlesArray = CvInvoke.HoughCircles(color_hue_image, HoughType.Gradient, 1, color_hue_image.Rows / 8, 100, 20, 0, 0);
+            //var circlesArray = CvInvoke.HoughCircles(color_hue_image, HoughType.Gradient, 1, color_hue_image.Rows / 8, 100, 20, 0, 0);
+            double cannyThreshold = 130.0;
+            double circleAccumulatorThreshold = 40.0;
+            double dp = 2.0;
+            double minDist = 30.0;
+            int minRadius = 5;
+            int maxRadius = 30;
+            CircleF[] circlesArray = CvInvoke.HoughCircles(
+    color_hue_image, HoughType.Gradient, dp, minDist, cannyThreshold, circleAccumulatorThreshold, minRadius, maxRadius);
 
             return circlesArray;
         }
