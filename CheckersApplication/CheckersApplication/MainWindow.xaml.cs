@@ -381,6 +381,7 @@ namespace CheckersApplication
         {
             currentMove++;
             shownMove++;
+            TB_MoveNr.Text = "Nr ruchu: " + (shownMove+1).ToString() + " (bieżący)";
             List<CheckersPiece> pieces = new List<CheckersPiece>();
             foreach (var p in chessBoardState.piecesObservable)
                 pieces.Add(p.Copy());
@@ -393,6 +394,8 @@ namespace CheckersApplication
             if (shownMove < 1)
                 return;
 
+            TB_MoveNr.Text = "Nr ruchu: " + shownMove.ToString();
+            BT_SaveMove.IsEnabled = false;
             shownMove--;
             chessBoardState.piecesObservable.Clear();
             foreach (var p in chessBoardState.history[shownMove])
@@ -406,10 +409,16 @@ namespace CheckersApplication
                 return;
 
             shownMove++;
+            
 
             if (shownMove == currentMove)
+            {
+                BT_SaveMove.IsEnabled = true;
+                TB_MoveNr.Text = "Nr ruchu: "+ (shownMove+1).ToString()+" (bieżący)";
                 return;
+            }
 
+            TB_MoveNr.Text = "Nr ruchu: " + shownMove.ToString();
             chessBoardState.piecesObservable.Clear();
             foreach (var p in chessBoardState.history[shownMove])
                 chessBoardState.piecesObservable.Add(p.Copy());

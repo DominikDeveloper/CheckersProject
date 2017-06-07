@@ -208,9 +208,10 @@
             </DataGrid.Columns>
         </DataGrid>
         <Button x:Name="BT_SaveMove" Content="Wykonaj ruch" HorizontalAlignment="Left" Margin="494,531,0,0" VerticalAlignment="Top" Width="104" Click="BT_SaveMove_Click"/>
-        <Button x:Name="BT_GoBack" Content="&lt;" HorizontalAlignment="Left" Margin="427,531,0,0" VerticalAlignment="Top" Width="20" Click="BT_GoBack_Click"/>
-        <Button x:Name="BT_GoForward" Content="&gt;" HorizontalAlignment="Left" Margin="452,531,0,0" VerticalAlignment="Top" Width="20" Click="BT_GoForward_Click"/>
+        <Button x:Name="BT_GoBack" Content="&lt;" HorizontalAlignment="Left" Margin="433,531,0,0" VerticalAlignment="Top" Width="20" Click="BT_GoBack_Click"/>
+        <Button x:Name="BT_GoForward" Content="&gt;" HorizontalAlignment="Left" Margin="458,531,0,0" VerticalAlignment="Top" Width="20" Click="BT_GoForward_Click"/>
         <Button Content="Nowa gra" HorizontalAlignment="Left" Margin="675,531,0,0" VerticalAlignment="Top" Width="77" Click="Button_Click"/>
+        <TextBlock x:Name="TB_MoveNr" HorizontalAlignment="Left" Height="18" Margin="433,566,0,0" TextWrapping="Wrap" Text="Nr ruchu: 1" VerticalAlignment="Top" Width="113"/>
     </Grid>
 
 </Window>
