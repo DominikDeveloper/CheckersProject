@@ -100,8 +100,8 @@
                 <Canvas x:Name="CV_Player1Color_Max"/>
             </Border>
 
-            <TextBlock HorizontalAlignment="Left" Margin="18,24,0,0" TextWrapping="Wrap" Text="Player1 color:" VerticalAlignment="Top"/>
-            <TextBlock HorizontalAlignment="Left" Margin="166,24,0,0" TextWrapping="Wrap" Text="Player2 color:" VerticalAlignment="Top"/>
+            <TextBlock HorizontalAlignment="Left" Margin="18,24,0,0" TextWrapping="Wrap" Text="Kol. ciemny - gracz 1:" VerticalAlignment="Top"/>
+            <TextBlock HorizontalAlignment="Left" Margin="166,24,0,0" TextWrapping="Wrap" Text="Kol. jasny - gracz 2:" VerticalAlignment="Top"/>
             <CheckBox x:Name="CB_AutoDetectColors" Content="Wykryj kolory pionków" HorizontalAlignment="Left" Margin="2,4,0,0" VerticalAlignment="Top" Width="250" Click="CB_AutoDetectColors_Click"/>
 
             <StackPanel Margin="0,128,144,0">
@@ -196,8 +196,8 @@
             <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Right" VerticalAlignment="Top" Width="130" Height="110" Margin="0,33,41,0">
                 <Image x:Name="IMG_Filter2"/>
             </Border>
-            <Label Content="Detekcja koloru (Player1)" HorizontalAlignment="Left" Height="28" Margin="10,0,0,0" VerticalAlignment="Top" Width="149"/>
-            <Label Content="Detekcja koloru (Player2)" HorizontalAlignment="Left" Height="28" Margin="183,0,0,0" VerticalAlignment="Top" Width="150"/>
+            <Label Content="Detekcja koloru (Gracz 1)" HorizontalAlignment="Left" Height="28" Margin="10,0,0,0" VerticalAlignment="Top" Width="149"/>
+            <Label Content="Detekcja koloru (Gracz 2)" HorizontalAlignment="Left" Height="28" Margin="183,0,0,0" VerticalAlignment="Top" Width="150"/>
         </Grid>
         <DataGrid x:Name="DG_Moves" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="153" Margin="1046,528,0,0" VerticalAlignment="Top" Width="211">
             <DataGrid.Columns>

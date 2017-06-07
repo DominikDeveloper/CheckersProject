@@ -194,6 +194,8 @@ namespace CheckersApplication
 
                     int[] minColorVal = new int[] { 3, 2, 1 };
 
+                    int autoColorsRange = 15;
+
                     if (circles != null)
                     {
                         if (CB_AutoDetectColors.IsChecked == true)
@@ -208,23 +210,27 @@ namespace CheckersApplication
 
                             Detection.DetectPlayersColors(circles, ref player1Color, ref player2Color, image);
 
-                            CV_Player1Color_Min.Background = new System.Windows.Media.SolidColorBrush(player1Color);
-                            RS_Slider1R.LowerValue = player1Color.R;
-                            RS_Slider1G.LowerValue = player1Color.G;
-                            RS_Slider1B.LowerValue = player1Color.B;
-                            CV_Player1Color_Max.Background = new System.Windows.Media.SolidColorBrush(player1Color);
-                            RS_Slider1R.HigherValue = player1Color.R;
-                            RS_Slider1G.HigherValue = player1Color.G;
-                            RS_Slider1B.HigherValue = player1Color.B;
+                            RS_Slider1R.LowerValue = player1Color.R - autoColorsRange;
+                            RS_Slider1G.LowerValue = player1Color.G - autoColorsRange;
+                            RS_Slider1B.LowerValue = player1Color.B - autoColorsRange;
+                            RS_Slider1R.HigherValue = player1Color.R + autoColorsRange;
+                            RS_Slider1G.HigherValue = player1Color.G + autoColorsRange;
+                            RS_Slider1B.HigherValue = player1Color.B + autoColorsRange;
+                            CV_Player1Color_Min.Background = new System.Windows.Media.SolidColorBrush(
+                                System.Windows.Media.Color.FromRgb((byte)RS_Slider1R.LowerValue, (byte)RS_Slider1G.LowerValue, (byte)RS_Slider1B.LowerValue));
+                            CV_Player1Color_Max.Background = new System.Windows.Media.SolidColorBrush(
+                                System.Windows.Media.Color.FromRgb((byte)RS_Slider1R.HigherValue, (byte)RS_Slider1G.HigherValue, (byte)RS_Slider1B.HigherValue));
 
-                            CV_Player2Color_Min.Background = new System.Windows.Media.SolidColorBrush(player2Color);
-                            RS_Slider2R.LowerValue = player2Color.R;
-                            RS_Slider2G.LowerValue = player2Color.G;
-                            RS_Slider2B.LowerValue = player2Color.B;
-                            CV_Player2Color_Max.Background = new System.Windows.Media.SolidColorBrush(player2Color);
-                            RS_Slider2R.HigherValue = player2Color.R;
-                            RS_Slider2G.HigherValue = player2Color.G;
-                            RS_Slider2B.HigherValue = player2Color.B;
+                            RS_Slider2R.LowerValue = player2Color.R - autoColorsRange;
+                            RS_Slider2G.LowerValue = player2Color.G - autoColorsRange;
+                            RS_Slider2B.LowerValue = player2Color.B - autoColorsRange;
+                            RS_Slider2R.HigherValue = player2Color.R + autoColorsRange;
+                            RS_Slider2G.HigherValue = player2Color.G + autoColorsRange;
+                            RS_Slider2B.HigherValue = player2Color.B + autoColorsRange;
+                            CV_Player2Color_Min.Background = new System.Windows.Media.SolidColorBrush(
+                                System.Windows.Media.Color.FromRgb((byte)RS_Slider2R.LowerValue, (byte)RS_Slider2G.LowerValue, (byte)RS_Slider2B.LowerValue));
+                            CV_Player2Color_Max.Background = new System.Windows.Media.SolidColorBrush(
+                                System.Windows.Media.Color.FromRgb((byte)RS_Slider2R.HigherValue, (byte)RS_Slider2G.HigherValue, (byte)RS_Slider2B.HigherValue));
                         }
                         else
                         {
@@ -353,11 +359,14 @@ namespace CheckersApplication
                 LB_Range1G.Content = RS_Slider1G.LowerValue.ToString() + " - " + RS_Slider1G.HigherValue.ToString();
                 LB_Range1B.Content = RS_Slider1B.LowerValue.ToString() + " - " + RS_Slider1B.HigherValue.ToString();
 
-                System.Windows.Media.Color minColor = System.Windows.Media.Color.FromRgb((byte)RS_Slider1R.LowerValue, (byte)RS_Slider1G.LowerValue, (byte)RS_Slider1B.LowerValue);
-                CV_Player1Color_Min.Background = new System.Windows.Media.SolidColorBrush(minColor);
+                if (CB_AutoDetectColors.IsChecked == false)
+                { 
+                    System.Windows.Media.Color minColor = System.Windows.Media.Color.FromRgb((byte)RS_Slider1R.LowerValue, (byte)RS_Slider1G.LowerValue, (byte)RS_Slider1B.LowerValue);
+                    CV_Player1Color_Min.Background = new System.Windows.Media.SolidColorBrush(minColor);
 
-                System.Windows.Media.Color maxColor = System.Windows.Media.Color.FromRgb((byte)RS_Slider1R.HigherValue, (byte)RS_Slider1G.HigherValue, (byte)RS_Slider1B.HigherValue);
-                CV_Player1Color_Max.Background = new System.Windows.Media.SolidColorBrush(maxColor);
+                    System.Windows.Media.Color maxColor = System.Windows.Media.Color.FromRgb((byte)RS_Slider1R.HigherValue, (byte)RS_Slider1G.HigherValue, (byte)RS_Slider1B.HigherValue);
+                    CV_Player1Color_Max.Background = new System.Windows.Media.SolidColorBrush(maxColor);
+                }
             }
         }
 
@@ -369,11 +378,14 @@ namespace CheckersApplication
                 LB_Range2G.Content = RS_Slider2G.LowerValue.ToString() + " - " + RS_Slider2G.HigherValue.ToString();
                 LB_Range2B.Content = RS_Slider2B.LowerValue.ToString() + " - " + RS_Slider2B.HigherValue.ToString();
 
-                System.Windows.Media.Color minColor = System.Windows.Media.Color.FromRgb((byte)RS_Slider2R.LowerValue, (byte)RS_Slider2G.LowerValue, (byte)RS_Slider2B.LowerValue);
-                CV_Player2Color_Min.Background = new System.Windows.Media.SolidColorBrush(minColor);
+                if (CB_AutoDetectColors.IsChecked == false)
+                {
+                    System.Windows.Media.Color minColor = System.Windows.Media.Color.FromRgb((byte)RS_Slider2R.LowerValue, (byte)RS_Slider2G.LowerValue, (byte)RS_Slider2B.LowerValue);
+                    CV_Player2Color_Min.Background = new System.Windows.Media.SolidColorBrush(minColor);
 
-                System.Windows.Media.Color maxColor = System.Windows.Media.Color.FromRgb((byte)RS_Slider2R.HigherValue, (byte)RS_Slider2G.HigherValue, (byte)RS_Slider2B.HigherValue);
-                CV_Player2Color_Max.Background = new System.Windows.Media.SolidColorBrush(maxColor);
+                    System.Windows.Media.Color maxColor = System.Windows.Media.Color.FromRgb((byte)RS_Slider2R.HigherValue, (byte)RS_Slider2G.HigherValue, (byte)RS_Slider2B.HigherValue);
+                    CV_Player2Color_Max.Background = new System.Windows.Media.SolidColorBrush(maxColor);
+                }
             }
         }
 
