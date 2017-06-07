@@ -32,14 +32,14 @@
             </DrawingBrush.Drawing>
         </DrawingBrush>
 
-        <Style x:Key="CheckersPieceStyle" TargetType="{x:Type Image}">
+        <Style x:Key="CheckersPieceStyle" TargetType="{x:Type Ellipse}">
             <Style.Triggers>
                 <MultiDataTrigger>
                     <MultiDataTrigger.Conditions>
                         <Condition Binding="{Binding Player}" Value="{x:Static local:Player.WhiteMen}"/>
                     </MultiDataTrigger.Conditions>
                     <MultiDataTrigger.Setters>
-                        <Setter Property="Image.Source" Value="pack://application:,,,/Resources/piece_white.png" />
+                        <Setter Property="Fill" Value="#FFE8E8E8" />
                     </MultiDataTrigger.Setters>
                 </MultiDataTrigger>
                 <MultiDataTrigger>
@@ -47,7 +47,7 @@
                         <Condition Binding="{Binding Player}" Value="{x:Static local:Player.BlackMen}"/>
                     </MultiDataTrigger.Conditions>
                     <MultiDataTrigger.Setters>
-                        <Setter Property="Image.Source" Value="pack://application:,,,/Resources/piece_black.png" />
+                        <Setter Property="Fill" Value="#FF3C2900" />
                     </MultiDataTrigger.Setters>
                 </MultiDataTrigger>
             </Style.Triggers>
@@ -79,7 +79,8 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Grid Width="60" Height="60">
-                        <Image Width="48" Height="48" Style="{StaticResource CheckersPieceStyle}" />
+                        <Ellipse x:Name="piece" Width="35" Height="35" Style="{StaticResource CheckersPieceStyle}">
+                        </Ellipse>
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
