@@ -18,7 +18,7 @@ namespace CheckersApplication
                     if (fields[i, j].Value == 1)
                         pieces.Add(new CheckersPiece { Pos = new Point(j, i), Player = Player.White });
                     else if (fields[i, j].Value == 2)
-                        pieces.Add(new CheckersPiece { Pos = new Point(j, i), Player = Player.Black });
+                        pieces.Add(new CheckersPiece { Pos = new Point(j, i), Player = Player.White });
                 }
             }
         }

@@ -200,12 +200,14 @@ namespace CheckersApplication
         private void RGBplayer1_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             System.Windows.Media.Color color = System.Windows.Media.Color.FromRgb((byte)redSlider1.Value, (byte)greenSlider1.Value, (byte)blueSlider1.Value);
+            player1Color = color;
             CV_Player1Color.Background = new System.Windows.Media.SolidColorBrush(color);
         }
 
         private void RGBplayer2_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             System.Windows.Media.Color color = System.Windows.Media.Color.FromRgb((byte)redSlider2.Value, (byte)greenSlider2.Value, (byte)blueSlider2.Value);
+            player2Color = color;
             CV_Player2Color.Background = new System.Windows.Media.SolidColorBrush(color);
         }
 
