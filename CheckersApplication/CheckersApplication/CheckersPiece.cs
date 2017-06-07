@@ -16,7 +16,7 @@ namespace CheckersApplication
         WhiteMen = 3
     }
 
-    class CheckersPiece : ViewModelBase
+    class CheckersPiece : ViewModelBase 
     {
         private Point pos;
 
@@ -37,6 +37,14 @@ namespace CheckersApplication
         {
             get { return player; }
             set { player = value; RaisePropertyChanged(() => player); }
+        }
+
+        public CheckersPiece Copy()
+        {
+            CheckersPiece p = new CheckersPiece();
+            p.pos = this.pos;
+            p.player = this.player;
+            return p;
         }
     }
 }

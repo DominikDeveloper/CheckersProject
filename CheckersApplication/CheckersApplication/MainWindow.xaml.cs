@@ -35,6 +35,8 @@ namespace CheckersApplication
         public static bool player1Detected = false;
         public static bool player2Detected = false;
         private bool ifInitComponent;
+        int currentMove = 0;
+        int shownMove = 0;
 
         public MainWindow()
         {
@@ -44,7 +46,7 @@ namespace CheckersApplication
             DiscoverUsbCameras();
             InitValuePickers();
             CvInvoke.UseOpenCL = (bool)CB_OpenCL.IsChecked;
-            this.ChessBoard.ItemsSource = chessBoardState.pieces;
+            this.ChessBoard.ItemsSource = chessBoardState.piecesObservable;
         }
 
         private void InitValuePickers() //set values for white
@@ -158,6 +160,8 @@ namespace CheckersApplication
 
         private void Detect(string filePath = null, Image<Bgr, byte> cameraCapture = null)
         {
+            if (currentMove != shownMove)
+                return;
             Image<Bgr, byte> image, resultImage;
             List<Color> currentColors = new List<Color>();
 
@@ -370,6 +374,55 @@ namespace CheckersApplication
 
                 System.Windows.Media.Color maxColor = System.Windows.Media.Color.FromRgb((byte)RS_Slider2R.HigherValue, (byte)RS_Slider2G.HigherValue, (byte)RS_Slider2B.HigherValue);
                 CV_Player2Color_Max.Background = new System.Windows.Media.SolidColorBrush(maxColor);
+            }
+        }
+
+        private void BT_SaveMove_Click(object sender, RoutedEventArgs e)
+        {
+            currentMove++;
+            shownMove++;
+            List<CheckersPiece> pieces = new List<CheckersPiece>();
+            foreach (var p in chessBoardState.piecesObservable)
+                pieces.Add(p.Copy());
+
+            chessBoardState.history.Add(pieces);
+        }
+
+        private void BT_GoBack_Click(object sender, RoutedEventArgs e)
+        {
+            if (shownMove < 1)
+                return;
+
+            shownMove--;
+            chessBoardState.piecesObservable.Clear();
+            foreach (var p in chessBoardState.history[shownMove])
+                chessBoardState.piecesObservable.Add(p.Copy());
+
+        }
+
+        private void BT_GoForward_Click(object sender, RoutedEventArgs e)
+        {
+            if (shownMove == currentMove)
+                return;
+
+            shownMove++;
+
+            if (shownMove == currentMove)
+                return;
+
+            chessBoardState.piecesObservable.Clear();
+            foreach (var p in chessBoardState.history[shownMove])
+                chessBoardState.piecesObservable.Add(p.Copy());
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = System.Windows.MessageBox.Show("Czy na pewno chcesz rozpocząć nową grę?\nDotychczasowy postęp zostanie utracony", "Checkers Project", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                chessBoardState.history.Clear();
+                currentMove = 0;
+                shownMove = 0;
             }
         }
     }

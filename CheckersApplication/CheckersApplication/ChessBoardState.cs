@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 
 namespace CheckersApplication
@@ -7,7 +8,8 @@ namespace CheckersApplication
     class ChessBoardState
     {
         public const int empty = 0;
-        public ObservableCollection<CheckersPiece> pieces = new ObservableCollection<CheckersPiece>();
+        public ObservableCollection<CheckersPiece> piecesObservable = new ObservableCollection<CheckersPiece>();
+        public List<List<CheckersPiece>> history = new List<List<CheckersPiece>>();
 
         public void AddPieces(ChessField[,] fields)
         {
@@ -16,16 +18,16 @@ namespace CheckersApplication
                 for (int j = 0; j < 8; j++)
                 {
                     if (fields[i, j].Value == (int)Player.WhiteMen)
-                        pieces.Add(new CheckersPiece { Pos = new Point(j, i), Player = Player.WhiteMen });
+                        piecesObservable.Add(new CheckersPiece { Pos = new Point(j, i), Player = Player.WhiteMen });
                     else if (fields[i, j].Value == (int)Player.BlackMen)
-                        pieces.Add(new CheckersPiece { Pos = new Point(j, i), Player = Player.BlackMen });
+                        piecesObservable.Add(new CheckersPiece { Pos = new Point(j, i), Player = Player.BlackMen });
                 }
             }
         }
 
         public void Clear()
         {
-            pieces.Clear();
+            piecesObservable.Clear();
         }
 
     }
