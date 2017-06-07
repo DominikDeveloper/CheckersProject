@@ -426,12 +426,14 @@ namespace CheckersApplication
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            MessageBoxResult result = System.Windows.MessageBox.Show("Czy na pewno chcesz rozpocząć nową grę?\nDotychczasowy postęp zostanie utracony", "Checkers Project", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            MessageBoxResult result = System.Windows.MessageBox.Show("Czy na pewno chcesz rozpocząć grę od nowa?\nDotychczasowy postęp zostanie utracony", "Checkers Project", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result == MessageBoxResult.Yes)
             {
                 chessBoardState.history.Clear();
                 currentMove = 0;
                 shownMove = 0;
+                TB_MoveNr.Text = "Nr ruchu: 1 (bieżący)";
+                BT_SaveMove.IsEnabled = true;
             }
         }
     }
