@@ -479,7 +479,7 @@ namespace CheckersApplication
                 return;
             }
 
-            TB_MoveNr.Text = "Nr ruchu: " + shownMove.ToString();
+            TB_MoveNr.Text = "Nr ruchu: " + (shownMove+1).ToString();
             chessBoardState.piecesObservable.Clear();
             foreach (var p in chessBoardState.history[shownMove])
                 chessBoardState.piecesObservable.Add(p.Copy());
