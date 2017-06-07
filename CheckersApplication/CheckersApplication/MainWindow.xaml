@@ -20,7 +20,7 @@
                             <RectangleGeometry Rect="0,0,2,2" />
                         </GeometryDrawing.Geometry>
                     </GeometryDrawing>
-                    <GeometryDrawing Brush="Brown">
+                    <GeometryDrawing Brush="#FFC16262">
                         <GeometryDrawing.Geometry>
                             <GeometryGroup>
                                 <RectangleGeometry Rect="0,0,1,1" />
@@ -39,7 +39,7 @@
                         <Condition Binding="{Binding Player}" Value="{x:Static local:Player.WhiteMen}"/>
                     </MultiDataTrigger.Conditions>
                     <MultiDataTrigger.Setters>
-                        <Setter Property="Fill" Value="#FFE8E8E8" />
+                        <Setter Property="Fill" Value="{DynamicResource Player2Color}"  />
                     </MultiDataTrigger.Setters>
                 </MultiDataTrigger>
                 <MultiDataTrigger>
@@ -47,7 +47,7 @@
                         <Condition Binding="{Binding Player}" Value="{x:Static local:Player.BlackMen}"/>
                     </MultiDataTrigger.Conditions>
                     <MultiDataTrigger.Setters>
-                        <Setter Property="Fill" Value="#FF3C2900" />
+                        <Setter Property="Fill" Value="{DynamicResource Player1Color}"  />
                     </MultiDataTrigger.Setters>
                 </MultiDataTrigger>
             </Style.Triggers>
