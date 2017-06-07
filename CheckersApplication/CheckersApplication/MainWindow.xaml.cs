@@ -210,23 +210,72 @@ namespace CheckersApplication
 
                             Detection.DetectPlayersColors(circles, ref player1Color, ref player2Color, image);
 
-                            RS_Slider1R.LowerValue = player1Color.R - autoColorsRange;
-                            RS_Slider1G.LowerValue = player1Color.G - autoColorsRange;
-                            RS_Slider1B.LowerValue = player1Color.B - autoColorsRange;
-                            RS_Slider1R.HigherValue = player1Color.R + autoColorsRange;
-                            RS_Slider1G.HigherValue = player1Color.G + autoColorsRange;
-                            RS_Slider1B.HigherValue = player1Color.B + autoColorsRange;
+                            if (player1Color.R - autoColorsRange < 0)
+                                RS_Slider1R.LowerValue = 0;
+                            else
+                                RS_Slider1R.LowerValue = player1Color.R - autoColorsRange;
+
+                            if (player1Color.G - autoColorsRange < 0)
+                                RS_Slider1G.LowerValue = 0;
+                            else
+                                RS_Slider1G.LowerValue = player1Color.G - autoColorsRange;
+
+                            if (player1Color.B - autoColorsRange < 0)
+                                RS_Slider1B.LowerValue = 0;
+                            else
+                                RS_Slider1B.LowerValue = player1Color.B - autoColorsRange;
+
+                            if (player1Color.R + autoColorsRange > 255)
+                                RS_Slider1R.HigherValue = 255;
+                            else
+                                RS_Slider1R.HigherValue = player1Color.R + autoColorsRange;
+
+                            if (player1Color.G + autoColorsRange > 255)
+                                RS_Slider1G.HigherValue = 255;
+                            else
+                                RS_Slider1G.HigherValue = player1Color.G + autoColorsRange;
+
+                            if (player1Color.B + autoColorsRange > 255)
+                                RS_Slider1B.HigherValue = 255;
+                            else
+                                RS_Slider1B.HigherValue = player1Color.B + autoColorsRange;
+
                             CV_Player1Color_Min.Background = new System.Windows.Media.SolidColorBrush(
                                 System.Windows.Media.Color.FromRgb((byte)RS_Slider1R.LowerValue, (byte)RS_Slider1G.LowerValue, (byte)RS_Slider1B.LowerValue));
                             CV_Player1Color_Max.Background = new System.Windows.Media.SolidColorBrush(
                                 System.Windows.Media.Color.FromRgb((byte)RS_Slider1R.HigherValue, (byte)RS_Slider1G.HigherValue, (byte)RS_Slider1B.HigherValue));
 
-                            RS_Slider2R.LowerValue = player2Color.R - autoColorsRange;
-                            RS_Slider2G.LowerValue = player2Color.G - autoColorsRange;
-                            RS_Slider2B.LowerValue = player2Color.B - autoColorsRange;
-                            RS_Slider2R.HigherValue = player2Color.R + autoColorsRange;
-                            RS_Slider2G.HigherValue = player2Color.G + autoColorsRange;
-                            RS_Slider2B.HigherValue = player2Color.B + autoColorsRange;
+
+                            if (player2Color.R - autoColorsRange < 0)
+                                RS_Slider2R.LowerValue = 0;
+                            else
+                                RS_Slider2R.LowerValue = player2Color.R - autoColorsRange;
+
+                            if (player2Color.G - autoColorsRange < 0)
+                                RS_Slider2G.LowerValue = 0;
+                            else
+                                RS_Slider2G.LowerValue = player2Color.G - autoColorsRange;
+
+                            if (player2Color.B - autoColorsRange < 0)
+                                RS_Slider2B.LowerValue = 0;
+                            else
+                                RS_Slider2B.LowerValue = player2Color.B - autoColorsRange;
+
+                            if (player2Color.R + autoColorsRange > 255)
+                                RS_Slider2R.HigherValue = 255;
+                            else
+                                RS_Slider2R.HigherValue = player2Color.R + autoColorsRange;
+
+                            if (player2Color.G + autoColorsRange > 255)
+                                RS_Slider2G.HigherValue = 255;
+                            else
+                                RS_Slider2G.HigherValue = player2Color.G + autoColorsRange;
+
+                            if (player2Color.B + autoColorsRange > 255)
+                                RS_Slider2B.HigherValue = 255;
+                            else
+                                RS_Slider2B.HigherValue = player2Color.B + autoColorsRange;
+
                             CV_Player2Color_Min.Background = new System.Windows.Media.SolidColorBrush(
                                 System.Windows.Media.Color.FromRgb((byte)RS_Slider2R.LowerValue, (byte)RS_Slider2G.LowerValue, (byte)RS_Slider2B.LowerValue));
                             CV_Player2Color_Max.Background = new System.Windows.Media.SolidColorBrush(
