@@ -207,7 +207,7 @@ namespace CheckersApplication
                             foreach (CircleF circle in circles)
                             {
                                 resultImage.Draw(circle, new Bgr(Color.Red), 3);
-                                ChessField.Pons(fields, circles, (int)Player.WhiteMen); //only white?!
+                                ChessField.Pons(fields, circles, (int)Player.White); //only white?!
                                 chessBoardState.Clear();
                             }
 
@@ -305,14 +305,14 @@ namespace CheckersApplication
                             foreach (CircleF circle in circleFor1)
                             {
                                 resultImage.Draw(circle, new Bgr(Color.Green), 3);
-                                ChessField.Pons(fields, circleFor1, (int)Player.BlackMen);
+                                ChessField.Pons(fields, circleFor1, (int)Player.Black);
                                 chessBoardState.AddPieces(fields);
                             }
 
                             foreach (CircleF circle in circleFor2)
                             {
                                 resultImage.Draw(circle, new Bgr(Color.Blue), 3);
-                                ChessField.Pons(fields, circleFor2, (int)Player.WhiteMen);
+                                ChessField.Pons(fields, circleFor2, (int)Player.White);
                                 chessBoardState.AddPieces(fields);
                             }
 
@@ -477,13 +477,13 @@ namespace CheckersApplication
                     //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.BlackMen;
                     //if (i.Player == Player.WhiteMen)
                     //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.WhiteMen;
-                    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)i.Player;
+                    board[i.Pos.Y / 60, i.Pos.X / 60].Value = (int)i.Player;
                 }
                 for (int i = 0; i < 8; i++)
                 {
                     for (int j = 0; j < 8; j++)
-                        File.AppendAllText("log",(board[i, j].Value).ToString());
-                    File.AppendAllText("log", "\r\n");
+                        File.AppendAllText("log13",(board[i, j].Value).ToString());
+                    File.AppendAllText("log13", "\r\n");
                 }
 
                 MovesJumps.Run(board, ref buffer_move_white, ref buffer_move_black);

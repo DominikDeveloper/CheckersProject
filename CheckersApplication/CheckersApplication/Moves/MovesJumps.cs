@@ -50,15 +50,15 @@ namespace CheckersApplication
                 for (int col = 0; col < 8; col++)
                 {
                     
-                    if (col < 2 && board[row, col].Value == (int)Player.WhiteMen)
+                    if (col < 2 && board[row, col].Value == (int)Player.White)
                     {
                         CheckRightJumpForWhite(board, row, col, ref move_matrix_buffer_white, indexx);
                     }
-                    if (col > 5 && board[row, col].Value == (int)Player.WhiteMen)
+                    if (col > 5 && board[row, col].Value == (int)Player.White)
                     {
                         CheckLeftJumpForWhite(board, row, col, ref move_matrix_buffer_white, indexx);
                     }
-                    if (col > 1 && col < 6 && board[row, col].Value == (int)Player.WhiteMen)
+                    if (col > 1 && col < 6 && board[row, col].Value == (int)Player.White)
                     {
                         if (CheckLeftJumpForWhite2(board, row, col) == true && CheckRightJumpForWhite2(board, row, col) == true)
                         {
@@ -89,8 +89,8 @@ namespace CheckersApplication
         {
             if (row <= 5)
             {
-                if (board[row + 1, col + 1].Value >= (int)Player.BlackMen &&
-                    board[row + 1, col + 1].Value == (int)Player.BlackMen &&
+                if (board[row + 1, col + 1].Value >= (int)Player.Black &&
+                    board[row + 1, col + 1].Value == (int)Player.Black &&
                     board[row + 2, col + 2].Value < 2)
                 {
                     return true;
@@ -104,8 +104,8 @@ namespace CheckersApplication
         {
             if (row <= 5)
             {
-                if (board[row + 1, col - 1].Value >= (int)Player.BlackMen &&
-                   board[row + 1, col - 1].Value == (int)Player.BlackMen &&
+                if (board[row + 1, col - 1].Value >= (int)Player.Black &&
+                   board[row + 1, col - 1].Value == (int)Player.Black &&
                    board[row + 2, col - 2].Value < 2)
                 {
                     return true;
@@ -119,8 +119,8 @@ namespace CheckersApplication
         {
             if (row <= 5)
             {
-                if (board[row + 1, col + 1].Value >= (int)Player.BlackMen &&
-                    board[row + 1, col + 1].Value == (int)Player.BlackMen &&
+                if (board[row + 1, col + 1].Value >= (int)Player.Black &&
+                    board[row + 1, col + 1].Value == (int)Player.Black &&
                     board[row + 2, col + 2].Value < 2)
                 {
                     //board[row, col] = 9;
@@ -171,8 +171,8 @@ namespace CheckersApplication
         {
             if (row <= 5)
             {
-                if (board[row + 1, col - 1].Value >= (int)Player.BlackMen &&
-                    board[row + 1, col - 1].Value == (int)Player.BlackMen &&
+                if (board[row + 1, col - 1].Value >= (int)Player.Black &&
+                    board[row + 1, col - 1].Value == (int)Player.Black &&
                     board[row + 2, col - 2].Value < 2)
                 {
                     //board[row, col] = 9;
@@ -276,7 +276,7 @@ namespace CheckersApplication
                             board2[i, j].Value = board[i, j].Value;
                         }
                     }
-                    if (board[row, col].Value == (int)Player.WhiteMen)
+                    if (board[row, col].Value == (int)Player.White)
                     {
                         if (col == 0)
                         {
@@ -335,8 +335,8 @@ namespace CheckersApplication
         {
             if (row >= 2)
             {
-                if (board[row - 1, col + 1].Value >= (int)Player.WhiteMen &&
-                    board[row - 1, col + 1].Value == (int)Player.WhiteMen &&
+                if (board[row - 1, col + 1].Value >= (int)Player.White &&
+                    board[row - 1, col + 1].Value == (int)Player.White &&
                     board[row - 2, col + 2].Value < 2)
                 {
                     return true;
@@ -350,8 +350,8 @@ namespace CheckersApplication
         {
             if (row >= 2)
             {
-                if (board[row - 1, col - 1].Value >= (int)Player.WhiteMen &&
-                   board[row - 1, col - 1].Value == (int)Player.WhiteMen &&
+                if (board[row - 1, col - 1].Value >= (int)Player.White &&
+                   board[row - 1, col - 1].Value == (int)Player.White &&
                    board[row - 2, col - 2].Value < 2)
                 {
                     return true;
@@ -368,15 +368,15 @@ namespace CheckersApplication
             for (int row = 2; row < 8; row++)
                 for (int col = 0; col < 8; col++)
                 {
-                    if (col < 2 && board[row, col].Value == (int)Player.BlackMen)
+                    if (col < 2 && board[row, col].Value == (int)Player.Black)
                     {
                         CheckRightJumpForBlack(board, row, col, ref move_matrix_buffer_black, indexx);
                     }
-                    if (col > 5 && board[row, col].Value == (int)Player.BlackMen)
+                    if (col > 5 && board[row, col].Value == (int)Player.Black)
                     {
                         CheckLeftJumpForBlack(board, row, col, ref move_matrix_buffer_black, indexx);
                     }
-                    if (col > 1 && col < 6 && board[row, col].Value == (int)Player.BlackMen)
+                    if (col > 1 && col < 6 && board[row, col].Value == (int)Player.Black)
                     {
                         if (CheckLeftJumpForBlack2(board, row, col) == true && CheckRightJumpForBlack2(board, row, col) == true)
                         {
@@ -444,8 +444,8 @@ namespace CheckersApplication
         {
             if (row >= 2)
             {
-                if (board[row - 1, col + 1].Value >= (int)Player.WhiteMen &&
-                    board[row - 1, col + 1].Value == (int)Player.WhiteMen &&
+                if (board[row - 1, col + 1].Value >= (int)Player.White &&
+                    board[row - 1, col + 1].Value == (int)Player.White &&
                     board[row - 2, col + 2].Value < 2)
                 {
                     //board[row, col] = 9;
@@ -490,8 +490,8 @@ namespace CheckersApplication
         {
             if (row >= 2)
             {
-                if (board[row - 1, col - 1].Value >= (int)Player.WhiteMen &&
-                    board[row - 1, col - 1].Value == (int)Player.WhiteMen &&
+                if (board[row - 1, col - 1].Value >= (int)Player.White &&
+                    board[row - 1, col - 1].Value == (int)Player.White &&
                     board[row - 2, col - 2].Value < 2)
                 {
                     //board[row, col] = 9;
@@ -574,7 +574,7 @@ namespace CheckersApplication
                             board2[i, j].Value = board[i, j].Value;
                         }
                     }
-                    if (board[row, col].Value == (int)Player.BlackMen)
+                    if (board[row, col].Value == (int)Player.Black)
                     {
                         if (col == 0)
                         {

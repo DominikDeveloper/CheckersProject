@@ -36,7 +36,7 @@
             <Style.Triggers>
                 <MultiDataTrigger>
                     <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding Player}" Value="{x:Static local:Player.WhiteMen}"/>
+                        <Condition Binding="{Binding Player}" Value="{x:Static local:Player.White}"/>
                     </MultiDataTrigger.Conditions>
                     <MultiDataTrigger.Setters>
                         <Setter Property="Fill" Value="{DynamicResource Player2Color}"  />
@@ -44,7 +44,7 @@
                 </MultiDataTrigger>
                 <MultiDataTrigger>
                     <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding Player}" Value="{x:Static local:Player.BlackMen}"/>
+                        <Condition Binding="{Binding Player}" Value="{x:Static local:Player.Black}"/>
                     </MultiDataTrigger.Conditions>
                     <MultiDataTrigger.Setters>
                         <Setter Property="Fill" Value="{DynamicResource Player1Color}"  />

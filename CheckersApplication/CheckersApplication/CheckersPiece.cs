@@ -12,8 +12,8 @@ namespace CheckersApplication
     {
         BlackEmptySquare = 0,
         WhiteSquare = 1,
-        BlackMen = 2,
-        WhiteMen = 3
+        Black = 2,
+        White = 3
     }
 
     class CheckersPiece : ViewModelBase 
