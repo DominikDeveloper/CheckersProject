@@ -318,7 +318,7 @@ namespace CheckersApplication
                             IMG_Filter2.Source = ToBitmapConverter.Convert(filtring2);
 
                             //Show correct moves/jumps
-                            goodMove = VerifyMoveJumps(fields);
+                                goodMove = VerifyMoveJumps(fields);
                             //PutMoveJumpsToDatagrid(fields);
                             //
                         }
@@ -449,14 +449,21 @@ namespace CheckersApplication
 
         private void BT_SaveMove_Click(object sender, RoutedEventArgs e)
         {
-            currentMove++;
-            shownMove++;
-            TB_MoveNr.Text = "Nr ruchu: " + (shownMove+1).ToString() + " (bieżący)";
-            List<CheckersPiece> pieces = new List<CheckersPiece>();
-            foreach (var p in chessBoardState.piecesObservable)
-                pieces.Add(p.Copy());
+            if (currentMove != 0 && goodMove || currentMove == 0)
+            {
+                currentMove++;
+                shownMove++;
+                TB_MoveNr.Text = "Nr ruchu: " + (shownMove + 1).ToString() + " (bieżący)";
+                List<CheckersPiece> pieces = new List<CheckersPiece>();
+                foreach (var p in chessBoardState.piecesObservable)
+                    pieces.Add(p.Copy());
 
-            chessBoardState.history.Add(pieces);
+                chessBoardState.history.Add(pieces);
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("Niepoprawny ruch.");
+            }
         }
 
         private void BT_GoBack_Click(object sender, RoutedEventArgs e)
