@@ -628,14 +628,15 @@ namespace CheckersApplication
             }
         }
 
-        public static void Run(ChessField[,] board, ref List<ChessField[,]> move_matrix_buffer_white, ref List<ChessField[,]> move_matrix_buffer_black)
+        public static List<ChessField[,]> RunWhite(ChessField[,] board)
         {
             //creating chessboard matrix
             //0 - black
             //1 - white
 
+
             move_matrix_buffer_white = new List<ChessField[,]>();
-            move_matrix_buffer_black = new List<ChessField[,]>();
+            //move_matrix_buffer_black = new List<ChessField[,]>();
 
             var newFields = ChessField.GetEmptyFields();
             move_matrix_buffer_white.Add(newFields);
@@ -647,29 +648,30 @@ namespace CheckersApplication
                 }
             }
 
-            var newFields2 = ChessField.GetEmptyFields();
-            move_matrix_buffer_black.Add(newFields2);
-            for (int i = 0; i < 8; i++)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-                    move_matrix_buffer_black[0][i, j].Value = board[i, j].Value;
-                }
-            }
+            //var newFields2 = ChessField.GetEmptyFields();
+            //move_matrix_buffer_black.Add(newFields2);
+            //for (int i = 0; i < 8; i++)
+            //{
+            //    for (int j = 0; j < 8; j++)
+            //    {
+            //        move_matrix_buffer_black[0][i, j].Value = board[i, j].Value;
+            ////    }
+            //}
 
-            CheckJumpsForBlack(board, 0);
+            CheckJumpsForWhite(board, 0);
 
-            if (move_matrix_buffer_white.Count == 1 && move_matrix_buffer_white[0] == board)
+            if (move_matrix_buffer_white.Count == 1/* && move_matrix_buffer_white[0] == board*/)
             {
                 move_matrix_buffer_white.Clear();
                 CheckMovesForWhite(board);
             }
 
-            if (move_matrix_buffer_black.Count == 1 && move_matrix_buffer_black[0] == board)
-            {
-                move_matrix_buffer_black.Clear();
-                CheckMovesForBlack(board);
-            }
+            //if (move_matrix_buffer_black.Count == 1 && move_matrix_buffer_black[0] == board)
+            //{
+            //    move_matrix_buffer_black.Clear();
+            //    CheckMovesForBlack(board);
+            //}
+            return move_matrix_buffer_white;
         }
     }
 }

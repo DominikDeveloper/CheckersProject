@@ -465,7 +465,7 @@ namespace CheckersApplication
 
                 chessBoardState.history.Add(pieces);
             }
-            else
+            else if(currentMove%2==1)
             {
                 ChessField[,] board = ChessField.GetEmptyFields();
                 List<CheckersPiece> pieces = new List<CheckersPiece>();
@@ -486,8 +486,14 @@ namespace CheckersApplication
                     File.AppendAllText("log13", "\r\n");
                 }
 
-                MovesJumps.Run(board, ref buffer_move_white, ref buffer_move_black);
+                buffer_move_white = MovesJumps.RunWhite(board);
+
+
                 System.Windows.MessageBox.Show("Niepoprawny ruch.");
+            }
+            else
+            {
+
             }
         }
 
@@ -543,7 +549,7 @@ namespace CheckersApplication
         {
             var move_matrix_buffer_white = new List<ChessField[,]>();
             var move_matrix_buffer_black = new List<ChessField[,]>();
-            MovesJumps.Run(fields, ref move_matrix_buffer_white, ref move_matrix_buffer_black);
+            //MovesJumps.Run(fields, ref move_matrix_buffer_white, ref move_matrix_buffer_black);
 
             if (currentMove % 2 == 0) //black as first
             {
