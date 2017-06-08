@@ -1,4 +1,6 @@
-﻿using Emgu.CV;
+﻿//ChessField.cs
+
+using Emgu.CV;
 using Emgu.CV.Structure;
 using System;
 using System.Collections.Generic;
@@ -18,6 +20,12 @@ namespace CheckersApplication
         {
             Value = 0;
             this.points = (Point[])points.Clone();
+        }
+
+        public ChessField()
+        {
+            Value = 0;
+            //this.points = (Point[])points.Clone();
         }
 
         public static ChessField[,] GetChessFields(Point[] rectangle)
@@ -51,6 +59,35 @@ namespace CheckersApplication
             }
             return fields;
         }
+
+        public static ChessField[,] GetEmptyFields()
+        {
+            ChessField[,] fields = new ChessField[8, 8];
+
+            for (int i = 0; i < 8; i++)
+                for (int j = 0; j < 8; j++)
+                    fields[i, j] = new ChessField();
+
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j += 2)
+                {
+                    if (i % 2 == 0)
+                    {
+                        fields[i, j].Value = (int)Player.BlackEmptySquare;
+                        fields[i, j + 1].Value = (int)Player.WhiteSquare;
+                    }
+                    else
+                    {
+                        fields[i, j].Value = (int)Player.WhiteSquare;
+                        fields[i, j + 1].Value = (int)Player.BlackEmptySquare;
+                    }
+                }
+            }
+
+            return fields;
+        }
+
 
         public static void Pons(ChessField[,] fields, CircleF[] circles, int putValue)
         {

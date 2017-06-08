@@ -1,4 +1,6 @@
-﻿using System;
+﻿//MainWindow.xaml.cs
+
+using System;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Drawing;
@@ -30,16 +32,18 @@ namespace CheckersApplication
     {
         Camera camera;
         ChessBoardState chessBoardState = new ChessBoardState();
-        public static  System.Windows.Media.Color player1Color = new System.Windows.Media.Color();
-        public static  System.Windows.Media.Color player2Color = new System.Windows.Media.Color();
+        public static System.Windows.Media.Color player1Color = new System.Windows.Media.Color();
+        public static System.Windows.Media.Color player2Color = new System.Windows.Media.Color();
         public static bool player1Detected = false;
         public static bool player2Detected = false;
         private bool ifInitComponent;
+        public bool goodMove;
         int currentMove = 0;
         int shownMove = 0;
 
         public MainWindow()
         {
+            goodMove = false;
             ifInitComponent = false;
             InitializeComponent();
             ifInitComponent = true;
@@ -244,7 +248,7 @@ namespace CheckersApplication
                             CV_Player1Color_Max.Background = new System.Windows.Media.SolidColorBrush(
                                 System.Windows.Media.Color.FromRgb((byte)RS_Slider1R.HigherValue, (byte)RS_Slider1G.HigherValue, (byte)RS_Slider1B.HigherValue));
 
-                            System.Windows.Application.Current.Resources["Player1Color"] = CV_Player1Color_Max.Background;
+                            //System.Windows.Application.Current.Resources["Player1Color"] = CV_Player1Color_Max.Background;
 
                             if (player2Color.R - autoColorsRange < 0)
                                 RS_Slider2R.LowerValue = 0;
@@ -281,7 +285,7 @@ namespace CheckersApplication
                             CV_Player2Color_Max.Background = new System.Windows.Media.SolidColorBrush(
                                 System.Windows.Media.Color.FromRgb((byte)RS_Slider2R.HigherValue, (byte)RS_Slider2G.HigherValue, (byte)RS_Slider2B.HigherValue));
 
-                            System.Windows.Application.Current.Resources["Player2Color"] = CV_Player2Color_Max.Background;
+                            //System.Windows.Application.Current.Resources["Player2Color"] = CV_Player2Color_Max.Background;
                         }
                         else
                         {
@@ -316,10 +320,11 @@ namespace CheckersApplication
                             IMG_Filter2.Source = ToBitmapConverter.Convert(filtring2);
 
                             //Show correct moves/jumps
-                            PutMoveJumpsToDatagrid(fields);
+                            goodMove = VerifyMoveJumps(fields);
+                            //PutMoveJumpsToDatagrid(fields);
                             //
                         }
-                        
+
                     }
                 }
             }
@@ -348,15 +353,48 @@ namespace CheckersApplication
             return fields;
         }
 
+        private bool VerifyMoveJumps(ChessField[,] fields)
+        {
+            var move_matrix_buffer_white = new List<ChessField[,]>();
+            var move_matrix_buffer_black = new List<ChessField[,]>();
+            MovesJumps.Run(fields, ref move_matrix_buffer_white, ref move_matrix_buffer_black);
+
+            if (currentMove % 2 == 0) //black as first
+            {
+                foreach (var item in move_matrix_buffer_black)
+                {
+                    if (item == fields)
+                        return true;
+                }
+            }
+
+            if (currentMove % 2 == 1) //white
+            {
+                foreach (var item in move_matrix_buffer_white)
+                {
+                    if (item == fields)
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
         private void PutMoveJumpsToDatagrid(ChessField[,] fields)
         {
             //Show correct moves/jumps (static methods - no change sequence of calling methods
 
+            var move_matrix_buffer_white = new List<ChessField[,]>();
+            var move_matrix_buffer_black = new List<ChessField[,]>();
+            //MovesJumps.Run(fields, ref move_matrix_buffer_white, ref move_matrix_buffer_black); //restore?
+
+            /*
             MovesJumps.CheckMovesForWhite(fields);
             MovesJumps.CheckJumpsForWhite(fields);
             MovesJumps.CheckMovesForBlack(fields);
             MovesJumps.CheckJumpsForBlack(fields);
-
+            */
+            /*
             List<MovesBody> list1 = new List<MovesBody>();
             foreach (var item in MovesJumps.jump_buffer_white)
             {
@@ -374,9 +412,31 @@ namespace CheckersApplication
             {
                 list1.Add(item);
             }
+            */
+
+            /*
+            List<MovesBody> list1 = new List<MovesBody>();
+            foreach (var item in move_matrix_buffer_white)
+            {
+                list1.Add(item);
+            }
+            foreach (var item in move_matrix_buffer_black)
+            {
+                list1.Add(item);
+            }
+            foreach (var item in MovesJumps.jump_buffer_black)
+            {
+                list1.Add(item);
+            }
+            foreach (var item in MovesJumps.move_buffer_black)
+            {
+                list1.Add(item);
+            }
+            
 
             DG_Moves.ItemsSource = null;
             DG_Moves.ItemsSource = list1;
+            */
         }
 
 
@@ -411,14 +471,14 @@ namespace CheckersApplication
                 LB_Range1B.Content = RS_Slider1B.LowerValue.ToString() + " - " + RS_Slider1B.HigherValue.ToString();
 
                 if (CB_AutoDetectColors.IsChecked == false)
-                { 
+                {
                     System.Windows.Media.Color minColor = System.Windows.Media.Color.FromRgb((byte)RS_Slider1R.LowerValue, (byte)RS_Slider1G.LowerValue, (byte)RS_Slider1B.LowerValue);
                     CV_Player1Color_Min.Background = new System.Windows.Media.SolidColorBrush(minColor);
 
                     System.Windows.Media.Color maxColor = System.Windows.Media.Color.FromRgb((byte)RS_Slider1R.HigherValue, (byte)RS_Slider1G.HigherValue, (byte)RS_Slider1B.HigherValue);
                     CV_Player1Color_Max.Background = new System.Windows.Media.SolidColorBrush(maxColor);
 
-                    System.Windows.Application.Current.Resources["Player1Color"] = CV_Player1Color_Max.Background;
+                    //System.Windows.Application.Current.Resources["Player1Color"] = maxColor;
                 }
             }
         }
@@ -439,21 +499,29 @@ namespace CheckersApplication
                     System.Windows.Media.Color maxColor = System.Windows.Media.Color.FromRgb((byte)RS_Slider2R.HigherValue, (byte)RS_Slider2G.HigherValue, (byte)RS_Slider2B.HigherValue);
                     CV_Player2Color_Max.Background = new System.Windows.Media.SolidColorBrush(maxColor);
 
-                    System.Windows.Application.Current.Resources["Player2Color"] = CV_Player2Color_Max.Background;
+                    //System.Windows.Application.Current.Resources["Player2Color"] = maxColor;
                 }
             }
         }
 
         private void BT_SaveMove_Click(object sender, RoutedEventArgs e)
         {
-            currentMove++;
-            shownMove++;
-            TB_MoveNr.Text = "Nr ruchu: " + (shownMove+1).ToString() + " (bieżący)";
-            List<CheckersPiece> pieces = new List<CheckersPiece>();
-            foreach (var p in chessBoardState.piecesObservable)
-                pieces.Add(p.Copy());
+            if (goodMove)
+            {
+                currentMove++;
+                shownMove++;
+                TB_MoveNr.Text = "Nr ruchu: " + (shownMove + 1).ToString() + " (bieżący)";
 
-            chessBoardState.history.Add(pieces);
+                List<CheckersPiece> pieces = new List<CheckersPiece>();
+                foreach (var p in chessBoardState.piecesObservable)
+                    pieces.Add(p.Copy());
+
+                chessBoardState.history.Add(pieces);
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("Wykonany ruch jest błędny.");
+            }
         }
 
         private void BT_GoBack_Click(object sender, RoutedEventArgs e)
@@ -476,16 +544,16 @@ namespace CheckersApplication
                 return;
 
             shownMove++;
-            
+
 
             if (shownMove == currentMove)
             {
                 BT_SaveMove.IsEnabled = true;
-                TB_MoveNr.Text = "Nr ruchu: "+ (shownMove+1).ToString()+" (bieżący)";
+                TB_MoveNr.Text = "Nr ruchu: " + (shownMove + 1).ToString() + " (bieżący)";
                 return;
             }
 
-            TB_MoveNr.Text = "Nr ruchu: " + (shownMove+1).ToString();
+            TB_MoveNr.Text = "Nr ruchu: " + (shownMove + 1).ToString();
             chessBoardState.piecesObservable.Clear();
             foreach (var p in chessBoardState.history[shownMove])
                 chessBoardState.piecesObservable.Add(p.Copy());
