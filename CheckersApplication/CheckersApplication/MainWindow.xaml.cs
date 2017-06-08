@@ -418,7 +418,7 @@ namespace CheckersApplication
                     System.Windows.Media.Color maxColor = System.Windows.Media.Color.FromRgb((byte)RS_Slider1R.HigherValue, (byte)RS_Slider1G.HigherValue, (byte)RS_Slider1B.HigherValue);
                     CV_Player1Color_Max.Background = new System.Windows.Media.SolidColorBrush(maxColor);
 
-                    System.Windows.Application.Current.Resources["Player1Color"] = maxColor;
+                    System.Windows.Application.Current.Resources["Player1Color"] = CV_Player1Color_Max.Background;
                 }
             }
         }
@@ -439,7 +439,7 @@ namespace CheckersApplication
                     System.Windows.Media.Color maxColor = System.Windows.Media.Color.FromRgb((byte)RS_Slider2R.HigherValue, (byte)RS_Slider2G.HigherValue, (byte)RS_Slider2B.HigherValue);
                     CV_Player2Color_Max.Background = new System.Windows.Media.SolidColorBrush(maxColor);
 
-                    System.Windows.Application.Current.Resources["Player2Color"] = maxColor;
+                    System.Windows.Application.Current.Resources["Player2Color"] = CV_Player2Color_Max.Background;
                 }
             }
         }
