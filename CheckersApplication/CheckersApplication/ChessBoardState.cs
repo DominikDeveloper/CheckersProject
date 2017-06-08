@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Drawing;
 
 namespace CheckersApplication
 {
@@ -11,38 +8,26 @@ namespace CheckersApplication
     class ChessBoardState
     {
         public const int empty = 0;
-        private int[,] matrix = new int[8, 8];
-        public ObservableCollection<CheckersPiece> pieces = new ObservableCollection<CheckersPiece>();
+        public ObservableCollection<CheckersPiece> piecesObservable = new ObservableCollection<CheckersPiece>();
+        public List<List<CheckersPiece>> history = new List<List<CheckersPiece>>();
 
-        public void TestData()
-        {
-            Random rnd = new Random();
-            for(int i = 0; i < 8; i++)
-            {
-                for(int j = 0; j < 8; j++)
-                {
-                    int state = rnd.Next(1, 6);
-                    if (state == (int)Player.White)
-                        matrix[i, j] = (int)Player.White;
-                    else if (state == (int)Player.Black)
-                        matrix[i, j] = (int)Player.Black;
-                }
-            }
-            matrixToPieces();
-        }
-
-        public void matrixToPieces()
+        public void AddPieces(ChessField[,] fields)
         {
             for (int i = 0; i < 8; i++)
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    if (matrix[i, j] == 1)
-                        pieces.Add(new CheckersPiece { Pos = new System.Drawing.Point(i, j), Player = Player.White });
-                    else if (matrix[i, j] == 2)
-                        pieces.Add(new CheckersPiece { Pos = new System.Drawing.Point(i, j), Player = Player.Black });
+                    if (fields[i, j].Value == (int)Player.WhiteMen)
+                        piecesObservable.Add(new CheckersPiece { Pos = new Point(j, i), Player = Player.WhiteMen });
+                    else if (fields[i, j].Value == (int)Player.BlackMen)
+                        piecesObservable.Add(new CheckersPiece { Pos = new Point(j, i), Player = Player.BlackMen });
                 }
             }
+        }
+
+        public void Clear()
+        {
+            piecesObservable.Clear();
         }
 
     }

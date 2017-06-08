@@ -4,20 +4,23 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:CheckersApplication"
+      xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
       mc:Ignorable="d" 
       Height="720" Width="1280"
-      Title="Checkers Project">
+      WindowStartupLocation="CenterScreen" 
+      ResizeMode="CanMinimize"
+        Title="Checkers Project">
 
     <Window.Resources>
         <DrawingBrush x:Key="CheckerBoard" Stretch="Fill" TileMode="Tile" Viewport="0,0,120,120" ViewportUnits="Absolute">
             <DrawingBrush.Drawing>
                 <DrawingGroup>
-                    <GeometryDrawing Brush="Tan">
+                    <GeometryDrawing Brush="#FFC16262">
                         <GeometryDrawing.Geometry>
                             <RectangleGeometry Rect="0,0,2,2" />
                         </GeometryDrawing.Geometry>
                     </GeometryDrawing>
-                    <GeometryDrawing Brush="Brown">
+                    <GeometryDrawing Brush="Tan">
                         <GeometryDrawing.Geometry>
                             <GeometryGroup>
                                 <RectangleGeometry Rect="0,0,1,1" />
@@ -29,22 +32,22 @@
             </DrawingBrush.Drawing>
         </DrawingBrush>
 
-        <Style x:Key="CheckersPieceStyle" TargetType="{x:Type Image}">
+        <Style x:Key="CheckersPieceStyle" TargetType="{x:Type Ellipse}">
             <Style.Triggers>
                 <MultiDataTrigger>
                     <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding Player}" Value="{x:Static local:Player.White}"/>
+                        <Condition Binding="{Binding Player}" Value="{x:Static local:Player.WhiteMen}"/>
                     </MultiDataTrigger.Conditions>
                     <MultiDataTrigger.Setters>
-                        <Setter Property="Image.Source" Value="http://www.wpclipart.com/recreation/games/chess/chess_set_1/chess_piece_white_pawn_T.png" />
+                        <Setter Property="Fill" Value="{DynamicResource Player2Color}"  />
                     </MultiDataTrigger.Setters>
                 </MultiDataTrigger>
                 <MultiDataTrigger>
                     <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding Player}" Value="{x:Static local:Player.Black}"/>
+                        <Condition Binding="{Binding Player}" Value="{x:Static local:Player.BlackMen}"/>
                     </MultiDataTrigger.Conditions>
                     <MultiDataTrigger.Setters>
-                        <Setter Property="Image.Source" Value="http://www.wpclipart.com/recreation/games/chess/chess_set_1/chess_piece_black_pawn_T.png" />
+                        <Setter Property="Fill" Value="{DynamicResource Player1Color}"  />
                     </MultiDataTrigger.Setters>
                 </MultiDataTrigger>
             </Style.Triggers>
@@ -53,16 +56,21 @@
     </Window.Resources>
 
 
-    <Grid Background="#FFFFFEFE">
+    <Grid Background="#FFFFFEFE" Margin="0,0,0,0">
         <!-- #2d2d2f -->
-        <Image x:Name="IMG_Camera" Margin="962,10,10,379" Width="300" Height="300"/>
-        <Button x:Name="BT_Start" Content="Rozpocznij" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="BT_Start_Click" Margin="36,181,0,0"/>
-        <Button x:Name="BT_Stop" Content="Zatrzymaj" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="BT_Stop_Click" IsEnabled="False" Margin="36,237,0,0"/>
-        <TextBox x:Name="TB_CameraSource" HorizontalAlignment="Left" Height="41" Margin="36,84,0,0" TextWrapping="Wrap" Text="URL streamu, ID kamery, lub plik wideo,&#xD;&#xA;np. (http://IP:PORT/mjpegfeed)" VerticalAlignment="Top" Width="253" IsEnabled="False" GotFocus="TB_CameraSource_GotFocus" Foreground="Gray"/>
-        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="300" Margin="962,10,0,0" VerticalAlignment="Top" Width="300"/>
-        <CheckBox x:Name="CB_DefaultCamera" Content="Kamera domyślna" HorizontalAlignment="Left" Margin="36,62,0,0" VerticalAlignment="Top" Width="120" Height="17" IsChecked="True" Click="CB_DefaultCamera_Click" />
+        <Button x:Name="BT_Start" Content="Rozpocznij" HorizontalAlignment="Left" VerticalAlignment="Top" Width="122" Click="BT_Start_Click" Margin="14,126,0,0"/>
+        <Button x:Name="BT_Stop" Content="Zatrzymaj" HorizontalAlignment="Left" VerticalAlignment="Top" Width="126" Click="BT_Stop_Click" IsEnabled="False" Margin="141,126,0,0"/>
+        <TextBox x:Name="TB_CameraSource" HorizontalAlignment="Left" Height="41" Margin="14,71,0,0" TextWrapping="Wrap" Text="URL streamu, ID kamery, lub plik wideo,&#xD;&#xA;np. (http://IP:PORT/mjpegfeed)" VerticalAlignment="Top" Width="253" IsEnabled="False" GotFocus="TB_CameraSource_GotFocus" Foreground="Gray"/>
+        <CheckBox x:Name="CB_DefaultCamera" Content="Wybór kamery z listy" HorizontalAlignment="Left" Margin="14,30,0,0" VerticalAlignment="Top" Width="134" Height="25" IsChecked="True" Click="CB_DefaultCamera_Click" />
+        <CheckBox x:Name="CB_OpenCL" Content="Użyj OpenCL" HorizontalAlignment="Left" Height="23" Margin="16,241,0,0" VerticalAlignment="Top" Width="120" IsChecked="False" Click="CB_OpenCL_Click"/>
+        <Button x:Name="BT_ImageTest" Content="Test wykrywania (wczytane zdj.)" HorizontalAlignment="Left" Height="48" Margin="14,175,0,0" VerticalAlignment="Top" Width="189" Click="BT_ImageTest_Click"/>
+        <ComboBox x:Name="CO_Cameras" HorizontalAlignment="Left" Height="25" Margin="166,30,0,0" VerticalAlignment="Top" Width="101" IsEditable="False"/>
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Right" Height="480" Margin="0,30,17,0" VerticalAlignment="Top" Width="450">
+            <Image x:Name="IMG_Detected"/>
+        </Border>
 
-        <ItemsControl Name="ChessBoard" Margin="380,84,448,301">
+
+        <ItemsControl Name="ChessBoard" Margin="310,30,512,181">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Canvas Width="480" Height="480" Background="{StaticResource CheckerBoard}"/>
@@ -71,7 +79,8 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Grid Width="60" Height="60">
-                        <Image Width="48" Height="48" Style="{StaticResource CheckersPieceStyle}" />
+                        <Ellipse x:Name="piece" Width="35" Height="35" Style="{StaticResource CheckersPieceStyle}">
+                        </Ellipse>
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
@@ -82,5 +91,127 @@
                 </Style>
             </ItemsControl.ItemContainerStyle>
         </ItemsControl>
+
+        <Grid x:Name="GD_MinSettingColors" HorizontalAlignment="Left" Height="228" Margin="14,282,0,0" VerticalAlignment="Top" Width="291" Visibility="Visible">
+            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="64" Margin="18,45,0,0" VerticalAlignment="Top" Width="50">
+                <Canvas x:Name="CV_Player1Color_Min"/>
+            </Border>
+            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="64" Margin="68,45,0,0" VerticalAlignment="Top" Width="50">
+                <Canvas x:Name="CV_Player1Color_Max"/>
+            </Border>
+
+            <TextBlock HorizontalAlignment="Left" Margin="18,24,0,0" TextWrapping="Wrap" Text="Kol. ciemny - gracz 1:" VerticalAlignment="Top"/>
+            <TextBlock HorizontalAlignment="Left" Margin="166,24,0,0" TextWrapping="Wrap" Text="Kol. jasny - gracz 2:" VerticalAlignment="Top"/>
+            <CheckBox x:Name="CB_AutoDetectColors" Content="Wykryj kolory pionków" HorizontalAlignment="Left" Margin="2,4,0,0" VerticalAlignment="Top" Width="250" Click="CB_AutoDetectColors_Click"/>
+
+            <StackPanel Margin="0,128,144,0">
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="R: " HorizontalAlignment="Left" Height="30" Margin="0,0,0,0" VerticalAlignment="Center" Width="20" FontSize="12"/>
+                    <xctk:RangeSlider x:Name="RS_Slider1R" Minimum="0" Maximum="255" LowerValue="255" HigherValue="255" LowerValueChanged="RangeSlider_Player1_ValueChanged" HigherValueChanged="RangeSlider_Player1_ValueChanged" Margin="-3,6,76,5" Width="73">
+                        <xctk:RangeSlider.Resources>
+                            <Style TargetType="{x:Type Slider}">
+                                <Setter Property="IsSnapToTickEnabled" Value="True"/>
+                                <Setter Property="IsSelectionRangeEnabled" Value="True"/>
+                            </Style>
+                        </xctk:RangeSlider.Resources>
+                    </xctk:RangeSlider>
+                    <Label x:Name="LB_Range1R" Content="255 - 255" Margin="-100,0,0,0" Height="26" Width="57" FontSize="11"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="G: " HorizontalAlignment="Left" Height="30" Margin="0,0,0,0" VerticalAlignment="Center" Width="20" FontSize="12"/>
+                    <xctk:RangeSlider x:Name="RS_Slider1G" Minimum="0" Maximum="255" LowerValue="255" HigherValue="255" LowerValueChanged="RangeSlider_Player1_ValueChanged" HigherValueChanged="RangeSlider_Player1_ValueChanged" Margin="-3,6,76,5" Width="73">
+                        <xctk:RangeSlider.Resources>
+                            <Style TargetType="{x:Type Slider}">
+                                <Setter Property="IsSnapToTickEnabled" Value="True"/>
+                                <Setter Property="IsSelectionRangeEnabled" Value="True"/>
+                            </Style>
+                        </xctk:RangeSlider.Resources>
+                    </xctk:RangeSlider>
+                    <Label x:Name="LB_Range1G" Content="255 - 255" Margin="-100,0,0,0" Height="26" Width="57" FontSize="11"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="B: " HorizontalAlignment="Left" Height="30" Margin="0,0,0,0" VerticalAlignment="Center" Width="20" FontSize="12"/>
+                    <xctk:RangeSlider x:Name="RS_Slider1B" Minimum="0" Maximum="255" LowerValue="255" HigherValue="255" LowerValueChanged="RangeSlider_Player1_ValueChanged" HigherValueChanged="RangeSlider_Player1_ValueChanged" Margin="-3,6,76,5" Width="73">
+                        <xctk:RangeSlider.Resources>
+                            <Style TargetType="{x:Type Slider}">
+                                <Setter Property="IsSnapToTickEnabled" Value="True"/>
+                                <Setter Property="IsSelectionRangeEnabled" Value="True"/>
+                            </Style>
+                        </xctk:RangeSlider.Resources>
+                    </xctk:RangeSlider>
+                    <Label x:Name="LB_Range1B" Content="255 - 255" Margin="-100,0,0,0" Height="26" Width="57" FontSize="11"/>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Margin="144,128,0,0">
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="R: " HorizontalAlignment="Left" Height="30" Margin="0,0,0,0" VerticalAlignment="Center" Width="20" FontSize="12"/>
+                    <xctk:RangeSlider x:Name="RS_Slider2R" Minimum="0" Maximum="255" LowerValue="255" HigherValue="255" LowerValueChanged="RangeSlider_Player2_ValueChanged" HigherValueChanged="RangeSlider_Player2_ValueChanged" Margin="-3,6,76,5" Width="73">
+                        <xctk:RangeSlider.Resources>
+                            <Style TargetType="{x:Type Slider}">
+                                <Setter Property="IsSnapToTickEnabled" Value="True"/>
+                                <Setter Property="IsSelectionRangeEnabled" Value="True"/>
+                            </Style>
+                        </xctk:RangeSlider.Resources>
+                    </xctk:RangeSlider>
+                    <Label x:Name="LB_Range2R" Content="255 - 255" Margin="-100,0,0,0" Height="26" Width="57" FontSize="11"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="G: " HorizontalAlignment="Left" Height="30" Margin="0,0,0,0" VerticalAlignment="Center" Width="20" FontSize="12"/>
+                    <xctk:RangeSlider x:Name="RS_Slider2G" Minimum="0" Maximum="255" LowerValue="255" HigherValue="255" LowerValueChanged="RangeSlider_Player2_ValueChanged" HigherValueChanged="RangeSlider_Player2_ValueChanged" Margin="-3,6,76,5" Width="73">
+                        <xctk:RangeSlider.Resources>
+                            <Style TargetType="{x:Type Slider}">
+                                <Setter Property="IsSnapToTickEnabled" Value="True"/>
+                                <Setter Property="IsSelectionRangeEnabled" Value="True"/>
+                            </Style>
+                        </xctk:RangeSlider.Resources>
+                    </xctk:RangeSlider>
+                    <Label x:Name="LB_Range2G" Content="255 - 255" Margin="-100,0,0,0" Height="26" Width="57" FontSize="11"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="B: " HorizontalAlignment="Left" Height="30" Margin="0,0,0,0" VerticalAlignment="Center" Width="20" FontSize="12"/>
+                    <xctk:RangeSlider x:Name="RS_Slider2B" Minimum="0" Maximum="255" LowerValue="255" HigherValue="255" LowerValueChanged="RangeSlider_Player2_ValueChanged" HigherValueChanged="RangeSlider_Player2_ValueChanged" Margin="-3,6,76,5" Width="73">
+                        <xctk:RangeSlider.Resources>
+                            <Style TargetType="{x:Type Slider}">
+                                <Setter Property="IsSnapToTickEnabled" Value="True"/>
+                                <Setter Property="IsSelectionRangeEnabled" Value="True"/>
+                            </Style>
+                        </xctk:RangeSlider.Resources>
+                    </xctk:RangeSlider>
+                    <Label x:Name="LB_Range2B" Content="255 - 255" Margin="-100,0,0,0" Height="26" Width="57" FontSize="11"/>
+                </StackPanel>
+            </StackPanel>
+
+            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="64" Margin="166,45,0,0" VerticalAlignment="Top" Width="50">
+                <Canvas x:Name="CV_Player2Color_Min"/>
+            </Border>
+            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="64" Margin="216,45,0,0" VerticalAlignment="Top" Width="50">
+                <Canvas x:Name="CV_Player2Color_Max"/>
+            </Border>
+        </Grid>
+        <Grid x:Name="GD_FilterImages" HorizontalAlignment="Left" Height="153" Margin="16,528,0,0" VerticalAlignment="Top" Width="363">
+            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Right" VerticalAlignment="Top" Width="130" Height="110" Margin="0,33,204,0">
+                <Image x:Name="IMG_Filter1"/>
+            </Border>
+            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Right" VerticalAlignment="Top" Width="130" Height="110" Margin="0,33,41,0">
+                <Image x:Name="IMG_Filter2"/>
+            </Border>
+            <Label Content="Detekcja koloru (Gracz 1)" HorizontalAlignment="Left" Height="28" Margin="10,0,0,0" VerticalAlignment="Top" Width="149"/>
+            <Label Content="Detekcja koloru (Gracz 2)" HorizontalAlignment="Left" Height="28" Margin="183,0,0,0" VerticalAlignment="Top" Width="150"/>
+        </Grid>
+        <DataGrid x:Name="DG_Moves" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="153" Margin="1046,528,0,0" VerticalAlignment="Top" Width="211">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Z" Width="50" IsReadOnly="True" SortDirection="Ascending" Binding="{Binding BoardLocationFrom}"/>
+                <DataGridTextColumn Header="Do" Width="50" IsReadOnly="True" Binding="{Binding BoardLocationTo}"/>
+                <DataGridTextColumn Header="Bić" Width="50" IsReadOnly="True" Binding="{Binding NumberOfJumps}"/>
+                <DataGridTextColumn Header="Kto?" Width="50" IsReadOnly="True" Binding="{Binding Player}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button x:Name="BT_SaveMove" Content="Wykonaj ruch" HorizontalAlignment="Left" Margin="494,531,0,0" VerticalAlignment="Top" Width="104" Click="BT_SaveMove_Click"/>
+        <Button x:Name="BT_GoBack" Content="&lt;" HorizontalAlignment="Left" Margin="433,531,0,0" VerticalAlignment="Top" Width="20" Click="BT_GoBack_Click"/>
+        <Button x:Name="BT_GoForward" Content="&gt;" HorizontalAlignment="Left" Margin="458,531,0,0" VerticalAlignment="Top" Width="20" Click="BT_GoForward_Click"/>
+        <Button Content="Od nowa" HorizontalAlignment="Left" Margin="675,531,0,0" VerticalAlignment="Top" Width="77" Click="Button_Click"/>
+        <TextBlock x:Name="TB_MoveNr" HorizontalAlignment="Left" Height="18" Margin="433,566,0,0" TextWrapping="Wrap" Text="Nr ruchu: 1 (bieżący)" VerticalAlignment="Top" Width="241"/>
     </Grid>
+
 </Window>

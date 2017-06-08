@@ -10,11 +10,13 @@ namespace CheckersApplication
 {
     public enum Player
     {
-        White = 1,
-        Black = 2
+        BlackEmptySquare = 0,
+        WhiteSquare = 1,
+        BlackMen = 2,
+        WhiteMen = 3
     }
 
-    class CheckersPiece : ViewModelBase
+    class CheckersPiece : ViewModelBase 
     {
         private Point pos;
 
@@ -35,6 +37,14 @@ namespace CheckersApplication
         {
             get { return player; }
             set { player = value; RaisePropertyChanged(() => player); }
+        }
+
+        public CheckersPiece Copy()
+        {
+            CheckersPiece p = new CheckersPiece();
+            p.pos = this.pos;
+            p.player = this.player;
+            return p;
         }
     }
 }
