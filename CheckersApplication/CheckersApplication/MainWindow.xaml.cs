@@ -34,6 +34,8 @@ namespace CheckersApplication
         public static  System.Windows.Media.Color player2Color = new System.Windows.Media.Color();
         public static bool player1Detected = false;
         public static bool player2Detected = false;
+        public static List<ChessField[,]> buffer_move_white;
+        public static List<ChessField[,]> buffer_move_black;
         public bool goodMove;
         private bool ifInitComponent;
         int currentMove = 0;
@@ -318,7 +320,7 @@ namespace CheckersApplication
                             IMG_Filter2.Source = ToBitmapConverter.Convert(filtring2);
 
                             //Show correct moves/jumps
-                                goodMove = VerifyMoveJumps(fields);
+                                //goodMove = VerifyMoveJumps(fields);
                             //PutMoveJumpsToDatagrid(fields);
                             //
                         }
@@ -449,7 +451,7 @@ namespace CheckersApplication
 
         private void BT_SaveMove_Click(object sender, RoutedEventArgs e)
         {
-            if (currentMove != 0 && goodMove || currentMove == 0)
+            if (currentMove == 0)
             {
                 currentMove++;
                 shownMove++;
@@ -458,10 +460,33 @@ namespace CheckersApplication
                 foreach (var p in chessBoardState.piecesObservable)
                     pieces.Add(p.Copy());
 
+
+
+
                 chessBoardState.history.Add(pieces);
             }
             else
             {
+                ChessField[,] board = ChessField.GetEmptyFields();
+                List<CheckersPiece> pieces = new List<CheckersPiece>();
+                pieces = chessBoardState.history[chessBoardState.history.Count - 1];
+
+                foreach (var i in pieces)
+                {
+                    //if (i.Player == Player.BlackMen)
+                    //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.BlackMen;
+                    //if (i.Player == Player.WhiteMen)
+                    //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.WhiteMen;
+                    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)i.Player;
+                }
+                for (int i = 0; i < 8; i++)
+                {
+                    for (int j = 0; j < 8; j++)
+                        File.AppendAllText("log",(board[i, j].Value).ToString());
+                    File.AppendAllText("log", "\r\n");
+                }
+
+                MovesJumps.Run(board, ref buffer_move_white, ref buffer_move_black);
                 System.Windows.MessageBox.Show("Niepoprawny ruch.");
             }
         }

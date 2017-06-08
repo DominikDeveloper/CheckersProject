@@ -450,6 +450,7 @@ namespace CheckersApplication
                 {
                     //board[row, col] = 9;
                     //jump_buffer_white.Add("[" + row.ToString() + "," + col.ToString() + "] > " + "[" + (row + 2).ToString() + "," + (col + 2).ToString() + "]");
+                    if (jumpList == null) { jumpList = new List<ChessField[,]>(); }
                     jumpList[indexx][row - 1, col + 1].Value = 1;
                     jumpList[indexx][row, col].Value = 1;
                     jumpList[indexx][row - 2, col + 2].Value = 2;
