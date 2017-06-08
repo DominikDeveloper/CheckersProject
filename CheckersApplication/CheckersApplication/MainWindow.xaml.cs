@@ -75,18 +75,18 @@ namespace CheckersApplication
 
         public void updateFrames(object sender, EventArgs e)
         {
-            try
-            {
+            //try
+            //{
                 camera.imageViewer.Image = camera.capture.QueryFrame();
                 var image = new Image<Bgr, Byte>(camera.imageViewer.Image.Bitmap);
                 Detect(cameraCapture: image);
-            }
+            /*}
             catch (Exception ex)
             {
                 ComponentDispatcher.ThreadIdle -= new EventHandler(updateFrames);
                 System.Windows.MessageBox.Show(ex.Message);
                 ChangeBtnStartStop();
-            }
+            }*/
         }
 
         private void ChangeBtnStartStop()
@@ -359,7 +359,7 @@ namespace CheckersApplication
             var move_matrix_buffer_black = new List<ChessField[,]>();
             MovesJumps.Run(fields, ref move_matrix_buffer_white, ref move_matrix_buffer_black);
 
-            if (currentMove % 2 == 0) //black as first
+            if (currentMove % 2 == 0 && currentMove > 0) //black as first
             {
                 foreach (var item in move_matrix_buffer_black)
                 {
@@ -368,7 +368,7 @@ namespace CheckersApplication
                 }
             }
 
-            if (currentMove % 2 == 1) //white
+            if (currentMove % 2 == 1 && currentMove > 0) //white
             {
                 foreach (var item in move_matrix_buffer_white)
                 {
