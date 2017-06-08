@@ -634,6 +634,7 @@ namespace CheckersApplication
             //0 - black
             //1 - white
 
+            bool bicie = false;
 
             move_matrix_buffer_white = new List<ChessField[,]>();
             //move_matrix_buffer_black = new List<ChessField[,]>();
@@ -645,6 +646,15 @@ namespace CheckersApplication
                 for (int j = 0; j < 8; j++)
                 {
                     move_matrix_buffer_white[0][i, j].Value = board[i, j].Value;
+                }
+            }
+
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    if (CheckLeftJumpForWhite2(board, i, j) == true || CheckRightJumpForWhite2(board, i, j) == true)
+                        bicie = true;
                 }
             }
 
@@ -660,7 +670,7 @@ namespace CheckersApplication
 
             CheckJumpsForWhite(board, 0);
 
-            if (move_matrix_buffer_white.Count == 1 && move_matrix_buffer_white[0] == board)
+            if (bicie == false)
             {
                 move_matrix_buffer_white.Clear();
                 CheckMovesForWhite(board);
