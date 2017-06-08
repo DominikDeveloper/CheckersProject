@@ -49,23 +49,7 @@ namespace CheckersApplication
             for (int row = 0; row < 6; row++)
                 for (int col = 0; col < 8; col++)
                 {
-                    //bool bicie = false;
-                    //int[,] board2 = new int[8, 8];
-                    //for (int i = 0; i < 8; i++)
-                    //{
-                    //    for (int j = 0; j < 8; j++)
-                    //    {
-                    //        board2[i, j] = board[i, j];
-                    //    }
-                    //}
-                    //jumping_buffer_white.Add(new int[8, 8]);
-                    //for (int i = 0; i < 8; i++)
-                    //{
-                    //    for (int j = 0; j < 8; j++)
-                    //    {
-                    //        jumping_buffer_white[0][i, j] = board[i, j];
-                    //    }
-                    //}
+                    
                     if (col < 2 && board[row, col].Value == (int)Player.WhiteMen)
                     {
                         CheckRightJumpForWhite(board, row, col, ref move_matrix_buffer_white, indexx);
@@ -96,13 +80,9 @@ namespace CheckersApplication
                             CheckLeftJumpForWhite(board, row, col, ref move_matrix_buffer_white, indexx);
                             CheckRightJumpForWhite(board, row, col, ref move_matrix_buffer_white, indexx);
                         }
-                        //CheckRightJumpForWhite(board, row, col, ref board2);
-
-                        //CheckLeftJumpForWhite(board, row, col, ref board2);
-
+                        
                     }
                 }
-            //showBoard(board2);  
         }
 
         public static bool CheckRightJumpForWhite2(ChessField[,] board, int row, int col)
@@ -388,23 +368,6 @@ namespace CheckersApplication
             for (int row = 2; row < 8; row++)
                 for (int col = 0; col < 8; col++)
                 {
-                    //bool bicie = false;
-                    //int[,] board2 = new int[8, 8];
-                    //for (int i = 0; i < 8; i++)
-                    //{
-                    //    for (int j = 0; j < 8; j++)
-                    //    {
-                    //        board2[i, j] = board[i, j];
-                    //    }
-                    //}
-                    //jumping_buffer_white.Add(new int[8, 8]);
-                    //for (int i = 0; i < 8; i++)
-                    //{
-                    //    for (int j = 0; j < 8; j++)
-                    //    {
-                    //        jumping_buffer_white[0][i, j] = board[i, j];
-                    //    }
-                    //}
                     if (col < 2 && board[row, col].Value == (int)Player.BlackMen)
                     {
                         CheckRightJumpForBlack(board, row, col, ref move_matrix_buffer_black, indexx);
@@ -444,32 +407,6 @@ namespace CheckersApplication
             //showBoard(board2);  
         }
 
-        /*
-        public static void CheckJumpsForBlack(int[,] board) // Check jumps, Black going up
-        {
-            jump_buffer_black = new List<string>();
-
-            for (int row = 2; row < 8; row++)
-                for (int col = 0; col < 8; col++)
-                {
-                    if (col < 2 && board[row, col] == (int)Player.BlackMen)
-                        CheckRightJumpForBlack(board, row, col);
-                    if (col > 5 && board[row, col] == (int)Player.BlackMen)
-                        CheckLeftJumpForBlack(board, row, col);
-                    if (col > 1 && col < 6 && board[row, col] == (int)Player.BlackMen)
-                    {
-                        CheckRightJumpForBlack(board, row, col);
-                        CheckLeftJumpForBlack(board, row, col);
-                    }
-
-                }
-        }*/
-
-        public static void CheckJumps(ChessField[,] board)
-        {
-            //CheckJumpsForWhite(board);
-            //CheckJumpsForBlack(board);
-        }
 
         private static void CheckLeftMovesForBlack(ChessField[,] board, int row, int col) //checks left moves for black checkers piece
         {
