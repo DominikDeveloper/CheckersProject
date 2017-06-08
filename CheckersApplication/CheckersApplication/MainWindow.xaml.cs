@@ -34,12 +34,14 @@ namespace CheckersApplication
         public static  System.Windows.Media.Color player2Color = new System.Windows.Media.Color();
         public static bool player1Detected = false;
         public static bool player2Detected = false;
+        public bool goodMove;
         private bool ifInitComponent;
         int currentMove = 0;
         int shownMove = 0;
 
         public MainWindow()
         {
+            goodMove = false;
             ifInitComponent = false;
             InitializeComponent();
             ifInitComponent = true;
@@ -316,7 +318,8 @@ namespace CheckersApplication
                             IMG_Filter2.Source = ToBitmapConverter.Convert(filtring2);
 
                             //Show correct moves/jumps
-                            PutMoveJumpsToDatagrid(fields);
+                            goodMove = VerifyMoveJumps(fields);
+                            //PutMoveJumpsToDatagrid(fields);
                             //
                         }
                         
@@ -347,7 +350,7 @@ namespace CheckersApplication
 
             return fields;
         }
-
+        /*
         private void PutMoveJumpsToDatagrid(ChessField[,] fields)
         {
             //Show correct moves/jumps (static methods - no change sequence of calling methods
@@ -378,7 +381,7 @@ namespace CheckersApplication
             DG_Moves.ItemsSource = null;
             DG_Moves.ItemsSource = list1;
         }
-
+        */
 
         private void CB_AutoDetectColors_Click(object sender, RoutedEventArgs e)
         {
@@ -503,6 +506,34 @@ namespace CheckersApplication
                 BT_SaveMove.IsEnabled = true;
             }
         }
+
+        private bool VerifyMoveJumps(ChessField[,] fields)
+        {
+            var move_matrix_buffer_white = new List<ChessField[,]>();
+            var move_matrix_buffer_black = new List<ChessField[,]>();
+            MovesJumps.Run(fields, ref move_matrix_buffer_white, ref move_matrix_buffer_black);
+
+            if (currentMove % 2 == 0) //black as first
+            {
+                foreach (var item in move_matrix_buffer_black)
+                {
+                    if (item == fields)
+                        return true;
+                }
+            }
+
+            if (currentMove % 2 == 1) //white
+            {
+                foreach (var item in move_matrix_buffer_white)
+                {
+                    if (item == fields)
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
     }
 
 }
