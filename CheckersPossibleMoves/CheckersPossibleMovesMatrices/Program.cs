@@ -20,7 +20,10 @@ namespace CheckersPossibleMovesMatrices
         public static List<string> jump_buffer_black;
         public static List<string> move_buffer_black;
         public static List<string> move_buffer_white;
-        public static List<int[,]> jump_matrix_buffer_white;
+        //public static List<int[,]> move_matrix_buffer_white;
+        public static List<int[,]> move_matrix_buffer_white;
+
+        public static int indexxx = 0;
 
         public static void showBoard(int[,] board) //shows current state of board
         {
@@ -46,49 +49,97 @@ namespace CheckersPossibleMovesMatrices
 
             Console.WriteLine("########");
         }
-        public static void CheckJumpsForWhite(int[,] board) // Check jumps, White going down
+        public static void CheckJumpsForWhite(int[,] board, int indexx) // Check jumps, White going down
         {
             jump_buffer_white = new List<string>();
-            jump_matrix_buffer_white = new List<int[,]>();
-            
-
-
-
-
             for (int row = 0; row < 6; row++)
                 for (int col = 0; col < 8; col++)
                 {
-                    int[,] board2 = new int[8, 8];
-                    for (int i = 0; i < 8; i++)
-                    {
-                        for (int j = 0; j < 8; j++)
-                        {
-                            board2[i, j] = board[i, j];
-                        }
-                    }
+                    //bool bicie = false;
+                    //int[,] board2 = new int[8, 8];
+                    //for (int i = 0; i < 8; i++)
+                    //{
+                    //    for (int j = 0; j < 8; j++)
+                    //    {
+                    //        board2[i, j] = board[i, j];
+                    //    }
+                    //}
+                    //jumping_buffer_white.Add(new int[8, 8]);
+                    //for (int i = 0; i < 8; i++)
+                    //{
+                    //    for (int j = 0; j < 8; j++)
+                    //    {
+                    //        jumping_buffer_white[0][i, j] = board[i, j];
+                    //    }
+                    //}
                     if (col < 2 && board[row, col] == (int)FieldValues.WhiteMen)
                     {
-                        CheckRightJumpForWhite(board, row, col, ref board2);
-                        showBoard(board2);
-                        jump_matrix_buffer_white.Add(board2);
+                        CheckRightJumpForWhite(board, row, col, ref move_matrix_buffer_white, indexx);
                     }
                     if (col > 5 && board[row, col] == (int)FieldValues.WhiteMen)
                     {
-                        CheckLeftJumpForWhite(board, row, col, ref board2);
-                        showBoard(board2);
-                        jump_matrix_buffer_white.Add(board2);
+                        CheckLeftJumpForWhite(board, row, col, ref move_matrix_buffer_white, indexx);
                     }
                     if (col > 1 && col < 6 && board[row, col] == (int)FieldValues.WhiteMen)
                     {
-                        CheckRightJumpForWhite(board, row, col, ref board2);
-                        CheckLeftJumpForWhite(board, row, col, ref board2);
-                        showBoard(board2);
-                        jump_matrix_buffer_white.Add(board2);
+                        if (CheckLeftJumpForWhite2(board, row, col) == true && CheckRightJumpForWhite2(board, row, col) == true)
+                        {
+                            indexxx++;
+                            move_matrix_buffer_white.Add(new int[8, 8]);
+                            for (int i = 0; i < 8; i++)
+                            {
+                                for (int j = 0; j < 8; j++)
+                                {
+                                    move_matrix_buffer_white[indexx + 1][i, j] = board[i, j];
+                                }
+                            }
+                            CheckLeftJumpForWhite(board, row, col, ref move_matrix_buffer_white, indexx);
+                            CheckRightJumpForWhite(board, row, col, ref move_matrix_buffer_white, indexx + 1);
+                        }
+                        else
+                        {
+                            CheckLeftJumpForWhite(board, row, col, ref move_matrix_buffer_white, indexx);
+                            CheckRightJumpForWhite(board, row, col, ref move_matrix_buffer_white, indexx);
+                        }
+                        //CheckRightJumpForWhite(board, row, col, ref board2);
+
+                        //CheckLeftJumpForWhite(board, row, col, ref board2);
+
                     }
                 }
             //showBoard(board2);  
         }
-        private static void CheckRightJumpForWhite(int[,] board, int row, int col,ref int[,] board2) //checks valid right-hand jump
+
+        public static bool CheckRightJumpForWhite2(int[,] board, int row, int col)
+        {
+            if (row <= 5)
+            {
+                if (board[row + 1, col + 1] >= (int)FieldValues.BlackMen &&
+                    board[row + 1, col + 1] == (int)FieldValues.BlackMen &&
+                    board[row + 2, col + 2] < 2)
+                {
+                    return true;
+                }
+                else return false;
+            }
+            return false;
+        }
+
+        public static bool CheckLeftJumpForWhite2(int[,] board, int row, int col)
+        {
+            if (row <= 5)
+            {
+                if (board[row + 1, col - 1] >= (int)FieldValues.BlackMen &&
+                   board[row + 1, col - 1] == (int)FieldValues.BlackMen &&
+                   board[row + 2, col - 2] < 2)
+                {
+                    return true;
+                }
+                else return false;
+            }
+            return false;
+        }
+        private static void CheckRightJumpForWhite(int[,] board, int row, int col, ref List<int[,]> jumpList, int indexx) //checks valid right-hand jump
         {
             if (row <= 5)
             {
@@ -98,23 +149,41 @@ namespace CheckersPossibleMovesMatrices
                 {
                     //board[row, col] = 9;
                     jump_buffer_white.Add("[" + row.ToString() + "," + col.ToString() + "] > " + "[" + (row + 2).ToString() + "," + (col + 2).ToString() + "]");
-                    board2[row + 1,col + 1] = 1;
-                    board2[row, col] = 1;
-                    board2[row + 2, col+2] = 3;
+                    jumpList[indexx][row + 1, col + 1] = 1;
+                    jumpList[indexx][row, col] = 1;
+                    jumpList[indexx][row + 2, col + 2] = 3;
                     if ((col + 2) < 2 /*&& board[row, col] == (int)FieldValues.BlackMen*/)
-                        CheckRightJumpForWhite(board, row + 2, col + 2, ref board2);
+                        CheckRightJumpForWhite(board, row + 2, col + 2, ref move_matrix_buffer_white, indexx);
                     if ((col + 2) > 5 /*&& board[row, col] == (int)FieldValues.BlackMen*/)
-                        CheckLeftJumpForWhite(board, row + 2, col + 2, ref board2);
+                        CheckLeftJumpForWhite(board, row + 2, col + 2, ref move_matrix_buffer_white, indexx);
                     if ((col + 2) > 1 && (col + 2) < 6 /*&& board[row, col] == (int)FieldValues.BlackMen*/)
                     {
-                        CheckRightJumpForWhite(board, row + 2, col + 2, ref board2);
-                        CheckLeftJumpForWhite(board, row + 2, col + 2, ref board2);
+                        if(CheckLeftJumpForWhite2(jumpList[indexx],row + 2, col + 2) == true && CheckRightJumpForWhite2(jumpList[indexx], row + 2, col + 2) == true)
+                        {
+                            indexxx++;
+                            move_matrix_buffer_white.Add(new int[8, 8]);
+                            for (int i = 0; i < 8; i++)
+                            {
+                                for (int j = 0; j < 8; j++)
+                                {
+                                    move_matrix_buffer_white[indexxx][i, j] = jumpList[indexx][i, j];
+                                }
+                            }
+                            CheckLeftJumpForWhite(board, row + 2, col + 2, ref move_matrix_buffer_white, indexx);
+                            CheckRightJumpForWhite(board, row + 2, col + 2, ref move_matrix_buffer_white, indexxx);
+                        }
+                        else
+                        {
+                            CheckLeftJumpForWhite(board, row + 2, col + 2, ref move_matrix_buffer_white, indexx);
+                            CheckRightJumpForWhite(board, row + 2, col + 2, ref move_matrix_buffer_white, indexx);
+                        }
+
                     }
                 }
             }
         }
 
-        private static void CheckLeftJumpForWhite(int[,] board, int row, int col,ref int[,] board2) //check valid left-hand jump
+        private static void CheckLeftJumpForWhite(int[,] board, int row, int col, ref List<int[,]> jumpList, int indexx) //check valid left-hand jump
         {
             if (row <= 5)
             {
@@ -124,37 +193,46 @@ namespace CheckersPossibleMovesMatrices
                 {
                     //board[row, col] = 9;
                     jump_buffer_white.Add("[" + row.ToString() + "," + col.ToString() + "] > " + "[" + (row + 2).ToString() + "," + (col - 2).ToString() + "]");
-                    board2[row + 1, col - 1] = 1;
-                    board2[row, col] = 1;
-                    board2[row + 2, col - 2] = 3;
+                    jumpList[indexx][row + 1, col - 1] = 1;
+                    jumpList[indexx][row, col] = 1;
+                    jumpList[indexx][row + 2, col - 2] = 3;
                     if ((col - 2) < 2 /*&& board[row, col] == (int)FieldValues.BlackMen*/)
-                        CheckRightJumpForWhite(board, row + 2, col - 2, ref board2);
+                        CheckRightJumpForWhite(board, row + 2, col - 2, ref move_matrix_buffer_white, indexx);
                     if ((col - 2) > 5 /*&& board[row, col] == (int)FieldValues.BlackMen*/)
-                        CheckLeftJumpForWhite(board, row + 2, col - 2 , ref board2);
+                        CheckLeftJumpForWhite(board, row + 2, col - 2, ref move_matrix_buffer_white, indexx);
                     if ((col - 2) > 1 && (col - 2) < 6 /*&& board[row, col] == (int)FieldValues.BlackMen*/)
                     {
-                        CheckRightJumpForWhite(board, row + 2, col - 2, ref board2);
-                        CheckLeftJumpForWhite(board, row + 2, col - 2, ref board2);
+                        if(CheckRightJumpForWhite2(jumpList[indexx],row + 2, col - 2) == true && CheckLeftJumpForWhite2(jumpList[indexx], row + 2, col - 2) == true)
+                        {
+                            indexxx++;
+                            move_matrix_buffer_white.Add(new int[8, 8]);
+                            for (int i = 0; i < 8; i++)
+                            {
+                                for (int j = 0; j < 8; j++)
+                                {
+                                    move_matrix_buffer_white[indexxx][i, j] = jumpList[indexx][i, j];
+                                }
+                            }
+                            CheckLeftJumpForWhite(board, row + 2, col - 2, ref move_matrix_buffer_white, indexx);
+                            CheckRightJumpForWhite(board, row + 2, col - 2, ref move_matrix_buffer_white, indexxx);
+                        }
+                        else
+                        {
+                            CheckLeftJumpForWhite(board, row + 2, col - 2, ref move_matrix_buffer_white, indexx);
+                            CheckRightJumpForWhite(board, row + 2, col - 2, ref move_matrix_buffer_white, indexx);
+                        }
+
                     }
 
                 }
             }
         }
 
-        private static void CheckRightJumpForWhite2(int[,] board, int row, int col)
-        {
-            throw new NotImplementedException();
-        }
-
-        private static void CheckLeftJumpForWhite2(int[,] board, int row, int col)
-        {
-            throw new NotImplementedException();
-        }
 
         public static void CheckJumpsForBlack(int[,] board) // Check jumps, Black going up
         {
             jump_buffer_black = new List<string>();
-            
+
             for (int row = 2; row < 8; row++)
                 for (int col = 0; col < 8; col++)
                 {
@@ -173,7 +251,7 @@ namespace CheckersPossibleMovesMatrices
 
         public static void CheckJumps(int[,] board)
         {
-            CheckJumpsForWhite(board);
+            //CheckJumpsForWhite(board);
             CheckJumpsForBlack(board);
         }
 
@@ -219,18 +297,28 @@ namespace CheckersPossibleMovesMatrices
             }
         }
 
-        private static void CheckLeftMovesForWhite(int[,] board, int row, int col) //checks left moves for black checkers piece
+        private static void CheckLeftMovesForWhite(int[,] board, int row, int col, ref int[,] board2, ref bool ruch) //checks left moves for black checkers piece
         {
             if (board[row + 1, col - 1] == (int)FieldValues.WhiteSquare)
             {
+                ruch = true;
+                board2[row, col] = 1;
+                board2[row + 1, col - 1] = 3;
+                //showBoard(board2);
+                //move_matrix_buffer_white.Add(board2);
                 move_buffer_white.Add("[" + row.ToString() + "," + col.ToString() + "] > " + "[" + (row + 1).ToString() + "," + (col - 1).ToString() + "]");
             }
         }
 
-        private static void CheckRightMovesForWhite(int[,] board, int row, int col) //checks right moves for black checkers piece
+        private static void CheckRightMovesForWhite(int[,] board, int row, int col, ref int[,] board2, ref bool ruch) //checks right moves for white checkers piece
         {
             if (board[row + 1, col + 1] == (int)FieldValues.WhiteSquare)
             {
+                ruch = true;
+                board2[row, col] = 1;
+                board2[row + 1, col + 1] = 3;
+                //showBoard(board2);
+                //move_matrix_buffer_white.Add(board2);
                 move_buffer_white.Add("[" + row.ToString() + "," + col.ToString() + "] > " + "[" + (row + 1).ToString() + "," + (col + 1).ToString() + "]");
             }
         }
@@ -241,26 +329,64 @@ namespace CheckersPossibleMovesMatrices
             {
                 for (int col = 0; col < 8; col++)
                 {
+                    bool ruch = false;
+                    int[,] board2 = new int[8, 8];
+                    for (int i = 0; i < 8; i++)
+                    {
+                        for (int j = 0; j < 8; j++)
+                        {
+                            board2[i, j] = board[i, j];
+                        }
+                    }
                     if (board[row, col] == (int)FieldValues.WhiteMen)
                     {
                         if (col == 0)
                         {
-                            CheckRightMovesForWhite(board, row, col);
+                            CheckRightMovesForWhite(board, row, col, ref board2, ref ruch);
+                            if (ruch == true)
+                            {
+                                showBoard(board2);
+                                move_matrix_buffer_white.Add(board2);
+                            }
                         }
                         else if (col == 7)
                         {
-                            CheckLeftMovesForWhite(board, row, col);
+                            CheckLeftMovesForWhite(board, row, col, ref board2, ref ruch);
+                            if (ruch == true)
+                            {
+                                showBoard(board2);
+                                move_matrix_buffer_white.Add(board2);
+                            }
                         }
                         else
                         {
-                            CheckLeftMovesForWhite(board, row, col);
-                            CheckRightMovesForWhite(board, row, col);
+                            CheckLeftMovesForWhite(board, row, col, ref board2, ref ruch);
+                            if (ruch == true)
+                            {
+                                showBoard(board2);
+                                move_matrix_buffer_white.Add(board2);
+                                ruch = false;
+                                board2 = new int[8, 8];
+                                for (int i = 0; i < 8; i++)
+                                {
+                                    for (int j = 0; j < 8; j++)
+                                    {
+                                        board2[i, j] = board[i, j];
+                                    }
+                                }
+                            }
+                            CheckRightMovesForWhite(board, row, col, ref board2, ref ruch);
+                            if (ruch == true)
+                            {
+                                showBoard(board2);
+                                move_matrix_buffer_white.Add(board2);
+                            }
                         }
                     }
                 }
             }
         }
-        
+
 
         private static void CheckRightJumpForBlack(int[,] board, int row, int col) //checks valid right-hand jump
         {
@@ -319,6 +445,8 @@ namespace CheckersPossibleMovesMatrices
             //creating chessboard matrix
             //0 - black
             //1 - white
+            move_matrix_buffer_white = new List<int[,]>();
+
             int[,] board = new int[8, 8];
             for (int i = 0; i < 8; i++)
             {
@@ -336,6 +464,10 @@ namespace CheckersPossibleMovesMatrices
                     }
                 }
             }
+
+            move_matrix_buffer_white = new List<int[,]>();
+
+
 
             showBoard(board);
             //placing checkers pieces on board
@@ -369,10 +501,24 @@ namespace CheckersPossibleMovesMatrices
             //board[0, 1] = 2;
             //board[6, 1] = 3;
 
-            board[0, 7] = 3;
-            board[1, 6] = 2;
+            //board[0, 7] = 3;
+            //board[1, 6] = 2;
+            //board[3, 4] = 2;
+            //board[5, 2] = 2;
+            //board[5, 4] = 2; ////super ultimate wielobicie
+
             board[0, 3] = 3;
+            board[1, 4] = 2;
             board[1, 2] = 2;
+            board[3, 0] = 2;
+            board[3, 2] = 2;
+            board[3, 4] = 2;
+            board[3, 6] = 2;
+            board[5, 2] = 2;
+
+
+
+
             //board[7, 4] = 2;
             //board[0, 1] = 3;
             //board[2, 3] = 3;
@@ -387,10 +533,21 @@ namespace CheckersPossibleMovesMatrices
             //board[2, 6] = 2;
             //board[2, 2] = 2;
 
+            move_matrix_buffer_white.Add(new int[8, 8]);
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    move_matrix_buffer_white[0][i, j] = board[i, j];
+                }
+            }
+
             showBoard(board);
 
             //Checking for jumps 9 if checkerspiece can jump //Comment of "9"  
-            CheckJumps(board);
+            //CheckJumps(board);
+
+            CheckJumpsForWhite(board, 0);
 
             showBoard(board);
 
@@ -399,23 +556,32 @@ namespace CheckersPossibleMovesMatrices
                 Console.Write(item + " ; ");
             Console.Write("-"); Console.WriteLine();
 
-            Console.Write("Bicia (poj.) - czarne: ");
-            foreach (var item in jump_buffer_black)
-                Console.Write(item + " ; ");
-            Console.Write("-"); Console.WriteLine();
+            //Console.Write("Bicia (poj.) - czarne: ");
+            //foreach (var item in jump_buffer_black)
+            //    Console.Write(item + " ; ");
+            //Console.Write("-"); Console.WriteLine();
 
             CheckMovesForBlack(board);
-            CheckMovesForWhite(board);
+
+            int a = 2;
+
+            if (move_matrix_buffer_white.Count == 0)
+                CheckMovesForWhite(board);
 
             Console.Write("Murzynskie ruchy: ");
             foreach (var item in move_buffer_black)
                 Console.Write(item + " ; ");
             Console.Write("-"); Console.WriteLine();
 
-            Console.Write("Masterrace ruchy: ");
-            foreach (var item in move_buffer_white)
-                Console.Write(item + " ; ");
-            Console.Write("-"); Console.WriteLine();
+            //Console.Write("Masterrace ruchy: ");
+            //foreach (var item in move_buffer_white)
+            //    Console.Write(item + " ; ");
+            //Console.Write("-"); Console.WriteLine();
+
+            foreach(int[,] i in move_matrix_buffer_white)
+            {
+                showBoard(i);
+            }
 
             Console.ReadKey();
         }
