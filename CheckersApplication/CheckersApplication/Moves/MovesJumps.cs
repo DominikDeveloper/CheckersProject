@@ -660,7 +660,7 @@ namespace CheckersApplication
 
             CheckJumpsForWhite(board, 0);
 
-            if (move_matrix_buffer_white.Count == 1/* && move_matrix_buffer_white[0] == board*/)
+            if (move_matrix_buffer_white.Count == 1 && move_matrix_buffer_white[0] == board)
             {
                 move_matrix_buffer_white.Clear();
                 CheckMovesForWhite(board);
