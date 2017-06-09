@@ -62,8 +62,8 @@
         <Button x:Name="BT_Stop" Content="Zatrzymaj" HorizontalAlignment="Left" VerticalAlignment="Top" Width="126" Click="BT_Stop_Click" IsEnabled="False" Margin="141,126,0,0"/>
         <TextBox x:Name="TB_CameraSource" HorizontalAlignment="Left" Height="41" Margin="14,71,0,0" TextWrapping="Wrap" Text="URL streamu, ID kamery, lub plik wideo,&#xD;&#xA;np. (http://IP:PORT/mjpegfeed)" VerticalAlignment="Top" Width="253" IsEnabled="False" GotFocus="TB_CameraSource_GotFocus" Foreground="Gray"/>
         <CheckBox x:Name="CB_DefaultCamera" Content="Wybór kamery z listy" HorizontalAlignment="Left" Margin="14,30,0,0" VerticalAlignment="Top" Width="134" Height="25" IsChecked="True" Click="CB_DefaultCamera_Click" />
-        <CheckBox x:Name="CB_OpenCL" Content="Użyj OpenCL" HorizontalAlignment="Left" Height="23" Margin="16,241,0,0" VerticalAlignment="Top" Width="120" IsChecked="False" Click="CB_OpenCL_Click"/>
-        <Button x:Name="BT_ImageTest" Content="Test wykrywania (wczytane zdj.)" HorizontalAlignment="Left" Height="48" Margin="14,175,0,0" VerticalAlignment="Top" Width="189" Click="BT_ImageTest_Click"/>
+        <CheckBox x:Name="CB_OpenCL" Content="Użyj OpenCL" HorizontalAlignment="Left" Height="23" Margin="16,254,0,0" VerticalAlignment="Top" Width="120" IsChecked="False" Click="CB_OpenCL_Click"/>
+        <Button x:Name="BT_ImageTest" Content="Test wykrywania (wczytanie zdj.)" HorizontalAlignment="Left" Height="31" Margin="14,175,0,0" VerticalAlignment="Top" Width="189" Click="BT_ImageTest_Click"/>
         <ComboBox x:Name="CO_Cameras" HorizontalAlignment="Left" Height="25" Margin="166,30,0,0" VerticalAlignment="Top" Width="101" IsEditable="False"/>
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Right" Height="480" Margin="0,30,17,0" VerticalAlignment="Top" Width="450">
             <Image x:Name="IMG_Detected"/>
@@ -107,7 +107,7 @@
             <StackPanel Margin="0,128,144,0">
                 <StackPanel Orientation="Horizontal">
                     <Label Content="R: " HorizontalAlignment="Left" Height="30" Margin="0,0,0,0" VerticalAlignment="Center" Width="20" FontSize="12"/>
-                    <xctk:RangeSlider x:Name="RS_Slider1R" Minimum="0" Maximum="255" LowerValue="115" HigherValue="255" LowerValueChanged="RangeSlider_Player1_ValueChanged" HigherValueChanged="RangeSlider_Player1_ValueChanged" Margin="-3,6,76,5" Width="73">
+                    <xctk:RangeSlider x:Name="RS_Slider1R" Minimum="0" Maximum="255" LowerValue="255" HigherValue="255" LowerValueChanged="RangeSlider_Player1_ValueChanged" HigherValueChanged="RangeSlider_Player1_ValueChanged" Margin="-3,6,76,5" Width="73">
                         <xctk:RangeSlider.Resources>
                             <Style TargetType="{x:Type Slider}">
                                 <Setter Property="IsSnapToTickEnabled" Value="True"/>
@@ -119,7 +119,7 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Label Content="G: " HorizontalAlignment="Left" Height="30" Margin="0,0,0,0" VerticalAlignment="Center" Width="20" FontSize="12"/>
-                    <xctk:RangeSlider x:Name="RS_Slider1G" Minimum="0" Maximum="255" LowerValue="0" HigherValue="95" LowerValueChanged="RangeSlider_Player1_ValueChanged" HigherValueChanged="RangeSlider_Player1_ValueChanged" Margin="-3,6,76,5" Width="73">
+                    <xctk:RangeSlider x:Name="RS_Slider1G" Minimum="0" Maximum="255" LowerValue="255" HigherValue="255" LowerValueChanged="RangeSlider_Player1_ValueChanged" HigherValueChanged="RangeSlider_Player1_ValueChanged" Margin="-3,6,76,5" Width="73">
                         <xctk:RangeSlider.Resources>
                             <Style TargetType="{x:Type Slider}">
                                 <Setter Property="IsSnapToTickEnabled" Value="True"/>
@@ -131,7 +131,7 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Label Content="B: " HorizontalAlignment="Left" Height="30" Margin="0,0,0,0" VerticalAlignment="Center" Width="20" FontSize="12"/>
-                    <xctk:RangeSlider x:Name="RS_Slider1B" Minimum="0" Maximum="255" LowerValue="0" HigherValue="65" LowerValueChanged="RangeSlider_Player1_ValueChanged" HigherValueChanged="RangeSlider_Player1_ValueChanged" Margin="-3,6,76,5" Width="73">
+                    <xctk:RangeSlider x:Name="RS_Slider1B" Minimum="0" Maximum="255" LowerValue="255" HigherValue="255" LowerValueChanged="RangeSlider_Player1_ValueChanged" HigherValueChanged="RangeSlider_Player1_ValueChanged" Margin="-3,6,76,5" Width="73">
                         <xctk:RangeSlider.Resources>
                             <Style TargetType="{x:Type Slider}">
                                 <Setter Property="IsSnapToTickEnabled" Value="True"/>
@@ -146,7 +146,7 @@
             <StackPanel Margin="144,128,0,0">
                 <StackPanel Orientation="Horizontal">
                     <Label Content="R: " HorizontalAlignment="Left" Height="30" Margin="0,0,0,0" VerticalAlignment="Center" Width="20" FontSize="12"/>
-                    <xctk:RangeSlider x:Name="RS_Slider2R" Minimum="0" Maximum="255" LowerValue="165" HigherValue="255" LowerValueChanged="RangeSlider_Player2_ValueChanged" HigherValueChanged="RangeSlider_Player2_ValueChanged" Margin="-3,6,76,5" Width="73">
+                    <xctk:RangeSlider x:Name="RS_Slider2R" Minimum="0" Maximum="255" LowerValue="255" HigherValue="255" LowerValueChanged="RangeSlider_Player2_ValueChanged" HigherValueChanged="RangeSlider_Player2_ValueChanged" Margin="-3,6,76,5" Width="73">
                         <xctk:RangeSlider.Resources>
                             <Style TargetType="{x:Type Slider}">
                                 <Setter Property="IsSnapToTickEnabled" Value="True"/>
@@ -158,7 +158,7 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Label Content="G: " HorizontalAlignment="Left" Height="30" Margin="0,0,0,0" VerticalAlignment="Center" Width="20" FontSize="12"/>
-                    <xctk:RangeSlider x:Name="RS_Slider2G" Minimum="0" Maximum="255" LowerValue="145" HigherValue="255" LowerValueChanged="RangeSlider_Player2_ValueChanged" HigherValueChanged="RangeSlider_Player2_ValueChanged" Margin="-3,6,76,5" Width="73">
+                    <xctk:RangeSlider x:Name="RS_Slider2G" Minimum="0" Maximum="255" LowerValue="255" HigherValue="255" LowerValueChanged="RangeSlider_Player2_ValueChanged" HigherValueChanged="RangeSlider_Player2_ValueChanged" Margin="-3,6,76,5" Width="73">
                         <xctk:RangeSlider.Resources>
                             <Style TargetType="{x:Type Slider}">
                                 <Setter Property="IsSnapToTickEnabled" Value="True"/>
@@ -170,7 +170,7 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Label Content="B: " HorizontalAlignment="Left" Height="30" Margin="0,0,0,0" VerticalAlignment="Center" Width="20" FontSize="12"/>
-                    <xctk:RangeSlider x:Name="RS_Slider2B" Minimum="0" Maximum="255" LowerValue="0" HigherValue="255" LowerValueChanged="RangeSlider_Player2_ValueChanged" HigherValueChanged="RangeSlider_Player2_ValueChanged" Margin="-3,6,76,5" Width="73">
+                    <xctk:RangeSlider x:Name="RS_Slider2B" Minimum="0" Maximum="255" LowerValue="255" HigherValue="255" LowerValueChanged="RangeSlider_Player2_ValueChanged" HigherValueChanged="RangeSlider_Player2_ValueChanged" Margin="-3,6,76,5" Width="73">
                         <xctk:RangeSlider.Resources>
                             <Style TargetType="{x:Type Slider}">
                                 <Setter Property="IsSnapToTickEnabled" Value="True"/>
@@ -211,7 +211,8 @@
         <Button x:Name="BT_GoBack" Content="&lt;" HorizontalAlignment="Left" Margin="433,531,0,0" VerticalAlignment="Top" Width="20" Click="BT_GoBack_Click"/>
         <Button x:Name="BT_GoForward" Content="&gt;" HorizontalAlignment="Left" Margin="458,531,0,0" VerticalAlignment="Top" Width="20" Click="BT_GoForward_Click"/>
         <Button Content="Od nowa" HorizontalAlignment="Left" Margin="675,531,0,0" VerticalAlignment="Top" Width="77" Click="Button_Click"/>
-        <TextBlock x:Name="TB_MoveNr" HorizontalAlignment="Left" Height="18" Margin="433,566,0,0" TextWrapping="Wrap" Text="Nr ruchu: 1 (bieżący)" VerticalAlignment="Top" Width="241"/>
+        <TextBlock x:Name="TB_MoveNr" HorizontalAlignment="Left" Height="18" Margin="433,566,0,0" TextWrapping="Wrap" Text="Nr ruchu: Ustawianie pionków" VerticalAlignment="Top" Width="241"/>
+        <Button Content="Wykryj z wczytanego zdj." HorizontalAlignment="Left" Margin="14,211,0,0" VerticalAlignment="Top" Width="139" Click="Button_Click_1"/>
     </Grid>
 
 </Window>

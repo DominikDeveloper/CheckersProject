@@ -40,6 +40,7 @@ namespace CheckersApplication
         private bool ifInitComponent;
         int currentMove = 0;
         int shownMove = 0;
+        string fileName;
 
         public static bool same(ChessField[,] board, ChessField[,] board2)
         {
@@ -155,6 +156,7 @@ namespace CheckersApplication
             {
                 try
                 {
+                    fileName = openFileDialog1.FileName;
                     Detect(openFileDialog1.FileName);
                 }
                 catch (Exception ex)
@@ -463,7 +465,7 @@ namespace CheckersApplication
             {
                 currentMove++;
                 shownMove++;
-                TB_MoveNr.Text = "Nr ruchu: " + (shownMove + 1).ToString() + " (bieżący)";
+                TB_MoveNr.Text = "Nr ruchu: " + (shownMove).ToString() + " (bieżący)";
                 List<CheckersPiece> pieces = new List<CheckersPiece>();
                 foreach (var p in chessBoardState.piecesObservable)
                     pieces.Add(p.Copy());
@@ -531,7 +533,7 @@ namespace CheckersApplication
 
                     currentMove++;
                     shownMove++;
-                    TB_MoveNr.Text = "Nr ruchu: " + (shownMove + 1).ToString() + " (bieżący)";
+                    TB_MoveNr.Text = "Nr ruchu: " + (shownMove).ToString() + " (bieżący)";
                     chessBoardState.history.Add(pieces2);
                 }
             }
@@ -593,7 +595,7 @@ namespace CheckersApplication
 
                     currentMove++;
                     shownMove++;
-                    TB_MoveNr.Text = "Nr ruchu: " + (shownMove + 1).ToString() + " (bieżący)";
+                    TB_MoveNr.Text = "Nr ruchu: " + (shownMove).ToString() + " (bieżący)";
                     chessBoardState.history.Add(pieces2);
                 }
             }
@@ -604,9 +606,16 @@ namespace CheckersApplication
             if (shownMove < 1)
                 return;
 
-            TB_MoveNr.Text = "Nr ruchu: " + shownMove.ToString();
-            BT_SaveMove.IsEnabled = false;
             shownMove--;
+
+            if (shownMove==0)
+                TB_MoveNr.Text = "Nr ruchu: Ustawianie pionków";
+            else
+                TB_MoveNr.Text = "Nr ruchu: " + shownMove.ToString();
+
+            BT_SaveMove.IsEnabled = false;
+            BT_ImageTest.IsEnabled = false;
+
             chessBoardState.piecesObservable.Clear();
             foreach (var p in chessBoardState.history[shownMove])
                 chessBoardState.piecesObservable.Add(p.Copy());
@@ -624,11 +633,12 @@ namespace CheckersApplication
             if (shownMove == currentMove)
             {
                 BT_SaveMove.IsEnabled = true;
-                TB_MoveNr.Text = "Nr ruchu: "+ (shownMove+1).ToString()+" (bieżący)";
+                BT_ImageTest.IsEnabled = true;
+                TB_MoveNr.Text = "Nr ruchu: "+ (shownMove).ToString()+" (bieżący)";
                 return;
             }
 
-            TB_MoveNr.Text = "Nr ruchu: " + (shownMove+1).ToString();
+            TB_MoveNr.Text = "Nr ruchu: " + (shownMove).ToString();
             chessBoardState.piecesObservable.Clear();
             foreach (var p in chessBoardState.history[shownMove])
                 chessBoardState.piecesObservable.Add(p.Copy());
@@ -642,7 +652,7 @@ namespace CheckersApplication
                 chessBoardState.history.Clear();
                 currentMove = 0;
                 shownMove = 0;
-                TB_MoveNr.Text = "Nr ruchu: 1 (bieżący)";
+                TB_MoveNr.Text = "Nr ruchu: Ustawianie pionków";
                 BT_SaveMove.IsEnabled = true;
             }
         }
@@ -674,6 +684,17 @@ namespace CheckersApplication
             return false;
         }
 
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Detect(fileName);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show("Nie wczytano obrazka.");
+            }
+        }
     }
 
 }
