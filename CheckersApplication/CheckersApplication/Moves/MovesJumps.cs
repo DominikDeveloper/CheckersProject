@@ -89,8 +89,7 @@ namespace CheckersApplication
         {
             if (row <= 5)
             {
-                if (board[row + 1, col + 1].Value >= (int)Player.Black &&
-                    board[row + 1, col + 1].Value == (int)Player.Black &&
+                if (board[row + 1, col + 1].Value == (int)Player.Black &&
                     board[row + 2, col + 2].Value < 2)
                 {
                     return true;
@@ -104,8 +103,7 @@ namespace CheckersApplication
         {
             if (row <= 5)
             {
-                if (board[row + 1, col - 1].Value >= (int)Player.Black &&
-                   board[row + 1, col - 1].Value == (int)Player.Black &&
+                if (board[row + 1, col - 1].Value == (int)Player.Black &&
                    board[row + 2, col - 2].Value < 2)
                 {
                     return true;
@@ -119,8 +117,7 @@ namespace CheckersApplication
         {
             if (row <= 5)
             {
-                if (board[row + 1, col + 1].Value >= (int)Player.Black &&
-                    board[row + 1, col + 1].Value == (int)Player.Black &&
+                if (board[row + 1, col + 1].Value == (int)Player.Black &&
                     board[row + 2, col + 2].Value < 2)
                 {
                     //board[row, col] = 9;
@@ -171,8 +168,7 @@ namespace CheckersApplication
         {
             if (row <= 5)
             {
-                if (board[row + 1, col - 1].Value >= (int)Player.Black &&
-                    board[row + 1, col - 1].Value == (int)Player.Black &&
+                if (board[row + 1, col - 1].Value == (int)Player.Black &&
                     board[row + 2, col - 2].Value < 2)
                 {
                     //board[row, col] = 9;
@@ -335,8 +331,7 @@ namespace CheckersApplication
         {
             if (row >= 2)
             {
-                if (board[row - 1, col + 1].Value >= (int)Player.White &&
-                    board[row - 1, col + 1].Value == (int)Player.White &&
+                if (board[row - 1, col + 1].Value == (int)Player.White &&
                     board[row - 2, col + 2].Value < 2)
                 {
                     return true;
@@ -350,8 +345,7 @@ namespace CheckersApplication
         {
             if (row >= 2)
             {
-                if (board[row - 1, col - 1].Value >= (int)Player.White &&
-                   board[row - 1, col - 1].Value == (int)Player.White &&
+                if (board[row - 1, col - 1].Value == (int)Player.White &&
                    board[row - 2, col - 2].Value < 2)
                 {
                     return true;
@@ -444,8 +438,7 @@ namespace CheckersApplication
         {
             if (row >= 2)
             {
-                if (board[row - 1, col + 1].Value >= (int)Player.White &&
-                    board[row - 1, col + 1].Value == (int)Player.White &&
+                if (board[row - 1, col + 1].Value == (int)Player.White &&
                     board[row - 2, col + 2].Value < 2)
                 {
                     //board[row, col] = 9;
@@ -490,8 +483,7 @@ namespace CheckersApplication
         {
             if (row >= 2)
             {
-                if (board[row - 1, col - 1].Value >= (int)Player.White &&
-                    board[row - 1, col - 1].Value == (int)Player.White &&
+                if (board[row - 1, col - 1].Value == (int)Player.White &&
                     board[row - 2, col - 2].Value < 2)
                 {
                     //board[row, col] = 9;
@@ -531,6 +523,7 @@ namespace CheckersApplication
                 }
             }
         }
+
 
         private static void CheckLeftMovesForBlack(ChessField[,] board, int row, int col, ref ChessField[,] board2, ref bool ruch) //checks left moves for black checkers piece
         {
@@ -649,13 +642,29 @@ namespace CheckersApplication
                 }
             }
 
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 6; i++)
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    if (CheckLeftJumpForWhite2(board, i, j) == true || CheckRightJumpForWhite2(board, i, j) == true)
-                        bicie = true;
-                }
+                    if (board[i,j].Value == (int)Player.White)
+                    {
+                        if ((j) < 2 /*&& board[row, col] == (int)Player.BlackMen*/)
+                        {
+                            if (CheckRightJumpForWhite2(board, i, j) == true)
+                                bicie = true;
+                        }
+                        else if ((j) > 5 /*&& board[row, col] == (int)Player.BlackMen*/)
+                        {
+                            if (CheckLeftJumpForWhite2(board, i, j) == true)
+                                bicie = true;
+                        }
+                        else if (j > 1 && j < 6 /*&& board[row, col] == (int)Player.BlackMen*/)
+                        {
+                            if (CheckRightJumpForWhite2(board, i, j) == true || CheckLeftJumpForWhite2(board, i, j) == true)
+                                bicie = true;
+                        }
+                    }
+                }                   
             }
 
             //var newFields2 = ChessField.GetEmptyFields();
@@ -683,5 +692,84 @@ namespace CheckersApplication
             //}
             return move_matrix_buffer_white;
         }
+        public static List<ChessField[,]> RunBlack(ChessField[,] board)
+        {
+            //creating chessboard matrix
+            //0 - black
+            //1 - white
+
+            bool bicie = false;
+
+            move_matrix_buffer_black = new List<ChessField[,]>();
+            //move_matrix_buffer_black = new List<ChessField[,]>();
+
+            var newFields = ChessField.GetEmptyFields();
+            move_matrix_buffer_black.Add(newFields);
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    move_matrix_buffer_black[0][i, j].Value = board[i, j].Value;
+                }
+            }
+
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                    Console.Write(board[i, j].Value);
+                Console.WriteLine();
+            }
+
+            for (int i = 2; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    if (board[i, j].Value == (int)Player.Black)
+                    {
+                        if ((j) < 2 /*&& board[row, col] == (int)Player.BlackMen*/)
+                        {
+                            if (CheckRightJumpForBlack2(board, i, j) == true)
+                                bicie = true;
+                        }
+                        else if ((j) > 5 /*&& board[row, col] == (int)Player.BlackMen*/)
+                        {
+                            if (CheckLeftJumpForBlack2(board, i, j) == true)
+                                bicie = true;
+                        }
+                        else if (j > 1 && j < 6 /*&& board[row, col] == (int)Player.BlackMen*/)
+                        {
+                            if (CheckRightJumpForBlack2(board, i, j) == true || CheckLeftJumpForBlack2(board, i, j) == true)
+                                bicie = true;
+                        }
+                    }
+                }
+            }
+
+            //var newFields2 = ChessField.GetEmptyFields();
+            //move_matrix_buffer_black.Add(newFields2);
+            //for (int i = 0; i < 8; i++)
+            //{
+            //    for (int j = 0; j < 8; j++)
+            //    {
+            //        move_matrix_buffer_black[0][i, j].Value = board[i, j].Value;
+            ////    }
+            //}
+
+            CheckJumpsForBlack(board, 0);
+
+            if (bicie == false)
+            {
+                move_matrix_buffer_black.Clear();
+                CheckMovesForBlack(board);
+            }
+
+            //if (move_matrix_buffer_black.Count == 1 && move_matrix_buffer_black[0] == board)
+            //{
+            //    move_matrix_buffer_black.Clear();
+            //    CheckMovesForBlack(board);
+            //}
+            return move_matrix_buffer_black;
+        }
+
     }
 }
