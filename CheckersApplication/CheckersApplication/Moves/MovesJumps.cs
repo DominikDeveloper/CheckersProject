@@ -10,11 +10,7 @@ namespace CheckersApplication
 {
     public class MovesBody
     {
-        public MovesBody()
-        {
-
-        }
-
+        public MovesBody()        {        }
     }
 
     public class MovesJumps
@@ -24,7 +20,6 @@ namespace CheckersApplication
 
         public static int indexxx = 0;
         public static int indexxxBlack = 0;
-
 
         public static void CheckJumpsForWhite(ChessField[,] board, int indexx) // Check jumps, White going down
         {
@@ -61,12 +56,10 @@ namespace CheckersApplication
                         {
                             CheckLeftJumpForWhite(board, row, col, ref move_matrix_buffer_white, indexx);
                             CheckRightJumpForWhite(board, row, col, ref move_matrix_buffer_white, indexx);
-                        }
-                        
+                        } 
                     }
                 }
         }
-
         public static bool CheckRightJumpForWhite2(ChessField[,] board, int row, int col)
         {
             if (row <= 5)
@@ -80,7 +73,6 @@ namespace CheckersApplication
             }
             return false;
         }
-
         public static bool CheckLeftJumpForWhite2(ChessField[,] board, int row, int col)
         {
             if (row <= 5)
@@ -94,7 +86,6 @@ namespace CheckersApplication
             }
             return false;
         }
-
         private static void CheckRightJumpForWhite(ChessField[,] board, int row, int col, ref List<ChessField[,]> jumpList, int indexx) //checks valid right-hand jump
         {
             if (row <= 5)
@@ -131,7 +122,6 @@ namespace CheckersApplication
                             CheckLeftJumpForWhite(board, row + 2, col + 2, ref move_matrix_buffer_white, indexx);
                             CheckRightJumpForWhite(board, row + 2, col + 2, ref move_matrix_buffer_white, indexx);
                         }
-
                     }
                 }
             }
@@ -173,7 +163,6 @@ namespace CheckersApplication
                             CheckLeftJumpForWhite(board, row + 2, col - 2, ref move_matrix_buffer_white, indexx);
                             CheckRightJumpForWhite(board, row + 2, col - 2, ref move_matrix_buffer_white, indexx);
                         }
-
                     }
 
                 }
@@ -290,7 +279,6 @@ namespace CheckersApplication
             }
             return false;
         }
-
         public static void CheckJumpsForBlack(ChessField[,] board, int indexx) // Check jumps, Black going up
         {
             for (int row = 2; row < 8; row++)
@@ -366,7 +354,6 @@ namespace CheckersApplication
                             CheckLeftJumpForBlack(board, row - 2, col + 2, ref move_matrix_buffer_black, indexx);
                             CheckRightJumpForBlack(board, row - 2, col + 2, ref move_matrix_buffer_black, indexx);
                         }
-
                     }
                 }
             }
@@ -604,6 +591,5 @@ namespace CheckersApplication
 
             return move_matrix_buffer_black;
         }
-
     }
 }
