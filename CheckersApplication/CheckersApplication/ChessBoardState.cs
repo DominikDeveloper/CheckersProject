@@ -17,10 +17,10 @@ namespace CheckersApplication
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    if (fields[i, j].Value == (int)Player.WhiteMen)
-                        piecesObservable.Add(new CheckersPiece { Pos = new Point(j, i), Player = Player.WhiteMen });
-                    else if (fields[i, j].Value == (int)Player.BlackMen)
-                        piecesObservable.Add(new CheckersPiece { Pos = new Point(j, i), Player = Player.BlackMen });
+                    if (fields[i, j].Value == (int)Player.White)
+                        piecesObservable.Add(new CheckersPiece { Pos = new Point(j, i), Player = Player.White });
+                    else if (fields[i, j].Value == (int)Player.Black)
+                        piecesObservable.Add(new CheckersPiece { Pos = new Point(j, i), Player = Player.Black });
                 }
             }
         }

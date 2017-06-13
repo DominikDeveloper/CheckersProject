@@ -36,7 +36,7 @@
             <Style.Triggers>
                 <MultiDataTrigger>
                     <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding Player}" Value="{x:Static local:Player.WhiteMen}"/>
+                        <Condition Binding="{Binding Player}" Value="{x:Static local:Player.White}"/>
                     </MultiDataTrigger.Conditions>
                     <MultiDataTrigger.Setters>
                         <Setter Property="Fill" Value="{DynamicResource Player2Color}"  />
@@ -44,7 +44,7 @@
                 </MultiDataTrigger>
                 <MultiDataTrigger>
                     <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding Player}" Value="{x:Static local:Player.BlackMen}"/>
+                        <Condition Binding="{Binding Player}" Value="{x:Static local:Player.Black}"/>
                     </MultiDataTrigger.Conditions>
                     <MultiDataTrigger.Setters>
                         <Setter Property="Fill" Value="{DynamicResource Player1Color}"  />
@@ -62,8 +62,8 @@
         <Button x:Name="BT_Stop" Content="Zatrzymaj" HorizontalAlignment="Left" VerticalAlignment="Top" Width="126" Click="BT_Stop_Click" IsEnabled="False" Margin="141,126,0,0"/>
         <TextBox x:Name="TB_CameraSource" HorizontalAlignment="Left" Height="41" Margin="14,71,0,0" TextWrapping="Wrap" Text="URL streamu, ID kamery, lub plik wideo,&#xD;&#xA;np. (http://IP:PORT/mjpegfeed)" VerticalAlignment="Top" Width="253" IsEnabled="False" GotFocus="TB_CameraSource_GotFocus" Foreground="Gray"/>
         <CheckBox x:Name="CB_DefaultCamera" Content="Wybór kamery z listy" HorizontalAlignment="Left" Margin="14,30,0,0" VerticalAlignment="Top" Width="134" Height="25" IsChecked="True" Click="CB_DefaultCamera_Click" />
-        <CheckBox x:Name="CB_OpenCL" Content="Użyj OpenCL" HorizontalAlignment="Left" Height="23" Margin="16,241,0,0" VerticalAlignment="Top" Width="120" IsChecked="False" Click="CB_OpenCL_Click"/>
-        <Button x:Name="BT_ImageTest" Content="Test wykrywania (wczytane zdj.)" HorizontalAlignment="Left" Height="48" Margin="14,175,0,0" VerticalAlignment="Top" Width="189" Click="BT_ImageTest_Click"/>
+        <CheckBox x:Name="CB_OpenCL" Content="Użyj OpenCL" HorizontalAlignment="Left" Height="23" Margin="16,254,0,0" VerticalAlignment="Top" Width="120" IsChecked="False" Click="CB_OpenCL_Click"/>
+        <Button x:Name="BT_ImageTest" Content="Test wykrywania (wczytanie zdj.)" HorizontalAlignment="Left" Height="31" Margin="14,175,0,0" VerticalAlignment="Top" Width="189" Click="BT_ImageTest_Click"/>
         <ComboBox x:Name="CO_Cameras" HorizontalAlignment="Left" Height="25" Margin="166,30,0,0" VerticalAlignment="Top" Width="101" IsEditable="False"/>
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Right" Height="480" Margin="0,30,17,0" VerticalAlignment="Top" Width="450">
             <Image x:Name="IMG_Detected"/>
@@ -211,7 +211,8 @@
         <Button x:Name="BT_GoBack" Content="&lt;" HorizontalAlignment="Left" Margin="433,531,0,0" VerticalAlignment="Top" Width="20" Click="BT_GoBack_Click"/>
         <Button x:Name="BT_GoForward" Content="&gt;" HorizontalAlignment="Left" Margin="458,531,0,0" VerticalAlignment="Top" Width="20" Click="BT_GoForward_Click"/>
         <Button Content="Od nowa" HorizontalAlignment="Left" Margin="675,531,0,0" VerticalAlignment="Top" Width="77" Click="Button_Click"/>
-        <TextBlock x:Name="TB_MoveNr" HorizontalAlignment="Left" Height="18" Margin="433,566,0,0" TextWrapping="Wrap" Text="Nr ruchu: 1 (bieżący)" VerticalAlignment="Top" Width="241"/>
+        <TextBlock x:Name="TB_MoveNr" HorizontalAlignment="Left" Height="18" Margin="433,566,0,0" TextWrapping="Wrap" Text="Nr ruchu: Ustawianie pionków" VerticalAlignment="Top" Width="241"/>
+        <Button Content="Wykryj z wczytanego zdj." HorizontalAlignment="Left" Margin="14,211,0,0" VerticalAlignment="Top" Width="139" Click="Button_Click_1"/>
     </Grid>
 
 </Window>

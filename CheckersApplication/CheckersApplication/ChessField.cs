@@ -14,6 +14,12 @@ namespace CheckersApplication
         public Point[] points { get; } = new Point[4];
         public int Value;
 
+        public ChessField()
+        {
+            Value = 0;
+            //this.points = (Point[])points.Clone();
+        }
+
         public ChessField(Point[] points)
         {
             Value = 0;
@@ -49,6 +55,34 @@ namespace CheckersApplication
                     fields[i, j] = new ChessField(field);
                 }
             }
+            return fields;
+        }
+
+        public static ChessField[,] GetEmptyFields()
+        {
+            ChessField[,] fields = new ChessField[8, 8];
+
+            for (int i = 0; i < 8; i++)
+                for (int j = 0; j < 8; j++)
+                    fields[i, j] = new ChessField();
+
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j += 2)
+                {
+                    if (i % 2 == 0)
+                    {
+                        fields[i, j].Value = (int)Player.BlackEmptySquare;
+                        fields[i, j + 1].Value = (int)Player.WhiteSquare;
+                    }
+                    else
+                    {
+                        fields[i, j].Value = (int)Player.WhiteSquare;
+                        fields[i, j + 1].Value = (int)Player.BlackEmptySquare;
+                    }
+                }
+            }
+
             return fields;
         }
 

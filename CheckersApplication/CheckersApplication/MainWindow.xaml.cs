@@ -34,12 +34,25 @@ namespace CheckersApplication
         public static  System.Windows.Media.Color player2Color = new System.Windows.Media.Color();
         public static bool player1Detected = false;
         public static bool player2Detected = false;
+        public static List<ChessField[,]> buffer_move_white;
+        public static List<ChessField[,]> buffer_move_black;
+        public bool goodMove;
         private bool ifInitComponent;
         int currentMove = 0;
         int shownMove = 0;
+        string fileName;
 
+        public static bool same(ChessField[,] board, ChessField[,] board2)
+        {
+            for (int i = 0; i < 8; i++)
+                for (int j = 0; j < 8; j++)
+                    if (board[i, j].Value != board2[i, j].Value)
+                        return false;
+            return true;
+        }
         public MainWindow()
         {
+            goodMove = false;
             ifInitComponent = false;
             InitializeComponent();
             ifInitComponent = true;
@@ -143,6 +156,7 @@ namespace CheckersApplication
             {
                 try
                 {
+                    fileName = openFileDialog1.FileName;
                     Detect(openFileDialog1.FileName);
                 }
                 catch (Exception ex)
@@ -203,7 +217,7 @@ namespace CheckersApplication
                             foreach (CircleF circle in circles)
                             {
                                 resultImage.Draw(circle, new Bgr(Color.Red), 3);
-                                ChessField.Pons(fields, circles, (int)Player.WhiteMen); //only white?!
+                                ChessField.Pons(fields, circles, (int)Player.White); //only white?!
                                 chessBoardState.Clear();
                             }
 
@@ -301,14 +315,14 @@ namespace CheckersApplication
                             foreach (CircleF circle in circleFor1)
                             {
                                 resultImage.Draw(circle, new Bgr(Color.Green), 3);
-                                ChessField.Pons(fields, circleFor1, (int)Player.BlackMen);
+                                ChessField.Pons(fields, circleFor1, (int)Player.Black);
                                 chessBoardState.AddPieces(fields);
                             }
 
                             foreach (CircleF circle in circleFor2)
                             {
                                 resultImage.Draw(circle, new Bgr(Color.Blue), 3);
-                                ChessField.Pons(fields, circleFor2, (int)Player.WhiteMen);
+                                ChessField.Pons(fields, circleFor2, (int)Player.White);
                                 chessBoardState.AddPieces(fields);
                             }
 
@@ -316,7 +330,8 @@ namespace CheckersApplication
                             IMG_Filter2.Source = ToBitmapConverter.Convert(filtring2);
 
                             //Show correct moves/jumps
-                            PutMoveJumpsToDatagrid(fields);
+                                //goodMove = VerifyMoveJumps(fields);
+                            //PutMoveJumpsToDatagrid(fields);
                             //
                         }
                         
@@ -347,7 +362,7 @@ namespace CheckersApplication
 
             return fields;
         }
-
+        /*
         private void PutMoveJumpsToDatagrid(ChessField[,] fields)
         {
             //Show correct moves/jumps (static methods - no change sequence of calling methods
@@ -378,7 +393,7 @@ namespace CheckersApplication
             DG_Moves.ItemsSource = null;
             DG_Moves.ItemsSource = list1;
         }
-
+        */
 
         private void CB_AutoDetectColors_Click(object sender, RoutedEventArgs e)
         {
@@ -446,14 +461,144 @@ namespace CheckersApplication
 
         private void BT_SaveMove_Click(object sender, RoutedEventArgs e)
         {
-            currentMove++;
-            shownMove++;
-            TB_MoveNr.Text = "Nr ruchu: " + (shownMove+1).ToString() + " (bieżący)";
-            List<CheckersPiece> pieces = new List<CheckersPiece>();
-            foreach (var p in chessBoardState.piecesObservable)
-                pieces.Add(p.Copy());
+            if (currentMove == 0)
+            {
+                currentMove++;
+                shownMove++;
+                TB_MoveNr.Text = "Nr ruchu: " + (shownMove).ToString() + " (bieżący)";
+                List<CheckersPiece> pieces = new List<CheckersPiece>();
+                foreach (var p in chessBoardState.piecesObservable)
+                    pieces.Add(p.Copy());
 
-            chessBoardState.history.Add(pieces);
+
+
+
+                chessBoardState.history.Add(pieces);
+            }
+            else if (currentMove % 2 == 1)
+            {
+                goodMove = false;
+                ChessField[,] board = ChessField.GetEmptyFields();
+                ChessField[,] board2 = ChessField.GetEmptyFields();
+                List<CheckersPiece> pieces = new List<CheckersPiece>();
+                pieces = chessBoardState.history[chessBoardState.history.Count - 1];
+
+                foreach (var i in pieces)
+                {
+                    //if (i.Player == Player.BlackMen)
+                    //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.BlackMen;
+                    //if (i.Player == Player.WhiteMen)
+                    //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.WhiteMen;
+                    board[i.Pos.Y / 60, i.Pos.X / 60].Value = (int)i.Player;
+                }
+                //for (int i = 0; i < 8; i++)
+                //{
+                //    for (int j = 0; j < 8; j++)
+                //        File.AppendAllText("log13", (board[i, j].Value).ToString());
+                //    File.AppendAllText("log13", "\r\n");
+                //}
+
+                List<CheckersPiece> pieces2 = new List<CheckersPiece>();
+                foreach (var p in chessBoardState.piecesObservable)
+                    pieces2.Add(p.Copy());
+
+                foreach (var i in pieces2)
+                {
+                    //if (i.Player == Player.BlackMen)
+                    //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.BlackMen;
+                    //if (i.Player == Player.WhiteMen)
+                    //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.WhiteMen;
+                    board2[i.Pos.Y / 60, i.Pos.X / 60].Value = (int)i.Player;
+                }
+
+                buffer_move_white = MovesJumps.RunWhite(board);
+
+                //for (int i = 0; i < 8; i++)
+                //{
+                //    for (int j = 0; j < 8; j++)
+                //        Console.Write(board2[i, j].Value);
+                //    Console.WriteLine();
+                //}
+
+                foreach (var v in buffer_move_white)
+                {
+                    if (same(v, board2))
+                        goodMove = true;
+                }
+
+                if (goodMove == false)
+                    System.Windows.MessageBox.Show("Niepoprawny ruch.");
+                else
+                {
+
+                    currentMove++;
+                    shownMove++;
+                    TB_MoveNr.Text = "Nr ruchu: " + (shownMove).ToString() + " (bieżący)";
+                    chessBoardState.history.Add(pieces2);
+                }
+            }
+            else
+            {
+                goodMove = false;
+                ChessField[,] board = ChessField.GetEmptyFields();
+                ChessField[,] board2 = ChessField.GetEmptyFields();
+                List<CheckersPiece> pieces = new List<CheckersPiece>();
+                pieces = chessBoardState.history[chessBoardState.history.Count - 1];
+
+                foreach (var i in pieces)
+                {
+                    //if (i.Player == Player.BlackMen)
+                    //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.BlackMen;
+                    //if (i.Player == Player.WhiteMen)
+                    //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.WhiteMen;
+                    board[i.Pos.Y / 60, i.Pos.X / 60].Value = (int)i.Player;
+                }
+                //for (int i = 0; i < 8; i++)
+                //{
+                //    for (int j = 0; j < 8; j++)
+                //        File.AppendAllText("log13", (board[i, j].Value).ToString());
+                //    File.AppendAllText("log13", "\r\n");
+                //}
+
+                List<CheckersPiece> pieces2 = new List<CheckersPiece>();
+                foreach (var p in chessBoardState.piecesObservable)
+                    pieces2.Add(p.Copy());
+
+                foreach (var i in pieces2)
+                {
+                    //if (i.Player == Player.BlackMen)
+                    //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.BlackMen;
+                    //if (i.Player == Player.WhiteMen)
+                    //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.WhiteMen;
+                    board2[i.Pos.Y / 60, i.Pos.X / 60].Value = (int)i.Player;
+                }
+
+                buffer_move_black = MovesJumps.RunBlack(board);
+
+                //for (int i = 0; i < 8; i++)
+                //{
+                //    for (int j = 0; j < 8; j++)
+                //        Console.Write(board2[i, j].Value);
+                //    Console.WriteLine();
+                //}
+
+                foreach (var v in buffer_move_black)
+                {
+                    if (same(v, board2))
+                        goodMove = true;
+                }
+
+                if (goodMove == false)
+                    System.Windows.MessageBox.Show("Niepoprawny ruch.");
+                else
+                {
+
+                    currentMove++;
+                    shownMove++;
+                    TB_MoveNr.Text = "Nr ruchu: " + (shownMove).ToString() + " (bieżący)";
+                    chessBoardState.history.Add(pieces2);
+                }
+            }
         }
 
         private void BT_GoBack_Click(object sender, RoutedEventArgs e)
@@ -461,9 +606,16 @@ namespace CheckersApplication
             if (shownMove < 1)
                 return;
 
-            TB_MoveNr.Text = "Nr ruchu: " + shownMove.ToString();
-            BT_SaveMove.IsEnabled = false;
             shownMove--;
+
+            if (shownMove==0)
+                TB_MoveNr.Text = "Nr ruchu: Ustawianie pionków";
+            else
+                TB_MoveNr.Text = "Nr ruchu: " + shownMove.ToString();
+
+            BT_SaveMove.IsEnabled = false;
+            BT_ImageTest.IsEnabled = false;
+
             chessBoardState.piecesObservable.Clear();
             foreach (var p in chessBoardState.history[shownMove])
                 chessBoardState.piecesObservable.Add(p.Copy());
@@ -481,11 +633,12 @@ namespace CheckersApplication
             if (shownMove == currentMove)
             {
                 BT_SaveMove.IsEnabled = true;
-                TB_MoveNr.Text = "Nr ruchu: "+ (shownMove+1).ToString()+" (bieżący)";
+                BT_ImageTest.IsEnabled = true;
+                TB_MoveNr.Text = "Nr ruchu: "+ (shownMove).ToString()+" (bieżący)";
                 return;
             }
 
-            TB_MoveNr.Text = "Nr ruchu: " + (shownMove+1).ToString();
+            TB_MoveNr.Text = "Nr ruchu: " + (shownMove).ToString();
             chessBoardState.piecesObservable.Clear();
             foreach (var p in chessBoardState.history[shownMove])
                 chessBoardState.piecesObservable.Add(p.Copy());
@@ -499,8 +652,47 @@ namespace CheckersApplication
                 chessBoardState.history.Clear();
                 currentMove = 0;
                 shownMove = 0;
-                TB_MoveNr.Text = "Nr ruchu: 1 (bieżący)";
+                TB_MoveNr.Text = "Nr ruchu: Ustawianie pionków";
                 BT_SaveMove.IsEnabled = true;
+            }
+        }
+
+        private bool VerifyMoveJumps(ChessField[,] fields)
+        {
+            var move_matrix_buffer_white = new List<ChessField[,]>();
+            var move_matrix_buffer_black = new List<ChessField[,]>();
+            //MovesJumps.Run(fields, ref move_matrix_buffer_white, ref move_matrix_buffer_black);
+
+            if (currentMove % 2 == 0) //black as first
+            {
+                foreach (var item in move_matrix_buffer_black)
+                {
+                    if (item == fields)
+                        return true;
+                }
+            }
+
+            if (currentMove % 2 == 1) //white
+            {
+                foreach (var item in move_matrix_buffer_white)
+                {
+                    if (item == fields)
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Detect(fileName);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show("Nie wczytano obrazka.");
             }
         }
     }
