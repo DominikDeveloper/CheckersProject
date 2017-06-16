@@ -138,6 +138,8 @@
     <Compile Include="Moves\ForBlackMen.cs" />
     <Compile Include="Moves\ForWhiteMen.cs" />
     <Compile Include="Moves\MovesJumps.cs" />
+    <Compile Include="Parameters\CircParam.cs" />
+    <Compile Include="Parameters\RectParam.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="MainWindow.xaml">
