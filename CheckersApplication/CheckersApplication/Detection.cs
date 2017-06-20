@@ -181,7 +181,6 @@ namespace CheckersApplication
         public static System.Drawing.Point[] GetRectanglePoints(Image<Bgr, Byte> img)
         {
 
-
             RectParam rectParams = new RectParam();
 
             UMat cannyEdges = new UMat();

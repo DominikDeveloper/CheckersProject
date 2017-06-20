@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Interop;
 
 namespace CheckersApplication
 {
@@ -7,6 +8,7 @@ namespace CheckersApplication
     {
         private void BT_SaveMove_Click(object sender, RoutedEventArgs e)
         {
+            //ComponentDispatcher.ThreadIdle -= (updateFrames);
             if (currentMove == 0)
             {
                 currentMove++;
@@ -145,6 +147,7 @@ namespace CheckersApplication
                     chessBoardState.history.Add(pieces2);
                 }
             }
+            //ComponentDispatcher.ThreadIdle += (updateFrames);
         }
 
         private void BT_GoBack_Click(object sender, RoutedEventArgs e)

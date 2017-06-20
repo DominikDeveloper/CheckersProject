@@ -148,136 +148,17 @@ namespace CheckersApplication
                     fields = DifferenceBoardSquareColors(fields);
                     //
 
-                    Mat filtring1 = new Mat();
-                    Mat filtring2 = new Mat();
-
                     int[] minColorVal = new int[] { 3, 2, 1 };
-
-                    int autoColorsRange = 15;
 
                     if (circles != null)
                     {
                         if (CB_AutoDetectColors.IsChecked == true)
                         {
-                            foreach (CircleF circle in circles)
-                            {
-                                resultImage.Draw(circle, new Bgr(Color.Red), 3);
-                                ChessField.Pons(fields, circles, (int)Player.White); //only white?!
-                                chessBoardState.Clear();
-                            }
-
-                            Detection.DetectPlayersColors(circles, ref player1Color, ref player2Color, image);
-
-                            if (player1Color.R - autoColorsRange < 0)
-                                RS_Slider1R.LowerValue = 0;
-                            else
-                                RS_Slider1R.LowerValue = player1Color.R - autoColorsRange;
-
-                            if (player1Color.G - autoColorsRange < 0)
-                                RS_Slider1G.LowerValue = 0;
-                            else
-                                RS_Slider1G.LowerValue = player1Color.G - autoColorsRange;
-
-                            if (player1Color.B - autoColorsRange < 0)
-                                RS_Slider1B.LowerValue = 0;
-                            else
-                                RS_Slider1B.LowerValue = player1Color.B - autoColorsRange;
-
-                            if (player1Color.R + autoColorsRange > 255)
-                                RS_Slider1R.HigherValue = 255;
-                            else
-                                RS_Slider1R.HigherValue = player1Color.R + autoColorsRange;
-
-                            if (player1Color.G + autoColorsRange > 255)
-                                RS_Slider1G.HigherValue = 255;
-                            else
-                                RS_Slider1G.HigherValue = player1Color.G + autoColorsRange;
-
-                            if (player1Color.B + autoColorsRange > 255)
-                                RS_Slider1B.HigherValue = 255;
-                            else
-                                RS_Slider1B.HigherValue = player1Color.B + autoColorsRange;
-
-                            CV_Player1Color_Min.Background = new System.Windows.Media.SolidColorBrush(
-                                System.Windows.Media.Color.FromRgb((byte)RS_Slider1R.LowerValue, (byte)RS_Slider1G.LowerValue, (byte)RS_Slider1B.LowerValue));
-                            CV_Player1Color_Max.Background = new System.Windows.Media.SolidColorBrush(
-                                System.Windows.Media.Color.FromRgb((byte)RS_Slider1R.HigherValue, (byte)RS_Slider1G.HigherValue, (byte)RS_Slider1B.HigherValue));
-
-                            System.Windows.Application.Current.Resources["Player1Color"] = CV_Player1Color_Max.Background;
-
-                            if (player2Color.R - autoColorsRange < 0)
-                                RS_Slider2R.LowerValue = 0;
-                            else
-                                RS_Slider2R.LowerValue = player2Color.R - autoColorsRange;
-
-                            if (player2Color.G - autoColorsRange < 0)
-                                RS_Slider2G.LowerValue = 0;
-                            else
-                                RS_Slider2G.LowerValue = player2Color.G - autoColorsRange;
-
-                            if (player2Color.B - autoColorsRange < 0)
-                                RS_Slider2B.LowerValue = 0;
-                            else
-                                RS_Slider2B.LowerValue = player2Color.B - autoColorsRange;
-
-                            if (player2Color.R + autoColorsRange > 255)
-                                RS_Slider2R.HigherValue = 255;
-                            else
-                                RS_Slider2R.HigherValue = player2Color.R + autoColorsRange;
-
-                            if (player2Color.G + autoColorsRange > 255)
-                                RS_Slider2G.HigherValue = 255;
-                            else
-                                RS_Slider2G.HigherValue = player2Color.G + autoColorsRange;
-
-                            if (player2Color.B + autoColorsRange > 255)
-                                RS_Slider2B.HigherValue = 255;
-                            else
-                                RS_Slider2B.HigherValue = player2Color.B + autoColorsRange;
-
-                            CV_Player2Color_Min.Background = new System.Windows.Media.SolidColorBrush(
-                                System.Windows.Media.Color.FromRgb((byte)RS_Slider2R.LowerValue, (byte)RS_Slider2G.LowerValue, (byte)RS_Slider2B.LowerValue));
-                            CV_Player2Color_Max.Background = new System.Windows.Media.SolidColorBrush(
-                                System.Windows.Media.Color.FromRgb((byte)RS_Slider2R.HigherValue, (byte)RS_Slider2G.HigherValue, (byte)RS_Slider2B.HigherValue));
-
-                            System.Windows.Application.Current.Resources["Player2Color"] = CV_Player2Color_Max.Background;
+                            AutoCircClrDetect(fields, circles, image, ref resultImage);
                         }
                         else
                         {
-                            var circleFor1 = Detection.FilterSomeColors(
-                                image,
-                                ref filtring1,
-                                new double[] { RS_Slider1B.LowerValue, RS_Slider1G.LowerValue, RS_Slider1R.LowerValue },
-                                new double[] { RS_Slider1B.HigherValue, RS_Slider1G.HigherValue, RS_Slider1R.HigherValue });
-                            var circleFor2 = Detection.FilterSomeColors(
-                                image,
-                                ref filtring2,
-                                new double[] { RS_Slider2B.LowerValue, RS_Slider2G.LowerValue, RS_Slider2R.LowerValue },
-                                new double[] { RS_Slider2B.HigherValue, RS_Slider2G.HigherValue, RS_Slider2R.HigherValue });
-
-                            chessBoardState.Clear();
-
-                            foreach (CircleF circle in circleFor1)
-                            {
-                                resultImage.Draw(circle, new Bgr(Color.Green), 3);
-                                ChessField.Pons(fields, circleFor1, (int)Player.Black);
-                                chessBoardState.AddPieces(fields);
-                            }
-
-                            foreach (CircleF circle in circleFor2)
-                            {
-                                resultImage.Draw(circle, new Bgr(Color.Blue), 3);
-                                ChessField.Pons(fields, circleFor2, (int)Player.White);
-                                chessBoardState.AddPieces(fields);
-                            }
-
-                            IMG_Filter1.Source = ToBitmapConverter.Convert(filtring1);
-                            IMG_Filter2.Source = ToBitmapConverter.Convert(filtring2);
-
-                            //Show correct moves/jumps
-                                //goodMove = VerifyMoveJumps(fields);
-                            //PutMoveJumpsToDatagrid(fields);
-                            //
+                            ManualCircClrDetect(fields, circles, image, ref resultImage);
                         }
                         
                     }
@@ -373,6 +254,129 @@ namespace CheckersApplication
 
             return false;
         }
+
+        private void ManualCircClrDetect(ChessField[,] fields, CircleF[] circles, Image<Bgr, byte> image, ref Image<Bgr, byte> resultImage)
+        {
+            Mat filtring1 = new Mat();
+            Mat filtring2 = new Mat();
+
+            var circleFor1 = Detection.FilterSomeColors(
+                                image,
+                                ref filtring1,
+                                new double[] { RS_Slider1B.LowerValue, RS_Slider1G.LowerValue, RS_Slider1R.LowerValue },
+                                new double[] { RS_Slider1B.HigherValue, RS_Slider1G.HigherValue, RS_Slider1R.HigherValue });
+            var circleFor2 = Detection.FilterSomeColors(
+                image,
+                ref filtring2,
+                new double[] { RS_Slider2B.LowerValue, RS_Slider2G.LowerValue, RS_Slider2R.LowerValue },
+                new double[] { RS_Slider2B.HigherValue, RS_Slider2G.HigherValue, RS_Slider2R.HigherValue });
+
+            //ComponentDispatcher.ThreadIdle -= updateFrames;
+            //System.Windows.MessageBox.Show(System.Threading.Thread.CurrentThread.ManagedThreadId.ToString());
+            //System.Threading.Thread.Sleep(1000);
+
+            chessBoardState.Clear();
+
+            BT_SaveMove.IsEnabled = false;
+            foreach (CircleF circle in circleFor1)
+            {
+                resultImage.Draw(circle, new Bgr(Color.Green), 3);
+                ChessField.Pons(fields, circleFor1, (int)Player.Black);
+                chessBoardState.AddPieces(fields);
+            }
+
+            foreach (CircleF circle in circleFor2)
+            {
+                resultImage.Draw(circle, new Bgr(Color.Blue), 3);
+                ChessField.Pons(fields, circleFor2, (int)Player.White);
+                chessBoardState.AddPieces(fields);
+            }
+
+            //System.Windows.MessageBox.Show("Mleko");
+            //System.Threading.Thread.Sleep(1000);
+            BT_SaveMove.IsEnabled = true;
+            //ComponentDispatcher.ThreadIdle += updateFrames;
+            IMG_Filter1.Source = ToBitmapConverter.Convert(filtring1);
+            IMG_Filter2.Source = ToBitmapConverter.Convert(filtring2);
+
+            //Show correct moves/jumps
+            //goodMove = VerifyMoveJumps(fields);
+            //PutMoveJumpsToDatagrid(fields);
+            //
+        }
+
+        private void AutoCircClrDetect(ChessField[,] fields, CircleF[] circles, Image<Bgr, byte> image, ref Image<Bgr, byte> resultImage)
+        {
+            int autoColorsRange = 15;
+
+            foreach (CircleF circle in circles)
+            {
+                resultImage.Draw(circle, new Bgr(Color.Red), 3);
+                ChessField.Pons(fields, circles, (int)Player.White); //only white?!
+                chessBoardState.Clear();
+            }
+
+            Detection.DetectPlayersColors(circles, ref player1Color, ref player2Color, image);
+            
+            //for player1
+            //set slider's values
+            SetLowValSlider(RS_Slider1R, player1Color.R, autoColorsRange);
+            SetLowValSlider(RS_Slider1G, player1Color.G, autoColorsRange);
+            SetLowValSlider(RS_Slider1B, player1Color.B, autoColorsRange);
+
+            SetHighValSlider(RS_Slider1R, player1Color.R, autoColorsRange);
+            SetHighValSlider(RS_Slider1G, player1Color.G, autoColorsRange);
+            SetHighValSlider(RS_Slider1B, player1Color.B, autoColorsRange);
+
+            //show color view
+            CV_Player1Color_Min.Background = new System.Windows.Media.SolidColorBrush(
+                System.Windows.Media.Color.FromRgb((byte)RS_Slider1R.LowerValue, (byte)RS_Slider1G.LowerValue, (byte)RS_Slider1B.LowerValue));
+            CV_Player1Color_Max.Background = new System.Windows.Media.SolidColorBrush(
+                System.Windows.Media.Color.FromRgb((byte)RS_Slider1R.HigherValue, (byte)RS_Slider1G.HigherValue, (byte)RS_Slider1B.HigherValue));
+
+            //color visual piece
+            System.Windows.Application.Current.Resources["Player1Color"] = CV_Player1Color_Max.Background;
+
+            //for player2
+            //set slider's values
+            SetLowValSlider(RS_Slider2R, player2Color.R, autoColorsRange);
+            SetLowValSlider(RS_Slider2G, player2Color.G, autoColorsRange);
+            SetLowValSlider(RS_Slider2B, player2Color.B, autoColorsRange);
+
+            SetHighValSlider(RS_Slider2R, player2Color.R, autoColorsRange);
+            SetHighValSlider(RS_Slider2G, player2Color.G, autoColorsRange);
+            SetHighValSlider(RS_Slider2B, player2Color.B, autoColorsRange);
+
+            //show color view
+            CV_Player2Color_Min.Background = new System.Windows.Media.SolidColorBrush(
+                System.Windows.Media.Color.FromRgb((byte)RS_Slider2R.LowerValue, (byte)RS_Slider2G.LowerValue, (byte)RS_Slider2B.LowerValue));
+            CV_Player2Color_Max.Background = new System.Windows.Media.SolidColorBrush(
+                System.Windows.Media.Color.FromRgb((byte)RS_Slider2R.HigherValue, (byte)RS_Slider2G.HigherValue, (byte)RS_Slider2B.HigherValue));
+            
+            //color visual piece
+            System.Windows.Application.Current.Resources["Player2Color"] = CV_Player2Color_Max.Background;
+        }
+
+        private void SetLowValSlider(Xceed.Wpf.Toolkit.RangeSlider slider, int playerPrimaryColor, int autoColorsRange)
+        {
+            const int MIN_CLR_VAL = 0;
+
+            if (playerPrimaryColor - autoColorsRange < MIN_CLR_VAL)
+                slider.LowerValue = MIN_CLR_VAL;
+            else
+                slider.LowerValue = playerPrimaryColor - autoColorsRange;
+        }
+
+        private void SetHighValSlider(Xceed.Wpf.Toolkit.RangeSlider slider, int playerPrimaryColor, int autoColorsRange)
+        {
+            const int MAX_CLR_VAL = 255;
+
+            if (playerPrimaryColor + autoColorsRange > MAX_CLR_VAL)
+                slider.HigherValue = MAX_CLR_VAL;
+            else
+                slider.HigherValue = playerPrimaryColor + autoColorsRange;
+        }
     }
+
 
 }
