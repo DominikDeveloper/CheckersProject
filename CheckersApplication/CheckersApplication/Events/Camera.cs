@@ -41,8 +41,10 @@ namespace CheckersApplication
             }
         }
 
-       
-
-
+        private void TB_CameraSource_GotFocus(object sender, RoutedEventArgs e)
+        {
+            TB_CameraSource.Text = "";
+            TB_CameraSource.Foreground = System.Windows.Media.Brushes.Black;
+        }
     }
 }

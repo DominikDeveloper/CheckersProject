@@ -4,28 +4,6 @@ namespace CheckersApplication
 {
     public partial class MainWindow : Window
     {
-        private void CB_AutoDetectColors_Click(object sender, RoutedEventArgs e)
-        {
-            if (CB_AutoDetectColors.IsChecked == true)
-            {
-                RS_Slider1R.IsEnabled = false;
-                RS_Slider2R.IsEnabled = false;
-                RS_Slider1G.IsEnabled = false;
-                RS_Slider2G.IsEnabled = false;
-                RS_Slider1B.IsEnabled = false;
-                RS_Slider2B.IsEnabled = false;
-            }
-            else
-            {
-                RS_Slider1R.IsEnabled = true;
-                RS_Slider2R.IsEnabled = true;
-                RS_Slider1G.IsEnabled = true;
-                RS_Slider2G.IsEnabled = true;
-                RS_Slider1B.IsEnabled = true;
-                RS_Slider2B.IsEnabled = true;
-            }
-        }
-
         private void RangeSlider_Player1_ValueChanged(object sender, RoutedEventArgs e)
         {
             if (ifInitComponent)

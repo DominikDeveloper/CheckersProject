@@ -109,13 +109,6 @@ namespace CheckersApplication
             ComponentDispatcher.ThreadIdle += new System.EventHandler(updateFrames);
         }
 
-        
-
-        private void TB_CameraSource_GotFocus(object sender, RoutedEventArgs e)
-        {
-            TB_CameraSource.Text = "";
-            TB_CameraSource.Foreground = System.Windows.Media.Brushes.Black;
-        }
 
         private void Detect(string filePath = null, Image<Bgr, byte> cameraCapture = null)
         {
