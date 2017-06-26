@@ -41,6 +41,7 @@ namespace CheckersApplication
         int currentMove = 0;
         int shownMove = 0;
         string fileName;
+        Stopwatch stopwatch;
 
         public static bool same(ChessField[,] board, ChessField[,] board2)
         {
@@ -60,6 +61,7 @@ namespace CheckersApplication
             InitValuePickers();
             CvInvoke.UseOpenCL = (bool)CB_OpenCL.IsChecked;
             this.ChessBoard.ItemsSource = chessBoardState.piecesObservable;
+            stopwatch = new Stopwatch();
         }
 
         private void InitValuePickers() //set values for white
@@ -86,7 +88,17 @@ namespace CheckersApplication
         {
             try
             {
-                camera.imageViewer.Image = camera.capture.QueryFrame();
+                if (!stopwatch.IsRunning)
+                {
+                    stopwatch.Start();
+                    camera.imageViewer.Image = camera.capture.QueryFrame();
+                }
+                camera.capture.QueryFrame(); //skip frames if big delay
+                if (stopwatch.ElapsedMilliseconds >= 1800)
+                {
+                    stopwatch.Restart();
+                    camera.imageViewer.Image = camera.capture.QueryFrame();
+                }
                 var image = new Image<Bgr, Byte>(camera.imageViewer.Image.Bitmap);
                 Detect(cameraCapture: image);
             }
