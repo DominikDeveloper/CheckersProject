@@ -39,8 +39,19 @@ namespace CheckersApplication
                             CheckLeftJumpForBlack(board, row, col, ref move_matrix_buffer_black, indexx);
                             CheckRightJumpForBlack(board, row, col, ref move_matrix_buffer_black, indexx + 1);
                         }
-                        else
+                        else if (CheckLeftJumpForBlack2(board, row, col) == true || CheckRightJumpForBlack2(board, row, col) == true)
                         {
+                            indexxx++;
+                            indexx++;
+                            var newFields = ChessField.GetEmptyFields();
+                            move_matrix_buffer_black.Add(newFields);
+                            for (int i = 0; i < 8; i++)
+                            {
+                                for (int j = 0; j < 8; j++)
+                                {
+                                    move_matrix_buffer_black[indexx][i, j].Value = board[i, j].Value;
+                                }
+                            }
                             CheckLeftJumpForBlack(board, row, col, ref move_matrix_buffer_black, indexx);
                             CheckRightJumpForBlack(board, row, col, ref move_matrix_buffer_black, indexx);
                         }
