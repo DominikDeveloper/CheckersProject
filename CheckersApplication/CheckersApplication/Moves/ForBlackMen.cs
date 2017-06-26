@@ -41,7 +41,7 @@ namespace CheckersApplication
                         }
                         else if (CheckLeftJumpForBlack2(board, row, col) == true || CheckRightJumpForBlack2(board, row, col) == true)
                         {
-                            indexxx++;
+                            indexxxBlack++;
                             indexx++;
                             var newFields = ChessField.GetEmptyFields();
                             move_matrix_buffer_black.Add(newFields);
