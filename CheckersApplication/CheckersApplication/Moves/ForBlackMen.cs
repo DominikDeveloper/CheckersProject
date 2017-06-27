@@ -91,7 +91,6 @@ namespace CheckersApplication
                 if (board[row - 1, col + 1].Value == (int)Player.White &&
                     board[row - 2, col + 2].Value < 2)
                 {
-                    if (jumpList == null) { jumpList = new List<ChessField[,]>(); }
                     jumpList[indexx][row - 1, col + 1].Value = 1;
                     jumpList[indexx][row, col].Value = 1;
                     jumpList[indexx][row - 2, col + 2].Value = 2;
@@ -141,7 +140,7 @@ namespace CheckersApplication
                         CheckLeftJumpForBlack(board, row - 2, col - 2, ref move_matrix_buffer_black, indexx);
                     if ((col - 2) > 1 && (col - 2) < 6 /*&& board[row, col] == (int)Player.BlackMen*/)
                     {
-                        if (CheckRightJumpForBlack2(jumpList[indexx], row - 2, col - 2) == true && CheckRightJumpForBlack2(jumpList[indexx], row - 2, col - 2) == true)
+                        if (CheckRightJumpForBlack2(jumpList[indexx], row - 2, col - 2) == true && CheckLeftJumpForBlack2(jumpList[indexx], row - 2, col - 2) == true)
                         {
                             indexxxBlack++;
                             var newFields = ChessField.GetEmptyFields();
@@ -165,7 +164,6 @@ namespace CheckersApplication
                 }
             }
         }
-
         //MOVES
         private static void CheckLeftMovesForBlack(ChessField[,] board, int row, int col, ref ChessField[,] board2, ref bool ruch) //checks left moves for black checkers piece
         {
@@ -265,13 +263,6 @@ namespace CheckersApplication
                 {
                     move_matrix_buffer_black[0][i, j].Value = board[i, j].Value;
                 }
-            }
-
-            for (int i = 0; i < 8; i++)
-            {
-                for (int j = 0; j < 8; j++)
-                    Console.Write(board[i, j].Value);
-                Console.WriteLine();
             }
 
             for (int i = 2; i < 8; i++)

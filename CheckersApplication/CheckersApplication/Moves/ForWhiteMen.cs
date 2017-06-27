@@ -14,7 +14,6 @@ namespace CheckersApplication
             for (int row = 0; row < 6; row++)
                 for (int col = 0; col < 8; col++)
                 {
-
                     if (col < 2 && board[row, col].Value == (int)Player.White)
                     {
                         CheckRightJumpForWhite(board, row, col, ref move_matrix_buffer_white, indexx);
@@ -162,11 +161,9 @@ namespace CheckersApplication
                             CheckRightJumpForWhite(board, row + 2, col - 2, ref move_matrix_buffer_white, indexx);
                         }
                     }
-
                 }
             }
         }
-
         //MOVES
         private static void CheckLeftMovesForWhite(ChessField[,] board, int row, int col, ref ChessField[,] board2, ref bool ruch) //checks left moves for black checkers piece
         {
@@ -300,6 +297,7 @@ namespace CheckersApplication
                 move_matrix_buffer_white.Clear();
                 CheckMovesForWhite(board);
             }
+
             return move_matrix_buffer_white;
         }
     }
