@@ -68,10 +68,21 @@ namespace CheckersApplication
                 //    Console.WriteLine();
                 //}
 
+                int whiteIter = 0; int whiteRequestIter = -1;
                 foreach (var v in buffer_move_white)
                 {
                     if (same(v, board2))
+                    {
                         goodMove = true;
+                        whiteRequestIter = whiteIter;
+                    }
+                    whiteIter++;
+                }
+
+                if (whiteRequestIter >= 0 && same(buffer_move_white[whiteRequestIter], board))
+                {
+                    buffer_move_white.RemoveAt(whiteRequestIter);
+                    goodMove = false;
                 }
 
                 if (goodMove == false)
@@ -129,11 +140,22 @@ namespace CheckersApplication
                 //        Console.Write(board2[i, j].Value);
                 //    Console.WriteLine();
                 //}
-
+                
+                int blackIter = 0; int blackRequestIter = -1;
                 foreach (var v in buffer_move_black)
                 {
                     if (same(v, board2))
+                    {
                         goodMove = true;
+                        blackRequestIter = blackIter;
+                    }
+                    blackIter++;
+                }
+
+                if (blackRequestIter >= 0 && same(buffer_move_black[blackRequestIter], board))
+                {
+                    buffer_move_black.RemoveAt(blackRequestIter);
+                    goodMove = false;
                 }
 
                 if (goodMove == false)

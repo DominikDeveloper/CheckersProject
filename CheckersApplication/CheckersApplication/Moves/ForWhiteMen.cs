@@ -14,12 +14,34 @@ namespace CheckersApplication
             for (int row = 0; row < 6; row++)
                 for (int col = 0; col < 8; col++)
                 {
-                    if (col < 2 && board[row, col].Value == (int)Player.White)
+                    if (col < 2 && board[row, col].Value == (int)Player.White && CheckRightJumpForWhite2(board,row,col) == true)
                     {
+                        indexxx++;
+                        indexx++;
+                        var newFields = ChessField.GetEmptyFields();
+                        move_matrix_buffer_white.Add(newFields);
+                        for (int i = 0; i < 8; i++)
+                        {
+                            for (int j = 0; j < 8; j++)
+                            {
+                                move_matrix_buffer_white[indexx][i, j].Value = board[i, j].Value;
+                            }
+                        }
                         CheckRightJumpForWhite(board, row, col, ref move_matrix_buffer_white, indexx);
                     }
-                    if (col > 5 && board[row, col].Value == (int)Player.White)
+                    if (col > 5 && board[row, col].Value == (int)Player.White && CheckLeftJumpForWhite2(board,row,col) == true)
                     {
+                        indexxx++;
+                        indexx++;
+                        var newFields = ChessField.GetEmptyFields();
+                        move_matrix_buffer_white.Add(newFields);
+                        for (int i = 0; i < 8; i++)
+                        {
+                            for (int j = 0; j < 8; j++)
+                            {
+                                move_matrix_buffer_white[indexx][i, j].Value = board[i, j].Value;
+                            }
+                        }
                         CheckLeftJumpForWhite(board, row, col, ref move_matrix_buffer_white, indexx);
                     }
                     if (col > 1 && col < 6 && board[row, col].Value == (int)Player.White)
@@ -253,6 +275,7 @@ namespace CheckersApplication
         {
             bool bicie = false;
 
+            indexxx = 0;
             move_matrix_buffer_white = new List<ChessField[,]>();
 
             var newFields = ChessField.GetEmptyFields();
