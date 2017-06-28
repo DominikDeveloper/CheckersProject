@@ -9,7 +9,8 @@
       Height="720" Width="1280"
       WindowStartupLocation="CenterScreen" 
       ResizeMode="CanMinimize"
-        Title="Checkers Project">
+        Title="Checkers Project"
+        KeyUp="Key_MainWindow_KeyUp">
 
     <Window.Resources>
         <DrawingBrush x:Key="CheckerBoard" Stretch="Fill" TileMode="Tile" Viewport="0,0,120,120" ViewportUnits="Absolute">
@@ -207,7 +208,7 @@
                 <DataGridTextColumn Header="Kto?" Width="50" IsReadOnly="True" Binding="{Binding Player}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <Button x:Name="BT_SaveMove" Content="Wykonaj ruch" HorizontalAlignment="Left" Margin="494,531,0,0" VerticalAlignment="Top" Width="104" Click="BT_SaveMove_Click"/>
+        <Button x:Name="BT_SaveMove" Content="Wykonaj ruch (M)" HorizontalAlignment="Left" Margin="494,531,0,0" VerticalAlignment="Top" Width="114" Click="BT_SaveMove_Click"/>
         <Button x:Name="BT_GoBack" Content="&lt;" HorizontalAlignment="Left" Margin="433,531,0,0" VerticalAlignment="Top" Width="20" Click="BT_GoBack_Click"/>
         <Button x:Name="BT_GoForward" Content="&gt;" HorizontalAlignment="Left" Margin="458,531,0,0" VerticalAlignment="Top" Width="20" Click="BT_GoForward_Click"/>
         <Button Content="Od nowa" HorizontalAlignment="Left" Margin="675,531,0,0" VerticalAlignment="Top" Width="77" Click="Button_Click"/>

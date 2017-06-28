@@ -6,20 +6,25 @@ namespace CheckersApplication
 {
     public partial class MainWindow : Window
     {
-        private void BT_SaveMove_Click(object sender, RoutedEventArgs e)
+        private void SaveMove()
         {
             //ComponentDispatcher.ThreadIdle -= (updateFrames);
             if (currentMove == 0)
             {
+                if (chessBoardState.piecesObservable.Count <= 0)
+                {
+                    string monit = "Nie wykryto żadnych pionków na planszy. "
+                        + "Jeżeli na planszy są rozstawione pionki, odznacz opcję wykrywania kolorów i ustaw ich kolorów używając suwaków.";
+                    MessageBox.Show(monit);
+                    return;
+                }
+
                 currentMove++;
                 shownMove++;
                 TB_MoveNr.Text = "Nr ruchu: " + (shownMove).ToString() + " (bieżący)";
                 List<CheckersPiece> pieces = new List<CheckersPiece>();
                 foreach (var p in chessBoardState.piecesObservable)
                     pieces.Add(p.Copy());
-
-
-
 
                 chessBoardState.history.Add(pieces);
             }
@@ -140,7 +145,7 @@ namespace CheckersApplication
                 //        Console.Write(board2[i, j].Value);
                 //    Console.WriteLine();
                 //}
-                
+
                 int blackIter = 0; int blackRequestIter = -1;
                 foreach (var v in buffer_move_black)
                 {
@@ -170,6 +175,19 @@ namespace CheckersApplication
                 }
             }
             //ComponentDispatcher.ThreadIdle += (updateFrames);
+        }
+
+        private void BT_SaveMove_Click(object sender, RoutedEventArgs e)
+        {
+            SaveMove();
+        }
+
+        private void Key_MainWindow_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.M)
+            {
+                SaveMove();
+            }
         }
 
         private void BT_GoBack_Click(object sender, RoutedEventArgs e)
