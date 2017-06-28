@@ -21,6 +21,7 @@ namespace CheckersApplication
                 currentMove++;
                 shownMove++;
                 TB_MoveNr.Text = "Nr ruchu: " + (shownMove).ToString() + " (bieżący)";
+                TB_Info.Text = "Rozpoczyna gracz nr 2";
                 List<CheckersPiece> pieces = new List<CheckersPiece>();
                 foreach (var p in chessBoardState.piecesObservable)
                     pieces.Add(p.Copy());
@@ -76,6 +77,7 @@ namespace CheckersApplication
                     currentMove++;
                     shownMove++;
                     TB_MoveNr.Text = "Nr ruchu: " + (shownMove).ToString() + " (bieżący)";
+                    TB_Info.Text = "Teraz kolej dla gracza 1.";
                     chessBoardState.history.Add(pieces2);
                 }
             }
@@ -128,6 +130,7 @@ namespace CheckersApplication
                     currentMove++;
                     shownMove++;
                     TB_MoveNr.Text = "Nr ruchu: " + (shownMove).ToString() + " (bieżący)";
+                    TB_Info.Text = "Oczekiwanie na ruch gracza 2.";
                     chessBoardState.history.Add(pieces2);
                 }
             }
@@ -140,7 +143,7 @@ namespace CheckersApplication
 
         private void Key_MainWindow_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if (e.Key == System.Windows.Input.Key.M)
+            if (e.Key == System.Windows.Input.Key.M && (e.OriginalSource is System.Windows.Controls.TextBox) == false)
             {
                 SaveMove();
             }
@@ -199,6 +202,7 @@ namespace CheckersApplication
                 currentMove = 0;
                 shownMove = 0;
                 TB_MoveNr.Text = "Nr ruchu: Ustawianie pionków";
+                TB_Info.Text = "1. Przygotować planszę 8x8. Wybrać kamerę, rozpocząć transmisję.\n2. Rozstawić pionki gracza 1 na dole planszy, a gracza 2 - na górze.\n3. Używając suwaków ustawić skrajne wartości kolorów pionków dla obu graczy. Jeśli wszystko jest wykrywane, kliknąć \"Wykonaj ruch.\" \n* Dla testowych zdjęć pominąć pkt. 1 i 2, wczytać plik graf.";
                 BT_SaveMove.IsEnabled = true;
             }
         }

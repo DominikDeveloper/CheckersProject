@@ -8,6 +8,7 @@ namespace CheckersApplication
 {
     public partial class MovesJumps
     {
+        //---PLAYER 2---//
         //JUMPS
         public static void CheckJumpsForWhite(ChessField[,] board, int indexx) // Check jumps, White going down
         {
