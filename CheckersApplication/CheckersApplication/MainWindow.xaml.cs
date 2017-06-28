@@ -140,12 +140,17 @@ namespace CheckersApplication
 
             if (points != null)
             {
-                resultImage.Draw(points, new Bgr(Color.DarkOrange), 2);
+                if (CB_ConfigurationShapes.IsChecked == true)
+                    resultImage.Draw(points, new Bgr(Color.DarkOrange), 2);
+
                 ChessField[,] fields = ChessField.GetChessFields(points);
                 if (fields != null)
                 {
                     foreach (var field in fields)
-                        resultImage.Draw(field.points, new Bgr(Color.Green), 2);
+                    {
+                        if (CB_ConfigurationShapes.IsChecked == true)
+                            resultImage.Draw(field.points, new Bgr(Color.Green), 2);
+                    }
 
                     CircleF[] circles = Detection.GetCircles(image);
 
@@ -285,14 +290,16 @@ namespace CheckersApplication
             BT_SaveMove.IsEnabled = false;
             foreach (CircleF circle in circleFor1)
             {
-                resultImage.Draw(circle, new Bgr(Color.Green), 3);
+                if (CB_ConfigurationShapes.IsChecked == true)
+                    resultImage.Draw(circle, new Bgr(Color.Green), 3);
                 ChessField.Pons(fields, circleFor1, (int)Player.Black);
                 chessBoardState.AddPieces(fields);
             }
 
             foreach (CircleF circle in circleFor2)
             {
-                resultImage.Draw(circle, new Bgr(Color.Blue), 3);
+                if (CB_ConfigurationShapes.IsChecked == true)
+                    resultImage.Draw(circle, new Bgr(Color.Blue), 3);
                 ChessField.Pons(fields, circleFor2, (int)Player.White);
                 chessBoardState.AddPieces(fields);
             }
@@ -316,7 +323,8 @@ namespace CheckersApplication
 
             foreach (CircleF circle in circles)
             {
-                resultImage.Draw(circle, new Bgr(Color.Red), 3);
+                if (CB_ConfigurationShapes.IsChecked == true)
+                    resultImage.Draw(circle, new Bgr(Color.Red), 3);
                 ChessField.Pons(fields, circles, (int)Player.White); //only white?!
                 chessBoardState.Clear();
             }

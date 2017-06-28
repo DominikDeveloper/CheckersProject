@@ -199,7 +199,7 @@
             <Label Content="Detekcja koloru (Gracz 1)" HorizontalAlignment="Left" Height="28" Margin="10,0,0,0" VerticalAlignment="Top" Width="149"/>
             <Label Content="Detekcja koloru (Gracz 2)" HorizontalAlignment="Left" Height="28" Margin="183,0,0,0" VerticalAlignment="Top" Width="150"/>
         </Grid>
-        <DataGrid x:Name="DG_Moves" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="153" Margin="1046,528,0,0" VerticalAlignment="Top" Width="211">
+        <DataGrid x:Name="DG_Moves" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="153" Margin="1046,528,0,0" VerticalAlignment="Top" Width="211" Visibility="Hidden">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Z" Width="50" IsReadOnly="True" SortDirection="Ascending" Binding="{Binding BoardLocationFrom}"/>
                 <DataGridTextColumn Header="Do" Width="50" IsReadOnly="True" Binding="{Binding BoardLocationTo}"/>
@@ -213,6 +213,7 @@
         <Button Content="Od nowa" HorizontalAlignment="Left" Margin="675,531,0,0" VerticalAlignment="Top" Width="77" Click="Button_Click"/>
         <TextBlock x:Name="TB_MoveNr" HorizontalAlignment="Left" Height="18" Margin="433,566,0,0" TextWrapping="Wrap" Text="Nr ruchu: Ustawianie pionków" VerticalAlignment="Top" Width="241"/>
         <Button Content="Wykryj z wczytanego zdj." HorizontalAlignment="Left" Margin="14,211,0,0" VerticalAlignment="Top" Width="139" Click="Button_Click_1"/>
+        <CheckBox x:Name="CB_ConfigurationShapes" Content="Wyświetl figury konfiguracyjne" HorizontalAlignment="Right" Height="17" Margin="0,520,230,0" VerticalAlignment="Top" Width="234" IsChecked="True"/>
     </Grid>
 
 </Window>
