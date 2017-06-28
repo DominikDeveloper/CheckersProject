@@ -8,7 +8,6 @@ namespace CheckersApplication
     {
         private void SaveMove()
         {
-            //ComponentDispatcher.ThreadIdle -= (updateFrames);
             if (currentMove == 0)
             {
                 if (chessBoardState.piecesObservable.Count <= 0)
@@ -38,18 +37,8 @@ namespace CheckersApplication
 
                 foreach (var i in pieces)
                 {
-                    //if (i.Player == Player.BlackMen)
-                    //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.BlackMen;
-                    //if (i.Player == Player.WhiteMen)
-                    //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.WhiteMen;
                     board[i.Pos.Y / 60, i.Pos.X / 60].Value = (int)i.Player;
                 }
-                //for (int i = 0; i < 8; i++)
-                //{
-                //    for (int j = 0; j < 8; j++)
-                //        File.AppendAllText("log13", (board[i, j].Value).ToString());
-                //    File.AppendAllText("log13", "\r\n");
-                //}
 
                 List<CheckersPiece> pieces2 = new List<CheckersPiece>();
                 foreach (var p in chessBoardState.piecesObservable)
@@ -57,21 +46,10 @@ namespace CheckersApplication
 
                 foreach (var i in pieces2)
                 {
-                    //if (i.Player == Player.BlackMen)
-                    //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.BlackMen;
-                    //if (i.Player == Player.WhiteMen)
-                    //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.WhiteMen;
                     board2[i.Pos.Y / 60, i.Pos.X / 60].Value = (int)i.Player;
                 }
 
                 buffer_move_white = MovesJumps.RunWhite(board);
-
-                //for (int i = 0; i < 8; i++)
-                //{
-                //    for (int j = 0; j < 8; j++)
-                //        Console.Write(board2[i, j].Value);
-                //    Console.WriteLine();
-                //}
 
                 int whiteIter = 0; int whiteRequestIter = -1;
                 foreach (var v in buffer_move_white)
@@ -111,18 +89,8 @@ namespace CheckersApplication
 
                 foreach (var i in pieces)
                 {
-                    //if (i.Player == Player.BlackMen)
-                    //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.BlackMen;
-                    //if (i.Player == Player.WhiteMen)
-                    //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.WhiteMen;
                     board[i.Pos.Y / 60, i.Pos.X / 60].Value = (int)i.Player;
                 }
-                //for (int i = 0; i < 8; i++)
-                //{
-                //    for (int j = 0; j < 8; j++)
-                //        File.AppendAllText("log13", (board[i, j].Value).ToString());
-                //    File.AppendAllText("log13", "\r\n");
-                //}
 
                 List<CheckersPiece> pieces2 = new List<CheckersPiece>();
                 foreach (var p in chessBoardState.piecesObservable)
@@ -130,21 +98,10 @@ namespace CheckersApplication
 
                 foreach (var i in pieces2)
                 {
-                    //if (i.Player == Player.BlackMen)
-                    //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.BlackMen;
-                    //if (i.Player == Player.WhiteMen)
-                    //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.WhiteMen;
                     board2[i.Pos.Y / 60, i.Pos.X / 60].Value = (int)i.Player;
                 }
 
                 buffer_move_black = MovesJumps.RunBlack(board);
-
-                //for (int i = 0; i < 8; i++)
-                //{
-                //    for (int j = 0; j < 8; j++)
-                //        Console.Write(board2[i, j].Value);
-                //    Console.WriteLine();
-                //}
 
                 int blackIter = 0; int blackRequestIter = -1;
                 foreach (var v in buffer_move_black)
@@ -174,7 +131,6 @@ namespace CheckersApplication
                     chessBoardState.history.Add(pieces2);
                 }
             }
-            //ComponentDispatcher.ThreadIdle += (updateFrames);
         }
 
         private void BT_SaveMove_Click(object sender, RoutedEventArgs e)

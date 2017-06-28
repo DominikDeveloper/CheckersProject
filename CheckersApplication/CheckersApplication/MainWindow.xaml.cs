@@ -43,14 +43,6 @@ namespace CheckersApplication
         string fileName;
         Stopwatch stopwatch;
 
-        public static bool same(ChessField[,] board, ChessField[,] board2)
-        {
-            for (int i = 0; i < 8; i++)
-                for (int j = 0; j < 8; j++)
-                    if (board[i, j].Value != board2[i, j].Value)
-                        return false;
-            return true;
-        }
         public MainWindow()
         {
             goodMove = false;
@@ -82,6 +74,15 @@ namespace CheckersApplication
             }
             if (CO_Cameras.Items.Count > 0)
                 CO_Cameras.SelectedIndex = 0;
+        }
+
+        public static bool same(ChessField[,] board, ChessField[,] board2)
+        {
+            for (int i = 0; i < 8; i++)
+                for (int j = 0; j < 8; j++)
+                    if (board[i, j].Value != board2[i, j].Value)
+                        return false;
+            return true;
         }
 
         public void updateFrames(object sender, EventArgs e)
@@ -198,46 +199,7 @@ namespace CheckersApplication
 
             return fields;
         }
-        /*
-        private void PutMoveJumpsToDatagrid(ChessField[,] fields)
-        {
-            //Show correct moves/jumps (static methods - no change sequence of calling methods
-
-            MovesJumps.CheckMovesForWhite(fields);
-            MovesJumps.CheckJumpsForWhite(fields);
-            MovesJumps.CheckMovesForBlack(fields);
-            MovesJumps.CheckJumpsForBlack(fields);
-
-            List<MovesBody> list1 = new List<MovesBody>();
-            foreach (var item in MovesJumps.jump_buffer_white)
-            {
-                list1.Add(item);
-            }
-            foreach (var item in MovesJumps.move_buffer_white)
-            {
-                list1.Add(item);
-            }
-            foreach (var item in MovesJumps.jump_buffer_black)
-            {
-                list1.Add(item);
-            }
-            foreach (var item in MovesJumps.move_buffer_black)
-            {
-                list1.Add(item);
-            }
-
-            DG_Moves.ItemsSource = null;
-            DG_Moves.ItemsSource = list1;
-        }
-        */
-
-        
-
-        
-
-        
-
-
+       
         private bool VerifyMoveJumps(ChessField[,] fields)
         {
             var move_matrix_buffer_white = new List<ChessField[,]>();
@@ -281,10 +243,6 @@ namespace CheckersApplication
                 new double[] { RS_Slider2B.LowerValue, RS_Slider2G.LowerValue, RS_Slider2R.LowerValue },
                 new double[] { RS_Slider2B.HigherValue, RS_Slider2G.HigherValue, RS_Slider2R.HigherValue });
 
-            //ComponentDispatcher.ThreadIdle -= updateFrames;
-            //System.Windows.MessageBox.Show(System.Threading.Thread.CurrentThread.ManagedThreadId.ToString());
-            //System.Threading.Thread.Sleep(1000);
-
             chessBoardState.Clear();
 
             BT_SaveMove.IsEnabled = false;
@@ -304,17 +262,12 @@ namespace CheckersApplication
                 chessBoardState.AddPieces(fields);
             }
 
-            //System.Windows.MessageBox.Show("Mleko");
-            //System.Threading.Thread.Sleep(1000);
             BT_SaveMove.IsEnabled = true;
-            //ComponentDispatcher.ThreadIdle += updateFrames;
+
             IMG_Filter1.Source = ToBitmapConverter.Convert(filtring1);
             IMG_Filter2.Source = ToBitmapConverter.Convert(filtring2);
 
-            //Show correct moves/jumps
             //goodMove = VerifyMoveJumps(fields);
-            //PutMoveJumpsToDatagrid(fields);
-            //
         }
 
         private void AutoCircClrDetect(ChessField[,] fields, CircleF[] circles, Image<Bgr, byte> image, ref Image<Bgr, byte> resultImage)
