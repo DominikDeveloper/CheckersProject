@@ -130,8 +130,16 @@
     <Compile Include="Detection.cs" />
     <Compile Include="CheckersPiece.cs" />
     <Compile Include="ChessBoardState.cs" />
+    <Compile Include="Events\Camera.cs" />
+    <Compile Include="Events\Moves.cs" />
+    <Compile Include="Events\Other.cs" />
+    <Compile Include="Events\Sliders.cs" />
+    <Compile Include="Helper\ToBitmapConverter.cs" />
+    <Compile Include="Moves\ForBlackMen.cs" />
+    <Compile Include="Moves\ForWhiteMen.cs" />
     <Compile Include="Moves\MovesJumps.cs" />
-    <Compile Include="ToBitmapConverter.cs" />
+    <Compile Include="Parameters\CircParam.cs" />
+    <Compile Include="Parameters\RectParam.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="MainWindow.xaml">

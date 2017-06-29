@@ -25,14 +25,13 @@ namespace CheckersApplication
         public static CircleF[] GetCircles(Image<Bgr, Byte> img)
         {
             UMat uimage = ConvertClearImage(img);
-            double cannyThreshold = 130.0;
-            double circleAccumulatorThreshold = 40.0;
-            double dp = 2.0;
-            double minDist = 30.0;
-            int minRadius = 5;
-            int maxRadius = 30;
+
+            CircParam circParams = new CircParam();
+
             CircleF[] circles = CvInvoke.HoughCircles(
-                uimage, HoughType.Gradient, dp, minDist, cannyThreshold, circleAccumulatorThreshold, minRadius, maxRadius);
+                uimage, HoughType.Gradient, 
+                circParams.dp, circParams.minDist, circParams.cannyThreshold, circParams.circleAccumulatorThreshold,
+                circParams.minRadius, circParams.maxRadius);
 
             return circles;
         }
@@ -168,31 +167,26 @@ namespace CheckersApplication
 
             // Use the Hough transform to detect circles in the combined threshold image
             //var circlesArray = CvInvoke.HoughCircles(color_hue_image, HoughType.Gradient, 1, color_hue_image.Rows / 8, 100, 20, 0, 0);
-            double cannyThreshold = 130.0;
-            double circleAccumulatorThreshold = 40.0;
-            double dp = 2.0;
-            double minDist = 30.0;
-            int minRadius = 5;
-            int maxRadius = 30;
+
+            CircParam circParams = new CircParam();
+
             CircleF[] circlesArray = CvInvoke.HoughCircles(
-    color_hue_image, HoughType.Gradient, dp, minDist, cannyThreshold, circleAccumulatorThreshold, minRadius, maxRadius);
+                color_hue_image, HoughType.Gradient, 
+                circParams.dp, circParams.minDist, circParams.cannyThreshold, circParams.circleAccumulatorThreshold, 
+                circParams.minRadius, circParams.maxRadius);
 
             return circlesArray;
         }
 
         public static System.Drawing.Point[] GetRectanglePoints(Image<Bgr, Byte> img)
         {
-            double cannyThresholdLinking = 120.0;
-            double cannyThreshold = 140.0;
+
+            RectParam rectParams = new RectParam();
 
             UMat cannyEdges = new UMat();
 
-            CvInvoke.Canny(img, cannyEdges, cannyThreshold, cannyThresholdLinking);
+            CvInvoke.Canny(img, cannyEdges, rectParams.cannyThreshold, rectParams.cannyThresholdLinking);
 
-                int contourAreaMin = 10000;
-                int contourAreaMax = 200000;
-                int angleMin = 85;
-                int angleMax = 95;
                 System.Drawing.Point[] points = null;
                 using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
                 {
@@ -204,13 +198,13 @@ namespace CheckersApplication
                         {
                             CvInvoke.ApproxPolyDP(contour, approxContour, CvInvoke.ArcLength(contour, true) * 0.05, true);
                             double contourArea = CvInvoke.ContourArea(approxContour, false);
-                            if (contourArea > contourAreaMin && contourArea < contourAreaMax)
+                            if (contourArea > rectParams.contourAreaMin && contourArea < rectParams.contourAreaMax)
                             {
                                 if (approxContour.Size == 4)
                                 {
                                     points  = approxContour.ToArray();
                                     LineSegment2D[] edges = PointCollection.PolyLine(points, true);
-                                    if(Detection.CheckAngles(edges, angleMin, angleMax))
+                                    if(Detection.CheckAngles(edges, rectParams.angleMin, rectParams.angleMax))
                                     {
                                         return points;
                                     }

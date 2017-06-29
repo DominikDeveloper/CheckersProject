@@ -41,15 +41,8 @@ namespace CheckersApplication
         int currentMove = 0;
         int shownMove = 0;
         string fileName;
+        Stopwatch stopwatch;
 
-        public static bool same(ChessField[,] board, ChessField[,] board2)
-        {
-            for (int i = 0; i < 8; i++)
-                for (int j = 0; j < 8; j++)
-                    if (board[i, j].Value != board2[i, j].Value)
-                        return false;
-            return true;
-        }
         public MainWindow()
         {
             goodMove = false;
@@ -60,6 +53,7 @@ namespace CheckersApplication
             InitValuePickers();
             CvInvoke.UseOpenCL = (bool)CB_OpenCL.IsChecked;
             this.ChessBoard.ItemsSource = chessBoardState.piecesObservable;
+            stopwatch = new Stopwatch();
         }
 
         private void InitValuePickers() //set values for white
@@ -82,11 +76,30 @@ namespace CheckersApplication
                 CO_Cameras.SelectedIndex = 0;
         }
 
+        public static bool same(ChessField[,] board, ChessField[,] board2)
+        {
+            for (int i = 0; i < 8; i++)
+                for (int j = 0; j < 8; j++)
+                    if (board[i, j].Value != board2[i, j].Value)
+                        return false;
+            return true;
+        }
+
         public void updateFrames(object sender, EventArgs e)
         {
             try
             {
-                camera.imageViewer.Image = camera.capture.QueryFrame();
+                if (!stopwatch.IsRunning)
+                {
+                    stopwatch.Start();
+                    camera.imageViewer.Image = camera.capture.QueryFrame();
+                }
+                camera.capture.QueryFrame(); //skip frames if big delay
+                if (stopwatch.ElapsedMilliseconds >= 1800)
+                {
+                    stopwatch.Restart();
+                    camera.imageViewer.Image = camera.capture.QueryFrame();
+                }
                 var image = new Image<Bgr, Byte>(camera.imageViewer.Image.Bitmap);
                 Detect(cameraCapture: image);
             }
@@ -109,68 +122,6 @@ namespace CheckersApplication
             ComponentDispatcher.ThreadIdle += new System.EventHandler(updateFrames);
         }
 
-        private void BT_Start_Click(object sender, RoutedEventArgs e)
-        {
-            ChangeBtnStartStop();
-            if (CB_DefaultCamera.IsChecked == true && CO_Cameras.Items.Count > 0)
-                camera = new Camera(Convert.ToString(CO_Cameras.SelectedIndex));
-            else
-                camera = new Camera(TB_CameraSource.Text);
-            CameraShow();
-            CO_Cameras.IsEnabled = false;
-        }
-
-        private void BT_Stop_Click(object sender, RoutedEventArgs e)
-        {
-            ChangeBtnStartStop();
-            ComponentDispatcher.ThreadIdle -= new EventHandler(updateFrames);
-            camera.capture.Stop();
-            camera.capture.Dispose();
-            CO_Cameras.IsEnabled = true;
-        }
-
-        private void CB_DefaultCamera_Click(object sender, RoutedEventArgs e)
-        {
-            CO_Cameras.IsEnabled = !CO_Cameras.IsEnabled;
-            TB_CameraSource.IsEnabled = !(bool)CB_DefaultCamera.IsChecked;
-            if (!TB_CameraSource.IsEnabled)
-            {
-                TB_CameraSource.Text = "URL streamu, ID kamery, lub plik wideo,\nnp. (http://IP:PORT/mjpegfeed)";
-                TB_CameraSource.Foreground = System.Windows.Media.Brushes.Gray;
-            }
-        }
-
-        private void CB_OpenCL_Click(object sender, RoutedEventArgs e)
-        {
-            CvInvoke.UseOpenCL = !CvInvoke.UseOpenCL;
-        }
-
-        private void BT_ImageTest_Click(object sender, RoutedEventArgs e)
-        {
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-            openFileDialog1.Filter = "Image files (*.jpg, *.png) | *.jpg; *.png";
-            openFileDialog1.RestoreDirectory = true;
-            DialogResult result = openFileDialog1.ShowDialog();
-            string path = String.Empty;
-            if (result == System.Windows.Forms.DialogResult.OK)
-            {
-                try
-                {
-                    fileName = openFileDialog1.FileName;
-                    Detect(openFileDialog1.FileName);
-                }
-                catch (Exception ex)
-                {
-                    System.Windows.MessageBox.Show("Komunikat błędu: " + ex.Message);
-                }
-            }
-        }
-
-        private void TB_CameraSource_GotFocus(object sender, RoutedEventArgs e)
-        {
-            TB_CameraSource.Text = "";
-            TB_CameraSource.Foreground = System.Windows.Media.Brushes.Black;
-        }
 
         private void Detect(string filePath = null, Image<Bgr, byte> cameraCapture = null)
         {
@@ -190,12 +141,17 @@ namespace CheckersApplication
 
             if (points != null)
             {
-                resultImage.Draw(points, new Bgr(Color.DarkOrange), 2);
+                if (CB_ConfigurationShapes.IsChecked == true)
+                    resultImage.Draw(points, new Bgr(Color.DarkOrange), 2);
+
                 ChessField[,] fields = ChessField.GetChessFields(points);
                 if (fields != null)
                 {
                     foreach (var field in fields)
-                        resultImage.Draw(field.points, new Bgr(Color.Green), 2);
+                    {
+                        if (CB_ConfigurationShapes.IsChecked == true)
+                            resultImage.Draw(field.points, new Bgr(Color.Green), 2);
+                    }
 
                     CircleF[] circles = Detection.GetCircles(image);
 
@@ -203,136 +159,17 @@ namespace CheckersApplication
                     fields = DifferenceBoardSquareColors(fields);
                     //
 
-                    Mat filtring1 = new Mat();
-                    Mat filtring2 = new Mat();
-
                     int[] minColorVal = new int[] { 3, 2, 1 };
-
-                    int autoColorsRange = 15;
 
                     if (circles != null)
                     {
                         if (CB_AutoDetectColors.IsChecked == true)
                         {
-                            foreach (CircleF circle in circles)
-                            {
-                                resultImage.Draw(circle, new Bgr(Color.Red), 3);
-                                ChessField.Pons(fields, circles, (int)Player.White); //only white?!
-                                chessBoardState.Clear();
-                            }
-
-                            Detection.DetectPlayersColors(circles, ref player1Color, ref player2Color, image);
-
-                            if (player1Color.R - autoColorsRange < 0)
-                                RS_Slider1R.LowerValue = 0;
-                            else
-                                RS_Slider1R.LowerValue = player1Color.R - autoColorsRange;
-
-                            if (player1Color.G - autoColorsRange < 0)
-                                RS_Slider1G.LowerValue = 0;
-                            else
-                                RS_Slider1G.LowerValue = player1Color.G - autoColorsRange;
-
-                            if (player1Color.B - autoColorsRange < 0)
-                                RS_Slider1B.LowerValue = 0;
-                            else
-                                RS_Slider1B.LowerValue = player1Color.B - autoColorsRange;
-
-                            if (player1Color.R + autoColorsRange > 255)
-                                RS_Slider1R.HigherValue = 255;
-                            else
-                                RS_Slider1R.HigherValue = player1Color.R + autoColorsRange;
-
-                            if (player1Color.G + autoColorsRange > 255)
-                                RS_Slider1G.HigherValue = 255;
-                            else
-                                RS_Slider1G.HigherValue = player1Color.G + autoColorsRange;
-
-                            if (player1Color.B + autoColorsRange > 255)
-                                RS_Slider1B.HigherValue = 255;
-                            else
-                                RS_Slider1B.HigherValue = player1Color.B + autoColorsRange;
-
-                            CV_Player1Color_Min.Background = new System.Windows.Media.SolidColorBrush(
-                                System.Windows.Media.Color.FromRgb((byte)RS_Slider1R.LowerValue, (byte)RS_Slider1G.LowerValue, (byte)RS_Slider1B.LowerValue));
-                            CV_Player1Color_Max.Background = new System.Windows.Media.SolidColorBrush(
-                                System.Windows.Media.Color.FromRgb((byte)RS_Slider1R.HigherValue, (byte)RS_Slider1G.HigherValue, (byte)RS_Slider1B.HigherValue));
-
-                            System.Windows.Application.Current.Resources["Player1Color"] = CV_Player1Color_Max.Background;
-
-                            if (player2Color.R - autoColorsRange < 0)
-                                RS_Slider2R.LowerValue = 0;
-                            else
-                                RS_Slider2R.LowerValue = player2Color.R - autoColorsRange;
-
-                            if (player2Color.G - autoColorsRange < 0)
-                                RS_Slider2G.LowerValue = 0;
-                            else
-                                RS_Slider2G.LowerValue = player2Color.G - autoColorsRange;
-
-                            if (player2Color.B - autoColorsRange < 0)
-                                RS_Slider2B.LowerValue = 0;
-                            else
-                                RS_Slider2B.LowerValue = player2Color.B - autoColorsRange;
-
-                            if (player2Color.R + autoColorsRange > 255)
-                                RS_Slider2R.HigherValue = 255;
-                            else
-                                RS_Slider2R.HigherValue = player2Color.R + autoColorsRange;
-
-                            if (player2Color.G + autoColorsRange > 255)
-                                RS_Slider2G.HigherValue = 255;
-                            else
-                                RS_Slider2G.HigherValue = player2Color.G + autoColorsRange;
-
-                            if (player2Color.B + autoColorsRange > 255)
-                                RS_Slider2B.HigherValue = 255;
-                            else
-                                RS_Slider2B.HigherValue = player2Color.B + autoColorsRange;
-
-                            CV_Player2Color_Min.Background = new System.Windows.Media.SolidColorBrush(
-                                System.Windows.Media.Color.FromRgb((byte)RS_Slider2R.LowerValue, (byte)RS_Slider2G.LowerValue, (byte)RS_Slider2B.LowerValue));
-                            CV_Player2Color_Max.Background = new System.Windows.Media.SolidColorBrush(
-                                System.Windows.Media.Color.FromRgb((byte)RS_Slider2R.HigherValue, (byte)RS_Slider2G.HigherValue, (byte)RS_Slider2B.HigherValue));
-
-                            System.Windows.Application.Current.Resources["Player2Color"] = CV_Player2Color_Max.Background;
+                            AutoCircClrDetect(fields, circles, image, ref resultImage);
                         }
                         else
                         {
-                            var circleFor1 = Detection.FilterSomeColors(
-                                image,
-                                ref filtring1,
-                                new double[] { RS_Slider1B.LowerValue, RS_Slider1G.LowerValue, RS_Slider1R.LowerValue },
-                                new double[] { RS_Slider1B.HigherValue, RS_Slider1G.HigherValue, RS_Slider1R.HigherValue });
-                            var circleFor2 = Detection.FilterSomeColors(
-                                image,
-                                ref filtring2,
-                                new double[] { RS_Slider2B.LowerValue, RS_Slider2G.LowerValue, RS_Slider2R.LowerValue },
-                                new double[] { RS_Slider2B.HigherValue, RS_Slider2G.HigherValue, RS_Slider2R.HigherValue });
-
-                            chessBoardState.Clear();
-
-                            foreach (CircleF circle in circleFor1)
-                            {
-                                resultImage.Draw(circle, new Bgr(Color.Green), 3);
-                                ChessField.Pons(fields, circleFor1, (int)Player.Black);
-                                chessBoardState.AddPieces(fields);
-                            }
-
-                            foreach (CircleF circle in circleFor2)
-                            {
-                                resultImage.Draw(circle, new Bgr(Color.Blue), 3);
-                                ChessField.Pons(fields, circleFor2, (int)Player.White);
-                                chessBoardState.AddPieces(fields);
-                            }
-
-                            IMG_Filter1.Source = ToBitmapConverter.Convert(filtring1);
-                            IMG_Filter2.Source = ToBitmapConverter.Convert(filtring2);
-
-                            //Show correct moves/jumps
-                                //goodMove = VerifyMoveJumps(fields);
-                            //PutMoveJumpsToDatagrid(fields);
-                            //
+                            ManualCircClrDetect(fields, circles, image, ref resultImage);
                         }
                         
                     }
@@ -362,301 +199,7 @@ namespace CheckersApplication
 
             return fields;
         }
-        /*
-        private void PutMoveJumpsToDatagrid(ChessField[,] fields)
-        {
-            //Show correct moves/jumps (static methods - no change sequence of calling methods
-
-            MovesJumps.CheckMovesForWhite(fields);
-            MovesJumps.CheckJumpsForWhite(fields);
-            MovesJumps.CheckMovesForBlack(fields);
-            MovesJumps.CheckJumpsForBlack(fields);
-
-            List<MovesBody> list1 = new List<MovesBody>();
-            foreach (var item in MovesJumps.jump_buffer_white)
-            {
-                list1.Add(item);
-            }
-            foreach (var item in MovesJumps.move_buffer_white)
-            {
-                list1.Add(item);
-            }
-            foreach (var item in MovesJumps.jump_buffer_black)
-            {
-                list1.Add(item);
-            }
-            foreach (var item in MovesJumps.move_buffer_black)
-            {
-                list1.Add(item);
-            }
-
-            DG_Moves.ItemsSource = null;
-            DG_Moves.ItemsSource = list1;
-        }
-        */
-
-        private void CB_AutoDetectColors_Click(object sender, RoutedEventArgs e)
-        {
-            if (CB_AutoDetectColors.IsChecked == true)
-            {
-                RS_Slider1R.IsEnabled = false;
-                RS_Slider2R.IsEnabled = false;
-                RS_Slider1G.IsEnabled = false;
-                RS_Slider2G.IsEnabled = false;
-                RS_Slider1B.IsEnabled = false;
-                RS_Slider2B.IsEnabled = false;
-            }
-            else
-            {
-                RS_Slider1R.IsEnabled = true;
-                RS_Slider2R.IsEnabled = true;
-                RS_Slider1G.IsEnabled = true;
-                RS_Slider2G.IsEnabled = true;
-                RS_Slider1B.IsEnabled = true;
-                RS_Slider2B.IsEnabled = true;
-            }
-        }
-
-        private void RangeSlider_Player1_ValueChanged(object sender, RoutedEventArgs e)
-        {
-            if (ifInitComponent)
-            {
-                LB_Range1R.Content = RS_Slider1R.LowerValue.ToString() + " - " + RS_Slider1R.HigherValue.ToString();
-                LB_Range1G.Content = RS_Slider1G.LowerValue.ToString() + " - " + RS_Slider1G.HigherValue.ToString();
-                LB_Range1B.Content = RS_Slider1B.LowerValue.ToString() + " - " + RS_Slider1B.HigherValue.ToString();
-
-                if (CB_AutoDetectColors.IsChecked == false)
-                { 
-                    System.Windows.Media.Color minColor = System.Windows.Media.Color.FromRgb((byte)RS_Slider1R.LowerValue, (byte)RS_Slider1G.LowerValue, (byte)RS_Slider1B.LowerValue);
-                    CV_Player1Color_Min.Background = new System.Windows.Media.SolidColorBrush(minColor);
-
-                    System.Windows.Media.Color maxColor = System.Windows.Media.Color.FromRgb((byte)RS_Slider1R.HigherValue, (byte)RS_Slider1G.HigherValue, (byte)RS_Slider1B.HigherValue);
-                    CV_Player1Color_Max.Background = new System.Windows.Media.SolidColorBrush(maxColor);
-
-                    System.Windows.Application.Current.Resources["Player1Color"] = CV_Player1Color_Max.Background;
-                }
-            }
-        }
-
-        private void RangeSlider_Player2_ValueChanged(object sender, RoutedEventArgs e)
-        {
-            if (ifInitComponent)
-            {
-                LB_Range2R.Content = RS_Slider2R.LowerValue.ToString() + " - " + RS_Slider2R.HigherValue.ToString();
-                LB_Range2G.Content = RS_Slider2G.LowerValue.ToString() + " - " + RS_Slider2G.HigherValue.ToString();
-                LB_Range2B.Content = RS_Slider2B.LowerValue.ToString() + " - " + RS_Slider2B.HigherValue.ToString();
-
-                if (CB_AutoDetectColors.IsChecked == false)
-                {
-                    System.Windows.Media.Color minColor = System.Windows.Media.Color.FromRgb((byte)RS_Slider2R.LowerValue, (byte)RS_Slider2G.LowerValue, (byte)RS_Slider2B.LowerValue);
-                    CV_Player2Color_Min.Background = new System.Windows.Media.SolidColorBrush(minColor);
-
-                    System.Windows.Media.Color maxColor = System.Windows.Media.Color.FromRgb((byte)RS_Slider2R.HigherValue, (byte)RS_Slider2G.HigherValue, (byte)RS_Slider2B.HigherValue);
-                    CV_Player2Color_Max.Background = new System.Windows.Media.SolidColorBrush(maxColor);
-
-                    System.Windows.Application.Current.Resources["Player2Color"] = CV_Player2Color_Max.Background;
-                }
-            }
-        }
-
-        private void BT_SaveMove_Click(object sender, RoutedEventArgs e)
-        {
-            if (currentMove == 0)
-            {
-                currentMove++;
-                shownMove++;
-                TB_MoveNr.Text = "Nr ruchu: " + (shownMove).ToString() + " (bieżący)";
-                List<CheckersPiece> pieces = new List<CheckersPiece>();
-                foreach (var p in chessBoardState.piecesObservable)
-                    pieces.Add(p.Copy());
-
-
-
-
-                chessBoardState.history.Add(pieces);
-            }
-            else if (currentMove % 2 == 1)
-            {
-                goodMove = false;
-                ChessField[,] board = ChessField.GetEmptyFields();
-                ChessField[,] board2 = ChessField.GetEmptyFields();
-                List<CheckersPiece> pieces = new List<CheckersPiece>();
-                pieces = chessBoardState.history[chessBoardState.history.Count - 1];
-
-                foreach (var i in pieces)
-                {
-                    //if (i.Player == Player.BlackMen)
-                    //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.BlackMen;
-                    //if (i.Player == Player.WhiteMen)
-                    //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.WhiteMen;
-                    board[i.Pos.Y / 60, i.Pos.X / 60].Value = (int)i.Player;
-                }
-                //for (int i = 0; i < 8; i++)
-                //{
-                //    for (int j = 0; j < 8; j++)
-                //        File.AppendAllText("log13", (board[i, j].Value).ToString());
-                //    File.AppendAllText("log13", "\r\n");
-                //}
-
-                List<CheckersPiece> pieces2 = new List<CheckersPiece>();
-                foreach (var p in chessBoardState.piecesObservable)
-                    pieces2.Add(p.Copy());
-
-                foreach (var i in pieces2)
-                {
-                    //if (i.Player == Player.BlackMen)
-                    //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.BlackMen;
-                    //if (i.Player == Player.WhiteMen)
-                    //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.WhiteMen;
-                    board2[i.Pos.Y / 60, i.Pos.X / 60].Value = (int)i.Player;
-                }
-
-                buffer_move_white = MovesJumps.RunWhite(board);
-
-                //for (int i = 0; i < 8; i++)
-                //{
-                //    for (int j = 0; j < 8; j++)
-                //        Console.Write(board2[i, j].Value);
-                //    Console.WriteLine();
-                //}
-
-                foreach (var v in buffer_move_white)
-                {
-                    if (same(v, board2))
-                        goodMove = true;
-                }
-
-                if (goodMove == false)
-                    System.Windows.MessageBox.Show("Niepoprawny ruch.");
-                else
-                {
-
-                    currentMove++;
-                    shownMove++;
-                    TB_MoveNr.Text = "Nr ruchu: " + (shownMove).ToString() + " (bieżący)";
-                    chessBoardState.history.Add(pieces2);
-                }
-            }
-            else
-            {
-                goodMove = false;
-                ChessField[,] board = ChessField.GetEmptyFields();
-                ChessField[,] board2 = ChessField.GetEmptyFields();
-                List<CheckersPiece> pieces = new List<CheckersPiece>();
-                pieces = chessBoardState.history[chessBoardState.history.Count - 1];
-
-                foreach (var i in pieces)
-                {
-                    //if (i.Player == Player.BlackMen)
-                    //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.BlackMen;
-                    //if (i.Player == Player.WhiteMen)
-                    //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.WhiteMen;
-                    board[i.Pos.Y / 60, i.Pos.X / 60].Value = (int)i.Player;
-                }
-                //for (int i = 0; i < 8; i++)
-                //{
-                //    for (int j = 0; j < 8; j++)
-                //        File.AppendAllText("log13", (board[i, j].Value).ToString());
-                //    File.AppendAllText("log13", "\r\n");
-                //}
-
-                List<CheckersPiece> pieces2 = new List<CheckersPiece>();
-                foreach (var p in chessBoardState.piecesObservable)
-                    pieces2.Add(p.Copy());
-
-                foreach (var i in pieces2)
-                {
-                    //if (i.Player == Player.BlackMen)
-                    //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.BlackMen;
-                    //if (i.Player == Player.WhiteMen)
-                    //    board[i.Pos.X / 60, i.Pos.Y / 60].Value = (int)Player.WhiteMen;
-                    board2[i.Pos.Y / 60, i.Pos.X / 60].Value = (int)i.Player;
-                }
-
-                buffer_move_black = MovesJumps.RunBlack(board);
-
-                //for (int i = 0; i < 8; i++)
-                //{
-                //    for (int j = 0; j < 8; j++)
-                //        Console.Write(board2[i, j].Value);
-                //    Console.WriteLine();
-                //}
-
-                foreach (var v in buffer_move_black)
-                {
-                    if (same(v, board2))
-                        goodMove = true;
-                }
-
-                if (goodMove == false)
-                    System.Windows.MessageBox.Show("Niepoprawny ruch.");
-                else
-                {
-
-                    currentMove++;
-                    shownMove++;
-                    TB_MoveNr.Text = "Nr ruchu: " + (shownMove).ToString() + " (bieżący)";
-                    chessBoardState.history.Add(pieces2);
-                }
-            }
-        }
-
-        private void BT_GoBack_Click(object sender, RoutedEventArgs e)
-        {
-            if (shownMove < 1)
-                return;
-
-            shownMove--;
-
-            if (shownMove==0)
-                TB_MoveNr.Text = "Nr ruchu: Ustawianie pionków";
-            else
-                TB_MoveNr.Text = "Nr ruchu: " + shownMove.ToString();
-
-            BT_SaveMove.IsEnabled = false;
-            BT_ImageTest.IsEnabled = false;
-
-            chessBoardState.piecesObservable.Clear();
-            foreach (var p in chessBoardState.history[shownMove])
-                chessBoardState.piecesObservable.Add(p.Copy());
-
-        }
-
-        private void BT_GoForward_Click(object sender, RoutedEventArgs e)
-        {
-            if (shownMove == currentMove)
-                return;
-
-            shownMove++;
-            
-
-            if (shownMove == currentMove)
-            {
-                BT_SaveMove.IsEnabled = true;
-                BT_ImageTest.IsEnabled = true;
-                TB_MoveNr.Text = "Nr ruchu: "+ (shownMove).ToString()+" (bieżący)";
-                return;
-            }
-
-            TB_MoveNr.Text = "Nr ruchu: " + (shownMove).ToString();
-            chessBoardState.piecesObservable.Clear();
-            foreach (var p in chessBoardState.history[shownMove])
-                chessBoardState.piecesObservable.Add(p.Copy());
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBoxResult result = System.Windows.MessageBox.Show("Czy na pewno chcesz rozpocząć grę od nowa?\nDotychczasowy postęp zostanie utracony", "Checkers Project", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (result == MessageBoxResult.Yes)
-            {
-                chessBoardState.history.Clear();
-                currentMove = 0;
-                shownMove = 0;
-                TB_MoveNr.Text = "Nr ruchu: Ustawianie pionków";
-                BT_SaveMove.IsEnabled = true;
-            }
-        }
-
+       
         private bool VerifyMoveJumps(ChessField[,] fields)
         {
             var move_matrix_buffer_white = new List<ChessField[,]>();
@@ -684,17 +227,122 @@ namespace CheckersApplication
             return false;
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void ManualCircClrDetect(ChessField[,] fields, CircleF[] circles, Image<Bgr, byte> image, ref Image<Bgr, byte> resultImage)
         {
-            try
+            Mat filtring1 = new Mat();
+            Mat filtring2 = new Mat();
+
+            var circleFor1 = Detection.FilterSomeColors(
+                                image,
+                                ref filtring1,
+                                new double[] { RS_Slider1B.LowerValue, RS_Slider1G.LowerValue, RS_Slider1R.LowerValue },
+                                new double[] { RS_Slider1B.HigherValue, RS_Slider1G.HigherValue, RS_Slider1R.HigherValue });
+            var circleFor2 = Detection.FilterSomeColors(
+                image,
+                ref filtring2,
+                new double[] { RS_Slider2B.LowerValue, RS_Slider2G.LowerValue, RS_Slider2R.LowerValue },
+                new double[] { RS_Slider2B.HigherValue, RS_Slider2G.HigherValue, RS_Slider2R.HigherValue });
+
+            chessBoardState.Clear();
+
+            BT_SaveMove.IsEnabled = false;
+            foreach (CircleF circle in circleFor1)
             {
-                Detect(fileName);
+                if (CB_ConfigurationShapes.IsChecked == true)
+                    resultImage.Draw(circle, new Bgr(Color.Green), 3);
+                ChessField.Pons(fields, circleFor1, (int)Player.Black);
+                chessBoardState.AddPieces(fields);
             }
-            catch (Exception ex)
+
+            foreach (CircleF circle in circleFor2)
             {
-                System.Windows.MessageBox.Show("Nie wczytano obrazka.");
+                if (CB_ConfigurationShapes.IsChecked == true)
+                    resultImage.Draw(circle, new Bgr(Color.Blue), 3);
+                ChessField.Pons(fields, circleFor2, (int)Player.White);
+                chessBoardState.AddPieces(fields);
             }
+
+            BT_SaveMove.IsEnabled = true;
+
+            IMG_Filter1.Source = ToBitmapConverter.Convert(filtring1);
+            IMG_Filter2.Source = ToBitmapConverter.Convert(filtring2);
+
+            //goodMove = VerifyMoveJumps(fields);
+        }
+
+        private void AutoCircClrDetect(ChessField[,] fields, CircleF[] circles, Image<Bgr, byte> image, ref Image<Bgr, byte> resultImage)
+        {
+            int autoColorsRange = 15;
+
+            foreach (CircleF circle in circles)
+            {
+                if (CB_ConfigurationShapes.IsChecked == true)
+                    resultImage.Draw(circle, new Bgr(Color.Red), 3);
+                ChessField.Pons(fields, circles, (int)Player.White); //only white?!
+                chessBoardState.Clear();
+            }
+
+            Detection.DetectPlayersColors(circles, ref player1Color, ref player2Color, image);
+            
+            //for player1
+            //set slider's values
+            SetLowValSlider(RS_Slider1R, player1Color.R, autoColorsRange);
+            SetLowValSlider(RS_Slider1G, player1Color.G, autoColorsRange);
+            SetLowValSlider(RS_Slider1B, player1Color.B, autoColorsRange);
+
+            SetHighValSlider(RS_Slider1R, player1Color.R, autoColorsRange);
+            SetHighValSlider(RS_Slider1G, player1Color.G, autoColorsRange);
+            SetHighValSlider(RS_Slider1B, player1Color.B, autoColorsRange);
+
+            //show color view
+            CV_Player1Color_Min.Background = new System.Windows.Media.SolidColorBrush(
+                System.Windows.Media.Color.FromRgb((byte)RS_Slider1R.LowerValue, (byte)RS_Slider1G.LowerValue, (byte)RS_Slider1B.LowerValue));
+            CV_Player1Color_Max.Background = new System.Windows.Media.SolidColorBrush(
+                System.Windows.Media.Color.FromRgb((byte)RS_Slider1R.HigherValue, (byte)RS_Slider1G.HigherValue, (byte)RS_Slider1B.HigherValue));
+
+            //color visual piece
+            System.Windows.Application.Current.Resources["Player1Color"] = CV_Player1Color_Max.Background;
+
+            //for player2
+            //set slider's values
+            SetLowValSlider(RS_Slider2R, player2Color.R, autoColorsRange);
+            SetLowValSlider(RS_Slider2G, player2Color.G, autoColorsRange);
+            SetLowValSlider(RS_Slider2B, player2Color.B, autoColorsRange);
+
+            SetHighValSlider(RS_Slider2R, player2Color.R, autoColorsRange);
+            SetHighValSlider(RS_Slider2G, player2Color.G, autoColorsRange);
+            SetHighValSlider(RS_Slider2B, player2Color.B, autoColorsRange);
+
+            //show color view
+            CV_Player2Color_Min.Background = new System.Windows.Media.SolidColorBrush(
+                System.Windows.Media.Color.FromRgb((byte)RS_Slider2R.LowerValue, (byte)RS_Slider2G.LowerValue, (byte)RS_Slider2B.LowerValue));
+            CV_Player2Color_Max.Background = new System.Windows.Media.SolidColorBrush(
+                System.Windows.Media.Color.FromRgb((byte)RS_Slider2R.HigherValue, (byte)RS_Slider2G.HigherValue, (byte)RS_Slider2B.HigherValue));
+            
+            //color visual piece
+            System.Windows.Application.Current.Resources["Player2Color"] = CV_Player2Color_Max.Background;
+        }
+
+        private void SetLowValSlider(Xceed.Wpf.Toolkit.RangeSlider slider, int playerPrimaryColor, int autoColorsRange)
+        {
+            const int MIN_CLR_VAL = 0;
+
+            if (playerPrimaryColor - autoColorsRange < MIN_CLR_VAL)
+                slider.LowerValue = MIN_CLR_VAL;
+            else
+                slider.LowerValue = playerPrimaryColor - autoColorsRange;
+        }
+
+        private void SetHighValSlider(Xceed.Wpf.Toolkit.RangeSlider slider, int playerPrimaryColor, int autoColorsRange)
+        {
+            const int MAX_CLR_VAL = 255;
+
+            if (playerPrimaryColor + autoColorsRange > MAX_CLR_VAL)
+                slider.HigherValue = MAX_CLR_VAL;
+            else
+                slider.HigherValue = playerPrimaryColor + autoColorsRange;
         }
     }
+
 
 }
