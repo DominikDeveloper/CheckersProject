@@ -189,6 +189,8 @@
             <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="64" Margin="216,45,0,0" VerticalAlignment="Top" Width="50">
                 <Canvas x:Name="CV_Player2Color_Max"/>
             </Border>
+            <Canvas x:Name="C1" HorizontalAlignment="Left" Height="12" Margin="62,28,0,0" VerticalAlignment="Top" Width="12" Background="Red" Visibility="Hidden"/>
+            <Canvas x:Name="C2" HorizontalAlignment="Left" Height="12" Margin="210,28,0,0" VerticalAlignment="Top" Width="12" Background="Red" Visibility="Hidden"/>
         </Grid>
         <Grid x:Name="GD_FilterImages" HorizontalAlignment="Left" Height="153" Margin="16,528,0,0" VerticalAlignment="Top" Width="363">
             <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Right" VerticalAlignment="Top" Width="130" Height="110" Margin="0,33,204,0">
